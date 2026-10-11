@@ -146,6 +146,13 @@ class ModelService:
     def global_shap(self) -> Dict[str, Any]:
         return self._shap_global
 
+    @staticmethod
+    def _num_or_default(row: pd.Series, col: str, default: float) -> float:
+        value = row.get(col)
+        if value is None or pd.isna(value):
+            return float(default)
+        return float(value)
+
     def validate_features_df(self, df_input: pd.DataFrame) -> pd.DataFrame:
         """
         Validates input DataFrame against feature_schema.json and forbidden columns.
@@ -468,11 +475,12 @@ class ModelService:
                     features_changed.append(col)
 
         # 4. Weight & BMI
-        curr_wt = float(safe_x.iloc[0].get("weight_latest", 70.0))
+        curr_wt = safe_x.iloc[0].get("weight_latest")
+        curr_wt_val = float(curr_wt) if pd.notna(curr_wt) and curr_wt not in (None, "") else 70.0
         wt_val = levers.get("weight_value")
         wt_pct = levers.get("weight_delta_pct")
-        if wt_val is not None and curr_wt > 0:
-            wt_mult = float(wt_val) / curr_wt
+        if wt_val is not None and curr_wt_val > 0:
+            wt_mult = float(wt_val) / curr_wt_val
         elif wt_pct is not None:
             wt_mult = 1.0 + float(wt_pct)
         else:

@@ -1,0 +1,475 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* ── LIGHT THEME PALETTE ── */
+    --bg-canvas: #EEF5FC;
+    --bg-canvas-rgb: 238, 245, 252;
+    --bg-surface: rgba(255, 255, 255, 0.62);
+    --bg-surface-strong: rgba(255, 255, 255, 0.82);
+    --bg-subtle: rgba(240, 247, 255, 0.55);
+    --bg-panel: rgba(255, 255, 255, 0.72);
+
+    /* Glass Tokens */
+    --glass-surface: rgba(255, 255, 255, 0.62);
+    --glass-surface-strong: rgba(255, 255, 255, 0.82);
+    --glass-border: rgba(255, 255, 255, 0.72);
+    --glass-border-subtle: rgba(203, 219, 238, 0.6);
+    --glass-border-strong: rgba(37, 99, 235, 0.35);
+    --glass-shadow: 0 8px 32px rgba(31, 65, 114, 0.08);
+    --glass-shadow-hover: 0 14px 40px rgba(31, 65, 114, 0.14);
+    --glass-blur: 20px;
+
+    /* Borders */
+    --border-hairline: rgba(255, 255, 255, 0.72);
+    --border-subtle: rgba(203, 219, 238, 0.6);
+    --border-strong: rgba(148, 163, 184, 0.6);
+
+    /* Typography */
+    --text-primary: #172033;
+    --text-secondary: #64748B;
+    --text-muted: #8194AA;
+    --text-faint: #94A3B8;
+
+    /* Primary & Secondary Brand Colors */
+    --color-primary: #2563EB;
+    --color-primary-rgb: 37, 99, 235;
+    --color-primary-hover: #1D4ED8;
+    --color-secondary: #0891B2;
+    --color-secondary-rgb: 8, 145, 178;
+
+    /* Legacy Accent Mappings for Existing Components */
+    --accent-teal: #0891B2;
+    --accent-teal-subtle: rgba(8, 145, 178, 0.12);
+    --accent-teal-border: rgba(8, 145, 178, 0.3);
+    --accent-teal-hover: #0E7490;
+
+    /* Risk Badges */
+    --risk-low: #059669;
+    --risk-low-bg: rgba(240, 253, 244, 0.85);
+    --risk-low-border: rgba(167, 243, 208, 0.8);
+
+    --risk-mod: #D97706;
+    --risk-mod-bg: rgba(254, 243, 199, 0.85);
+    --risk-mod-border: rgba(253, 230, 138, 0.8);
+
+    --risk-high: #E11D48;
+    --risk-high-bg: rgba(255, 241, 242, 0.85);
+    --risk-high-border: rgba(254, 205, 211, 0.8);
+
+    /* Background Layering Overlay */
+    --bg-overlay-gradient: linear-gradient(
+      180deg,
+      rgba(238, 245, 252, 0.74) 0%,
+      rgba(238, 245, 252, 0.86) 30%,
+      rgba(238, 245, 252, 0.94) 70%,
+      rgba(238, 245, 252, 0.98) 100%
+    );
+    --bg-radial-glow: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.08) 0%, transparent 45%),
+      radial-gradient(circle at 85% 25%, rgba(8, 145, 178, 0.09) 0%, transparent 40%);
+  }
+
+  .dark {
+    /* ── DARK THEME PALETTE (Midnight-Blue Healthcare Intelligence) ── */
+    --bg-canvas: #07111F;
+    --bg-canvas-rgb: 7, 17, 31;
+    --bg-surface: rgba(15, 29, 48, 0.62);
+    --bg-surface-strong: rgba(20, 37, 59, 0.82);
+    --bg-subtle: rgba(11, 23, 40, 0.65);
+    --bg-panel: rgba(15, 29, 48, 0.75);
+
+    /* Glass Tokens */
+    --glass-surface: rgba(15, 29, 48, 0.62);
+    --glass-surface-strong: rgba(20, 37, 59, 0.82);
+    --glass-border: rgba(148, 183, 220, 0.16);
+    --glass-border-subtle: rgba(148, 183, 220, 0.10);
+    --glass-border-strong: rgba(96, 165, 250, 0.35);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.32);
+    --glass-shadow-hover: 0 14px 40px rgba(0, 0, 0, 0.45);
+    --glass-blur: 22px;
+
+    /* Borders */
+    --border-hairline: rgba(148, 183, 220, 0.16);
+    --border-subtle: rgba(148, 183, 220, 0.12);
+    --border-strong: rgba(148, 183, 220, 0.28);
+
+    /* Typography */
+    --text-primary: #E7F0FC;
+    --text-secondary: #9BAFC7;
+    --text-muted: #6A82A0;
+    --text-faint: #475569;
+
+    /* Primary & Secondary Brand Colors */
+    --color-primary: #60A5FA;
+    --color-primary-rgb: 96, 165, 250;
+    --color-primary-hover: #93C5FD;
+    --color-secondary: #22D3EE;
+    --color-secondary-rgb: 34, 211, 238;
+
+    /* Legacy Accent Mappings for Existing Components */
+    --accent-teal: #22D3EE;
+    --accent-teal-subtle: rgba(34, 211, 238, 0.12);
+    --accent-teal-border: rgba(34, 211, 238, 0.25);
+    --accent-teal-hover: #67E8F9;
+
+    /* Risk Badges */
+    --risk-low: #34D399;
+    --risk-low-bg: rgba(6, 78, 59, 0.7);
+    --risk-low-border: rgba(52, 211, 153, 0.3);
+
+    --risk-mod: #FBBF24;
+    --risk-mod-bg: rgba(120, 53, 15, 0.7);
+    --risk-mod-border: rgba(251, 191, 36, 0.3);
+
+    --risk-high: #FB7185;
+    --risk-high-bg: rgba(136, 19, 55, 0.7);
+    --risk-high-border: rgba(251, 113, 133, 0.3);
+
+    /* Background Layering Overlay */
+    --bg-overlay-gradient: linear-gradient(
+      180deg,
+      rgba(7, 17, 31, 0.82) 0%,
+      rgba(7, 17, 31, 0.88) 30%,
+      rgba(11, 23, 40, 0.94) 70%,
+      rgba(7, 17, 31, 0.98) 100%
+    );
+    --bg-radial-glow: radial-gradient(circle at 18% 18%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 82% 28%, rgba(96, 165, 250, 0.09) 0%, transparent 45%);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ── LAYERED HEALTHCARE BACKGROUND APPARATUS ── */
+  .twincare-bg-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: var(--bg-radial-glow), var(--bg-overlay-gradient), url('/healthcare-bg.png');
+    background-size: cover, cover, cover;
+    background-position: center top, center top, center top;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    transition: opacity 300ms ease;
+  }
+
+  /* Optional Subtle Grid/Circuit Overlay Texture */
+  .twincare-bg-grid {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: linear-gradient(to right, rgba(148, 183, 220, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 183, 220, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 80%);
+  }
+
+  /* Editorial Serif Heading Utility */
+  .font-editorial {
+    font-family: var(--font-serif), Newsreader, "Source Serif 4", Georgia, Cambria, serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Clinical Tabular Numerals */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Sleek Theme-Aware Scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-subtle);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--border-strong);
+  }
+
+  /* Accessible Focus Rings */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* ── 1. GLASS CARD ── */
+  .glass-card {
+    background: var(--glass-surface);
+    backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow);
+    transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  }
+  .glass-card.bg-white {
+    background: var(--glass-surface) !important;
+  }
+  .glass-card:hover {
+    box-shadow: var(--glass-shadow-hover);
+    border-color: var(--glass-border-strong);
+  }
+
+  /* Alias: clinical-card maps directly to glass-card for instant universal upgrade */
+  .clinical-card {
+    background: var(--glass-surface);
+    backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow);
+    transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  }
+  .clinical-card.bg-white {
+    background: var(--glass-surface) !important;
+  }
+  .clinical-card:hover {
+    border-color: var(--glass-border-strong);
+  }
+
+  .dark .glass-card,
+  .dark .clinical-card {
+    background: var(--glass-surface) !important;
+    border-color: var(--glass-border) !important;
+  }
+  .dark .glass-panel {
+    background: var(--glass-surface-strong) !important;
+    border-color: var(--glass-border) !important;
+  }
+
+  /* ── 2. GLASS PANEL (Stronger Surface for Prominent Hero & Risk Panels) ── */
+  .glass-panel {
+    background: var(--glass-surface-strong);
+    backdrop-filter: blur(24px) saturate(155%);
+    -webkit-backdrop-filter: blur(24px) saturate(155%);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* ── 3. GLASS NAVBAR ── */
+  .glass-navbar {
+    background: var(--bg-surface);
+    backdrop-filter: blur(20px) saturate(145%);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  /* ── 4. GLASS SIDEBAR ── */
+  .glass-sidebar {
+    background: var(--bg-surface);
+    backdrop-filter: blur(22px) saturate(145%);
+    -webkit-backdrop-filter: blur(22px) saturate(145%);
+    border-right: 1px solid var(--glass-border);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
+  }
+
+  /* ── 5. GLASS MODAL ── */
+  .glass-modal {
+    background: var(--glass-surface-strong);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  }
+
+  /* ── 6. GLASS DROPDOWN ── */
+  .glass-dropdown {
+    background: var(--glass-surface-strong);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  /* ── 7. GLASS TOOLTIP ── */
+  .glass-tooltip {
+    background: var(--glass-surface-strong);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* ── 8. GLASS INPUT & CONTROLS ── */
+  .glass-input {
+    background: var(--bg-subtle);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    border-radius: 12px;
+    transition: all 180ms ease;
+  }
+  .glass-input:focus {
+    outline: none;
+    background: var(--bg-surface-strong);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.18);
+  }
+
+  /* Dense data cell */
+  .clinical-metric-box {
+    background: var(--glass-surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    transition: all 180ms ease;
+  }
+  .clinical-metric-box:hover {
+    border-color: var(--glass-border-strong);
+    background: var(--glass-surface-strong);
+  }
+
+  /* ── 9. BUTTONS ── */
+  .glass-btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.3);
+    transition: all 200ms ease;
+  }
+  .glass-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(var(--color-primary-rgb), 0.42);
+    filter: brightness(1.06);
+  }
+  .glass-btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .glass-btn-secondary {
+    background: var(--glass-surface);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 180ms ease;
+  }
+  .glass-btn-secondary:hover {
+    background: var(--glass-surface-strong);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  /* ── 10. RISK TIER BADGES ── */
+  .badge-risk-low {
+    color: var(--risk-low);
+    background: var(--risk-low-bg);
+    border: 1px solid var(--risk-low-border);
+    font-weight: 600;
+  }
+  .badge-risk-mod {
+    color: var(--risk-mod);
+    background: var(--risk-mod-bg);
+    border: 1px solid var(--risk-mod-border);
+    font-weight: 600;
+  }
+  .badge-risk-high {
+    color: var(--risk-high);
+    background: var(--risk-high-bg);
+    border: 1px solid var(--risk-high-border);
+    font-weight: 600;
+  }
+
+  /* Simulated badge */
+  .badge-simulated {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-subtle);
+  }
+}
+
+/* Fallback when backdrop-filter is not supported */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass-card,
+  .clinical-card,
+  .glass-panel,
+  .glass-navbar,
+  .glass-sidebar,
+  .glass-modal,
+  .glass-dropdown {
+    background: var(--bg-surface-strong) !important;
+  }
+}
+
+/* Reduced Motion Respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print Stylesheet */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .twincare-bg-layer,
+  .twincare-bg-grid,
+  nav,
+  header,
+  footer,
+  .no-print,
+  button,
+  input[type="range"] {
+    display: none !important;
+  }
+  .glass-card,
+  .clinical-card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    break-inside: avoid;
+  }
+}

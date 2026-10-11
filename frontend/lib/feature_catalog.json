@@ -1,0 +1,1190 @@
+[
+  {
+    "name": "age_at_t",
+    "label": "Age At T",
+    "min": 18.0,
+    "max": 109.0,
+    "plausible_min": 18.1,
+    "plausible_max": 100.8,
+    "is_cat": false
+  },
+  {
+    "name": "gender",
+    "label": "Gender",
+    "min": 0,
+    "max": 100,
+    "plausible_min": null,
+    "plausible_max": null,
+    "is_cat": true
+  },
+  {
+    "name": "race",
+    "label": "Race",
+    "min": 0,
+    "max": 100,
+    "plausible_min": null,
+    "plausible_max": null,
+    "is_cat": true
+  },
+  {
+    "name": "ethnicity",
+    "label": "Ethnicity",
+    "min": 0,
+    "max": 100,
+    "plausible_min": null,
+    "plausible_max": null,
+    "is_cat": true
+  },
+  {
+    "name": "baseline_sbp",
+    "label": "Baseline Sbp",
+    "min": 69.0,
+    "max": 139.9,
+    "plausible_min": 85.0,
+    "plausible_max": 139.0,
+    "is_cat": false
+  },
+  {
+    "name": "baseline_dbp",
+    "label": "Baseline Dbp",
+    "min": 40.0,
+    "max": 89.0,
+    "plausible_min": 54.0,
+    "plausible_max": 89.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_latest",
+    "label": "Sbp Latest",
+    "min": 69.0,
+    "max": 139.9,
+    "plausible_min": 85.0,
+    "plausible_max": 139.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_recency_days",
+    "label": "Sbp Recency Days",
+    "min": 0.0,
+    "max": 0.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_count_365d",
+    "label": "Sbp Count 365D",
+    "min": 1.0,
+    "max": 105.0,
+    "plausible_min": 1.0,
+    "plausible_max": 6.5,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_count_alltime",
+    "label": "Sbp Count Alltime",
+    "min": 1.0,
+    "max": 123.0,
+    "plausible_min": 1.0,
+    "plausible_max": 24.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_latest",
+    "label": "Dbp Latest",
+    "min": 40.0,
+    "max": 89.0,
+    "plausible_min": 54.0,
+    "plausible_max": 89.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_recency_days",
+    "label": "Dbp Recency Days",
+    "min": 0.0,
+    "max": 0.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_count_365d",
+    "label": "Dbp Count 365D",
+    "min": 1.0,
+    "max": 105.0,
+    "plausible_min": 1.0,
+    "plausible_max": 6.5,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_count_alltime",
+    "label": "Dbp Count Alltime",
+    "min": 1.0,
+    "max": 123.0,
+    "plausible_min": 1.0,
+    "plausible_max": 24.0,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_latest",
+    "label": "Bmi Latest",
+    "min": 15.9,
+    "max": 43.4,
+    "plausible_min": 18.8,
+    "plausible_max": 36.2,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_recency_days",
+    "label": "Bmi Recency Days",
+    "min": 0.0,
+    "max": 1072.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_count_365d",
+    "label": "Bmi Count 365D",
+    "min": 0.0,
+    "max": 21.0,
+    "plausible_min": 1.0,
+    "plausible_max": 5.0,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_count_alltime",
+    "label": "Bmi Count Alltime",
+    "min": 1.0,
+    "max": 122.0,
+    "plausible_min": 1.0,
+    "plausible_max": 20.0,
+    "is_cat": false
+  },
+  {
+    "name": "weight_latest",
+    "label": "Weight Latest",
+    "min": 39.9,
+    "max": 130.4,
+    "plausible_min": 50.5,
+    "plausible_max": 110.7,
+    "is_cat": false
+  },
+  {
+    "name": "weight_recency_days",
+    "label": "Weight Recency Days",
+    "min": 0.0,
+    "max": 994.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "weight_count_365d",
+    "label": "Weight Count 365D",
+    "min": 0.0,
+    "max": 23.0,
+    "plausible_min": 1.0,
+    "plausible_max": 6.0,
+    "is_cat": false
+  },
+  {
+    "name": "weight_count_alltime",
+    "label": "Weight Count Alltime",
+    "min": 1.0,
+    "max": 122.0,
+    "plausible_min": 1.0,
+    "plausible_max": 24.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_latest",
+    "label": "Hr Latest",
+    "min": 55.8,
+    "max": 192.0,
+    "plausible_min": 60.0,
+    "plausible_max": 100.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_recency_days",
+    "label": "Hr Recency Days",
+    "min": 0.0,
+    "max": 994.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_count_365d",
+    "label": "Hr Count 365D",
+    "min": 0.0,
+    "max": 21.0,
+    "plausible_min": 1.0,
+    "plausible_max": 6.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_count_alltime",
+    "label": "Hr Count Alltime",
+    "min": 1.0,
+    "max": 123.0,
+    "plausible_min": 1.0,
+    "plausible_max": 24.0,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_latest",
+    "label": "Glucose Latest",
+    "min": 64.1,
+    "max": 195.3,
+    "plausible_min": 64.5,
+    "plausible_max": 121.4,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_recency_days",
+    "label": "Glucose Recency Days",
+    "min": 0.0,
+    "max": 2899.0,
+    "plausible_min": 0.0,
+    "plausible_max": 1023.8,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_count_365d",
+    "label": "Glucose Count 365D",
+    "min": 0.0,
+    "max": 63.0,
+    "plausible_min": 0.0,
+    "plausible_max": 15.0,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_count_alltime",
+    "label": "Glucose Count Alltime",
+    "min": 0.0,
+    "max": 317.0,
+    "plausible_min": 0.0,
+    "plausible_max": 44.5,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_latest",
+    "label": "Hba1C Latest",
+    "min": 2.3,
+    "max": 8.3,
+    "plausible_min": 3.1,
+    "plausible_max": 7.1,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_recency_days",
+    "label": "Hba1C Recency Days",
+    "min": 0.0,
+    "max": 2948.0,
+    "plausible_min": 0.0,
+    "plausible_max": 768.5,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_count_365d",
+    "label": "Hba1C Count 365D",
+    "min": 0.0,
+    "max": 41.0,
+    "plausible_min": 0.0,
+    "plausible_max": 7.0,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_count_alltime",
+    "label": "Hba1C Count Alltime",
+    "min": 0.0,
+    "max": 187.0,
+    "plausible_min": 0.0,
+    "plausible_max": 24.5,
+    "is_cat": false
+  },
+  {
+    "name": "htn_history",
+    "label": "Htn History",
+    "min": 0.0,
+    "max": 0.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "diabetes_history",
+    "label": "Diabetes History",
+    "min": 0.0,
+    "max": 1.0,
+    "plausible_min": 0.0,
+    "plausible_max": 1.0,
+    "is_cat": false
+  },
+  {
+    "name": "obesity_history",
+    "label": "Obesity History",
+    "min": 0.0,
+    "max": 1.0,
+    "plausible_min": 0.0,
+    "plausible_max": 1.0,
+    "is_cat": false
+  },
+  {
+    "name": "cvd_history",
+    "label": "Cvd History",
+    "min": 0.0,
+    "max": 1.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "ckd_history",
+    "label": "Ckd History",
+    "min": 0.0,
+    "max": 0.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "total_prior_conditions",
+    "label": "Total Prior Conditions",
+    "min": 0.0,
+    "max": 49.0,
+    "plausible_min": 0.0,
+    "plausible_max": 26.0,
+    "is_cat": false
+  },
+  {
+    "name": "days_since_first_condition",
+    "label": "Days Since First Condition",
+    "min": 105.0,
+    "max": 29813.0,
+    "plausible_min": 703.3,
+    "plausible_max": 28740.8,
+    "is_cat": false
+  },
+  {
+    "name": "antihypertensive_med_history",
+    "label": "Antihypertensive Med History",
+    "min": 0.0,
+    "max": 1.0,
+    "plausible_min": 0.0,
+    "plausible_max": 1.0,
+    "is_cat": false
+  },
+  {
+    "name": "antidiabetic_med_history",
+    "label": "Antidiabetic Med History",
+    "min": 0.0,
+    "max": 1.0,
+    "plausible_min": 0.0,
+    "plausible_max": 1.0,
+    "is_cat": false
+  },
+  {
+    "name": "statin_lipid_med_history",
+    "label": "Statin Lipid Med History",
+    "min": 0.0,
+    "max": 1.0,
+    "plausible_min": 0.0,
+    "plausible_max": 1.0,
+    "is_cat": false
+  },
+  {
+    "name": "total_prior_medications",
+    "label": "Total Prior Medications",
+    "min": 0.0,
+    "max": 603.0,
+    "plausible_min": 0.0,
+    "plausible_max": 89.5,
+    "is_cat": false
+  },
+  {
+    "name": "recent_medication_count",
+    "label": "Recent Medication Count",
+    "min": 0.0,
+    "max": 138.0,
+    "plausible_min": 0.0,
+    "plausible_max": 33.5,
+    "is_cat": false
+  },
+  {
+    "name": "days_since_last_medication",
+    "label": "Days Since Last Medication",
+    "min": 0.0,
+    "max": 19505.0,
+    "plausible_min": 0.0,
+    "plausible_max": 7794.8,
+    "is_cat": false
+  },
+  {
+    "name": "total_prior_encounters",
+    "label": "Total Prior Encounters",
+    "min": 1.0,
+    "max": 572.0,
+    "plausible_min": 4.0,
+    "plausible_max": 96.5,
+    "is_cat": false
+  },
+  {
+    "name": "recent_encounter_count",
+    "label": "Recent Encounter Count",
+    "min": 1.0,
+    "max": 128.0,
+    "plausible_min": 1.0,
+    "plausible_max": 19.0,
+    "is_cat": false
+  },
+  {
+    "name": "inpatient_encounter_count",
+    "label": "Inpatient Encounter Count",
+    "min": 0.0,
+    "max": 38.0,
+    "plausible_min": 0.0,
+    "plausible_max": 5.0,
+    "is_cat": false
+  },
+  {
+    "name": "emergency_encounter_count",
+    "label": "Emergency Encounter Count",
+    "min": 0.0,
+    "max": 40.0,
+    "plausible_min": 0.0,
+    "plausible_max": 9.0,
+    "is_cat": false
+  },
+  {
+    "name": "wellness_encounter_count",
+    "label": "Wellness Encounter Count",
+    "min": 1.0,
+    "max": 501.0,
+    "plausible_min": 3.0,
+    "plausible_max": 80.0,
+    "is_cat": false
+  },
+  {
+    "name": "days_since_last_encounter",
+    "label": "Days Since Last Encounter",
+    "min": 0.0,
+    "max": 3.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "total_observations",
+    "label": "Total Observations",
+    "min": 9.0,
+    "max": 11086.0,
+    "plausible_min": 12.0,
+    "plausible_max": 1717.5,
+    "is_cat": false
+  },
+  {
+    "name": "days_with_observations",
+    "label": "Days With Observations",
+    "min": 1.0,
+    "max": 530.0,
+    "plausible_min": 1.0,
+    "plausible_max": 60.5,
+    "is_cat": false
+  },
+  {
+    "name": "days_since_first_record",
+    "label": "Days Since First Record",
+    "min": 0.0,
+    "max": 3598.0,
+    "plausible_min": 0.0,
+    "plausible_max": 3125.5,
+    "is_cat": false
+  },
+  {
+    "name": "days_since_last_measurement",
+    "label": "Days Since Last Measurement",
+    "min": 0.0,
+    "max": 0.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_mean_365d",
+    "label": "Sbp Mean 365D",
+    "min": 69.0,
+    "max": 150.8,
+    "plausible_min": 85.0,
+    "plausible_max": 139.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_std_365d",
+    "label": "Sbp Std 365D",
+    "min": 0.0,
+    "max": 33.6,
+    "plausible_min": 0.0,
+    "plausible_max": 7.1,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_min_365d",
+    "label": "Sbp Min 365D",
+    "min": 62.0,
+    "max": 139.1,
+    "plausible_min": 84.0,
+    "plausible_max": 139.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_max_365d",
+    "label": "Sbp Max 365D",
+    "min": 69.0,
+    "max": 174.5,
+    "plausible_min": 85.0,
+    "plausible_max": 139.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_first_365d",
+    "label": "Sbp First 365D",
+    "min": 62.0,
+    "max": 174.5,
+    "plausible_min": 84.0,
+    "plausible_max": 139.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_last_365d",
+    "label": "Sbp Last 365D",
+    "min": 69.0,
+    "max": 139.9,
+    "plausible_min": 85.0,
+    "plausible_max": 139.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_change_365d",
+    "label": "Sbp Change 365D",
+    "min": -47.5,
+    "max": 37.2,
+    "plausible_min": -9.0,
+    "plausible_max": 8.0,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_slope_365d",
+    "label": "Sbp Slope 365D",
+    "min": -2.4,
+    "max": 1.0,
+    "plausible_min": -0.3,
+    "plausible_max": 0.3,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_n_365d",
+    "label": "Sbp N 365D",
+    "min": 1.0,
+    "max": 105.0,
+    "plausible_min": 1.0,
+    "plausible_max": 6.5,
+    "is_cat": false
+  },
+  {
+    "name": "sbp_range_365d",
+    "label": "Sbp Range 365D",
+    "min": 0.0,
+    "max": 47.5,
+    "plausible_min": 0.0,
+    "plausible_max": 15.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_mean_365d",
+    "label": "Dbp Mean 365D",
+    "min": 43.0,
+    "max": 97.3,
+    "plausible_min": 54.6,
+    "plausible_max": 89.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_std_365d",
+    "label": "Dbp Std 365D",
+    "min": 0.0,
+    "max": 18.2,
+    "plausible_min": 0.0,
+    "plausible_max": 4.9,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_min_365d",
+    "label": "Dbp Min 365D",
+    "min": 38.0,
+    "max": 89.0,
+    "plausible_min": 53.0,
+    "plausible_max": 89.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_max_365d",
+    "label": "Dbp Max 365D",
+    "min": 43.0,
+    "max": 109.7,
+    "plausible_min": 55.0,
+    "plausible_max": 89.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_first_365d",
+    "label": "Dbp First 365D",
+    "min": 42.0,
+    "max": 109.7,
+    "plausible_min": 55.0,
+    "plausible_max": 89.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_last_365d",
+    "label": "Dbp Last 365D",
+    "min": 40.0,
+    "max": 89.0,
+    "plausible_min": 54.0,
+    "plausible_max": 89.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_change_365d",
+    "label": "Dbp Change 365D",
+    "min": -25.3,
+    "max": 25.7,
+    "plausible_min": -6.0,
+    "plausible_max": 5.0,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_slope_365d",
+    "label": "Dbp Slope 365D",
+    "min": -1.5,
+    "max": 0.6,
+    "plausible_min": -0.3,
+    "plausible_max": 0.1,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_n_365d",
+    "label": "Dbp N 365D",
+    "min": 1.0,
+    "max": 105.0,
+    "plausible_min": 1.0,
+    "plausible_max": 6.5,
+    "is_cat": false
+  },
+  {
+    "name": "dbp_range_365d",
+    "label": "Dbp Range 365D",
+    "min": 0.0,
+    "max": 25.7,
+    "plausible_min": 0.0,
+    "plausible_max": 10.0,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_mean_365d",
+    "label": "Bmi Mean 365D",
+    "min": 16.2,
+    "max": 43.4,
+    "plausible_min": 18.8,
+    "plausible_max": 36.2,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_std_365d",
+    "label": "Bmi Std 365D",
+    "min": 0.0,
+    "max": 2.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.3,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_min_365d",
+    "label": "Bmi Min 365D",
+    "min": 15.9,
+    "max": 43.4,
+    "plausible_min": 18.8,
+    "plausible_max": 36.2,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_max_365d",
+    "label": "Bmi Max 365D",
+    "min": 16.2,
+    "max": 43.4,
+    "plausible_min": 18.8,
+    "plausible_max": 36.2,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_first_365d",
+    "label": "Bmi First 365D",
+    "min": 16.2,
+    "max": 43.4,
+    "plausible_min": 18.8,
+    "plausible_max": 36.2,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_last_365d",
+    "label": "Bmi Last 365D",
+    "min": 15.9,
+    "max": 43.4,
+    "plausible_min": 18.8,
+    "plausible_max": 36.2,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_change_365d",
+    "label": "Bmi Change 365D",
+    "min": -2.8,
+    "max": 2.5,
+    "plausible_min": 0.0,
+    "plausible_max": 0.4,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_slope_365d",
+    "label": "Bmi Slope 365D",
+    "min": -0.0,
+    "max": 0.0,
+    "plausible_min": -0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_n_365d",
+    "label": "Bmi N 365D",
+    "min": 1.0,
+    "max": 21.0,
+    "plausible_min": 1.0,
+    "plausible_max": 5.0,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_range_365d",
+    "label": "Bmi Range 365D",
+    "min": 0.0,
+    "max": 2.8,
+    "plausible_min": 0.0,
+    "plausible_max": 0.5,
+    "is_cat": false
+  },
+  {
+    "name": "weight_mean_365d",
+    "label": "Weight Mean 365D",
+    "min": 40.6,
+    "max": 130.4,
+    "plausible_min": 50.5,
+    "plausible_max": 110.7,
+    "is_cat": false
+  },
+  {
+    "name": "weight_std_365d",
+    "label": "Weight Std 365D",
+    "min": 0.0,
+    "max": 5.9,
+    "plausible_min": 0.0,
+    "plausible_max": 1.0,
+    "is_cat": false
+  },
+  {
+    "name": "weight_min_365d",
+    "label": "Weight Min 365D",
+    "min": 39.9,
+    "max": 130.4,
+    "plausible_min": 50.4,
+    "plausible_max": 110.7,
+    "is_cat": false
+  },
+  {
+    "name": "weight_max_365d",
+    "label": "Weight Max 365D",
+    "min": 40.9,
+    "max": 130.4,
+    "plausible_min": 50.5,
+    "plausible_max": 110.7,
+    "is_cat": false
+  },
+  {
+    "name": "weight_first_365d",
+    "label": "Weight First 365D",
+    "min": 40.9,
+    "max": 130.4,
+    "plausible_min": 50.4,
+    "plausible_max": 110.7,
+    "is_cat": false
+  },
+  {
+    "name": "weight_last_365d",
+    "label": "Weight Last 365D",
+    "min": 39.9,
+    "max": 130.4,
+    "plausible_min": 50.5,
+    "plausible_max": 110.7,
+    "is_cat": false
+  },
+  {
+    "name": "weight_change_365d",
+    "label": "Weight Change 365D",
+    "min": -8.3,
+    "max": 7.9,
+    "plausible_min": 0.0,
+    "plausible_max": 1.3,
+    "is_cat": false
+  },
+  {
+    "name": "weight_slope_365d",
+    "label": "Weight Slope 365D",
+    "min": -0.0,
+    "max": 0.0,
+    "plausible_min": -0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "weight_n_365d",
+    "label": "Weight N 365D",
+    "min": 1.0,
+    "max": 23.0,
+    "plausible_min": 1.0,
+    "plausible_max": 6.0,
+    "is_cat": false
+  },
+  {
+    "name": "weight_range_365d",
+    "label": "Weight Range 365D",
+    "min": 0.0,
+    "max": 8.3,
+    "plausible_min": 0.0,
+    "plausible_max": 1.6,
+    "is_cat": false
+  },
+  {
+    "name": "hr_mean_365d",
+    "label": "Hr Mean 365D",
+    "min": 55.8,
+    "max": 186.6,
+    "plausible_min": 60.0,
+    "plausible_max": 100.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_std_365d",
+    "label": "Hr Std 365D",
+    "min": 0.0,
+    "max": 85.6,
+    "plausible_min": 0.0,
+    "plausible_max": 21.2,
+    "is_cat": false
+  },
+  {
+    "name": "hr_min_365d",
+    "label": "Hr Min 365D",
+    "min": 50.9,
+    "max": 186.6,
+    "plausible_min": 60.0,
+    "plausible_max": 99.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_max_365d",
+    "label": "Hr Max 365D",
+    "min": 55.8,
+    "max": 197.6,
+    "plausible_min": 60.0,
+    "plausible_max": 100.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_first_365d",
+    "label": "Hr First 365D",
+    "min": 50.9,
+    "max": 196.2,
+    "plausible_min": 60.0,
+    "plausible_max": 100.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_last_365d",
+    "label": "Hr Last 365D",
+    "min": 55.8,
+    "max": 192.0,
+    "plausible_min": 60.0,
+    "plausible_max": 100.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_change_365d",
+    "label": "Hr Change 365D",
+    "min": -121.1,
+    "max": 117.8,
+    "plausible_min": -26.5,
+    "plausible_max": 19.5,
+    "is_cat": false
+  },
+  {
+    "name": "hr_slope_365d",
+    "label": "Hr Slope 365D",
+    "min": -4.4,
+    "max": 13.4,
+    "plausible_min": -1.3,
+    "plausible_max": 0.6,
+    "is_cat": false
+  },
+  {
+    "name": "hr_n_365d",
+    "label": "Hr N 365D",
+    "min": 1.0,
+    "max": 21.0,
+    "plausible_min": 1.0,
+    "plausible_max": 6.0,
+    "is_cat": false
+  },
+  {
+    "name": "hr_range_365d",
+    "label": "Hr Range 365D",
+    "min": 0.0,
+    "max": 135.9,
+    "plausible_min": 0.0,
+    "plausible_max": 35.0,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_mean_365d",
+    "label": "Glucose Mean 365D",
+    "min": 64.1,
+    "max": 195.3,
+    "plausible_min": 64.6,
+    "plausible_max": 120.8,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_std_365d",
+    "label": "Glucose Std 365D",
+    "min": 0.0,
+    "max": 50.7,
+    "plausible_min": 0.0,
+    "plausible_max": 17.5,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_min_365d",
+    "label": "Glucose Min 365D",
+    "min": 64.0,
+    "max": 195.3,
+    "plausible_min": 64.3,
+    "plausible_max": 120.6,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_max_365d",
+    "label": "Glucose Max 365D",
+    "min": 64.1,
+    "max": 195.3,
+    "plausible_min": 64.6,
+    "plausible_max": 124.2,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_first_365d",
+    "label": "Glucose First 365D",
+    "min": 64.0,
+    "max": 195.3,
+    "plausible_min": 64.4,
+    "plausible_max": 122.6,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_last_365d",
+    "label": "Glucose Last 365D",
+    "min": 64.1,
+    "max": 195.3,
+    "plausible_min": 64.5,
+    "plausible_max": 121.5,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_change_365d",
+    "label": "Glucose Change 365D",
+    "min": -87.8,
+    "max": 34.7,
+    "plausible_min": -22.4,
+    "plausible_max": 24.2,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_slope_365d",
+    "label": "Glucose Slope 365D",
+    "min": -4.2,
+    "max": 4.4,
+    "plausible_min": -1.2,
+    "plausible_max": 0.6,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_n_365d",
+    "label": "Glucose N 365D",
+    "min": 1.0,
+    "max": 63.0,
+    "plausible_min": 1.0,
+    "plausible_max": 21.0,
+    "is_cat": false
+  },
+  {
+    "name": "glucose_range_365d",
+    "label": "Glucose Range 365D",
+    "min": 0.0,
+    "max": 87.8,
+    "plausible_min": 0.0,
+    "plausible_max": 31.9,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_mean_365d",
+    "label": "Hba1C Mean 365D",
+    "min": 2.4,
+    "max": 8.3,
+    "plausible_min": 3.1,
+    "plausible_max": 7.1,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_std_365d",
+    "label": "Hba1C Std 365D",
+    "min": 0.0,
+    "max": 2.1,
+    "plausible_min": 0.0,
+    "plausible_max": 0.3,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_min_365d",
+    "label": "Hba1C Min 365D",
+    "min": 2.3,
+    "max": 8.3,
+    "plausible_min": 3.1,
+    "plausible_max": 7.1,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_max_365d",
+    "label": "Hba1C Max 365D",
+    "min": 2.5,
+    "max": 8.3,
+    "plausible_min": 3.1,
+    "plausible_max": 7.1,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_first_365d",
+    "label": "Hba1C First 365D",
+    "min": 2.4,
+    "max": 8.3,
+    "plausible_min": 3.1,
+    "plausible_max": 7.1,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_last_365d",
+    "label": "Hba1C Last 365D",
+    "min": 2.3,
+    "max": 8.3,
+    "plausible_min": 3.1,
+    "plausible_max": 7.1,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_change_365d",
+    "label": "Hba1C Change 365D",
+    "min": -3.0,
+    "max": 0.6,
+    "plausible_min": -0.3,
+    "plausible_max": 0.2,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_slope_365d",
+    "label": "Hba1C Slope 365D",
+    "min": -0.1,
+    "max": 0.0,
+    "plausible_min": -0.0,
+    "plausible_max": 0.0,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_n_365d",
+    "label": "Hba1C N 365D",
+    "min": 1.0,
+    "max": 41.0,
+    "plausible_min": 1.0,
+    "plausible_max": 12.0,
+    "is_cat": false
+  },
+  {
+    "name": "hba1c_range_365d",
+    "label": "Hba1C Range 365D",
+    "min": 0.0,
+    "max": 3.0,
+    "plausible_min": 0.0,
+    "plausible_max": 0.4,
+    "is_cat": false
+  },
+  {
+    "name": "pulse_pressure_latest",
+    "label": "Pulse Pressure Latest",
+    "min": -2.0,
+    "max": 75.0,
+    "plausible_min": 10.0,
+    "plausible_max": 65.5,
+    "is_cat": false
+  },
+  {
+    "name": "bmi_weight_available",
+    "label": "Bmi Weight Available",
+    "min": 1.0,
+    "max": 1.0,
+    "plausible_min": 1.0,
+    "plausible_max": 1.0,
+    "is_cat": false
+  },
+  {
+    "name": "bp_measurement_available",
+    "label": "Bp Measurement Available",
+    "min": 1.0,
+    "max": 1.0,
+    "plausible_min": 1.0,
+    "plausible_max": 1.0,
+    "is_cat": false
+  },
+  {
+    "name": "metabolic_measurement_count",
+    "label": "Metabolic Measurement Count",
+    "min": 0.0,
+    "max": 2.0,
+    "plausible_min": 0.0,
+    "plausible_max": 2.0,
+    "is_cat": false
+  },
+  {
+    "name": "age_band",
+    "label": "Age Band",
+    "min": 0,
+    "max": 100,
+    "plausible_min": null,
+    "plausible_max": null,
+    "is_cat": true
+  }
+]

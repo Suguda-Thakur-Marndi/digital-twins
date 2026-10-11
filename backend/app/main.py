@@ -125,14 +125,12 @@ app = FastAPI(
 )
 
 # ── CORS Middleware ───────────────────────────────────────────────────────────
-ALLOWED_ORIGINS = os.getenv(
-    "ALLOWED_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001",
-).split(",")
+raw_allowed_origins = os.getenv("ALLOWED_ORIGINS") or os.getenv("CORS_ORIGINS")
+ALLOWED_ORIGINS = (raw_allowed_origins or "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001").split(",")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Hackathon & local dev accessibility
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -520,7 +518,9 @@ async def simulate_patient(request: schemas.SimulateRequest):
     if x_df is None:
         raise HTTPException(status_code=404, detail=f"Patient '{request.patient_id}' not found.")
 
-    levers_dict = request.model_dump(exclude_unset=True)
+    levers_dict = {
+        k: v for k, v in request.model_dump(exclude_unset=True).items() if k != "patient_id"
+    }
     try:
         sim_res = model_svc.simulate(x_df, levers=levers_dict, shap_svc=shap_svc)
     except ValueError as e:
