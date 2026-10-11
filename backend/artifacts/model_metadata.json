@@ -1,0 +1,80 @@
+{
+  "model_name": "XGBoost 365-Day Hypertension Decompensation Pipeline",
+  "working_project": "TwinCare",
+  "summit": "Happiest Health Reimagining and Reforming Healthcare in India Summit 2026, Bengaluru",
+  "theme": "Digital Twin in Healthcare",
+  "version": "1.0.0",
+  "schema_fingerprint": "a4ddaedbdbc8bb07",
+  "model_hash": "8d798b1c6e042e83",
+  "feature_count": 132,
+  "condition": "Essential Hypertension",
+  "target_outcome": "BP Decompensation (Progression to Stage 2 / New Diagnosis) within 365 days",
+  "prediction_horizon_days": 365,
+  "lookback_history_days": 365,
+  "training_date": "2026-03-15",
+  "temporal_splits": {
+    "train_period": {
+      "start": "1940-09-29",
+      "end": "2022-02-21",
+      "rows": 4529
+    },
+    "validation_period": {
+      "start": "2022-02-21",
+      "end": "2023-07-02",
+      "rows": 961
+    },
+    "test_period": {
+      "start": "2023-07-02",
+      "end": "2025-10-10",
+      "rows": 961
+    }
+  },
+  "metrics": {
+    "roc_auc": 0.8069,
+    "roc_auc_ci_95": [
+      0.691,
+      0.908
+    ],
+    "pr_auc": 0.0644,
+    "base_rate": 0.01457,
+    "total_supervised_rows": 6451,
+    "total_patients": 1335,
+    "positive_events_total": 94,
+    "positive_events_test": 14
+  },
+  "calibration": {
+    "method": "Platt Scaling (Sigmoid on Validation Log-Odds)",
+    "calibrator_coef": 0.43931872899301294,
+    "calibrator_intercept": -2.2073486573430956,
+    "uncalibrated_warning": "Raw model output reflects scale_pos_weight ranking score; Platt calibrator outputs empirical 1-year decompensation risk."
+  },
+  "risk_tiers": {
+    "low": {
+      "max_risk": 0.15,
+      "label": "Low Risk",
+      "clinical_action": "Routine annual wellness monitoring; lifestyle support."
+    },
+    "moderate": {
+      "min_risk": 0.15,
+      "max_risk": 0.4,
+      "label": "Moderate Risk",
+      "clinical_action": "Biannual BP verification; ambulatory or home BP monitoring (ABPM); sodium reduction."
+    },
+    "high": {
+      "min_risk": 0.4,
+      "label": "High Risk",
+      "clinical_action": "Prompt clinical evaluation; medication adherence review; lifestyle intervention; close 90-day follow-up."
+    }
+  },
+  "alert_threshold": 0.4,
+  "validation_threshold": 0.7562,
+  "data_source": "Synthea Synthetic EHR (US-style medical encounters)",
+  "limitations": [
+    "Synthetic EHR data only; does not contain real human patient clinical trajectories.",
+    "Low absolute event incidence (1.46% base rate) yields wide confidence intervals on test metrics.",
+    "Model trained on US-centric coding patterns and vital distributions; has NOT been clinically validated on Indian populations.",
+    "Not integrated with national health ID standards (ABDM/ABHA) or Indian clinical guidelines (e.g., API/IAP guidelines).",
+    "Wearable telemetry streams are strictly simulated demonstrations and decoupled from model weights.",
+    "Research prototype only; not certified as a medical device (CDSCO/FDA) and NOT for clinical diagnosis or treatment."
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "version": "1.0",
+  "levers": {
+    "sbp": {
+      "display_name": "Systolic Blood Pressure",
+      "unit": "mmHg",
+      "normal_range_hint": "< 120 mmHg (Normal) / 120-129 (Elevated)",
+      "default_min": 70.0,
+      "default_max": 220.0,
+      "plausible_min": 80.0,
+      "plausible_max": 200.0,
+      "step": 1.0,
+      "type": "additive",
+      "target_columns": [
+        "sbp_latest",
+        "sbp_mean_365d",
+        "sbp_min_365d",
+        "sbp_max_365d",
+        "sbp_first_365d",
+        "sbp_last_365d",
+        "baseline_sbp"
+      ],
+      "derived_columns": ["pulse_pressure_latest"]
+    },
+    "dbp": {
+      "display_name": "Diastolic Blood Pressure",
+      "unit": "mmHg",
+      "normal_range_hint": "< 80 mmHg (Normal) / 80-89 (Stage 1)",
+      "default_min": 40.0,
+      "default_max": 140.0,
+      "plausible_min": 50.0,
+      "plausible_max": 125.0,
+      "step": 1.0,
+      "type": "additive",
+      "target_columns": [
+        "dbp_latest",
+        "dbp_mean_365d",
+        "dbp_min_365d",
+        "dbp_max_365d",
+        "dbp_first_365d",
+        "dbp_last_365d",
+        "baseline_dbp"
+      ],
+      "derived_columns": ["pulse_pressure_latest"]
+    },
+    "hr": {
+      "display_name": "Resting Heart Rate",
+      "unit": "bpm",
+      "normal_range_hint": "60 – 100 bpm",
+      "default_min": 40.0,
+      "default_max": 160.0,
+      "plausible_min": 45.0,
+      "plausible_max": 140.0,
+      "step": 1.0,
+      "type": "additive",
+      "target_columns": [
+        "hr_latest",
+        "hr_mean_365d",
+        "hr_min_365d",
+        "hr_max_365d",
+        "hr_first_365d",
+        "hr_last_365d"
+      ],
+      "derived_columns": []
+    },
+    "weight": {
+      "display_name": "Body Weight",
+      "unit": "kg",
+      "normal_range_hint": "Adult standard: 50 – 85 kg (BMI 18.5–24.9)",
+      "default_min": 35.0,
+      "default_max": 180.0,
+      "plausible_min": 40.0,
+      "plausible_max": 160.0,
+      "step": 0.5,
+      "type": "multiplicative",
+      "target_columns": [
+        "weight_latest",
+        "weight_mean_365d",
+        "weight_min_365d",
+        "weight_max_365d",
+        "weight_first_365d",
+        "weight_last_365d"
+      ],
+      "derived_columns": [
+        "bmi_latest",
+        "bmi_mean_365d",
+        "bmi_min_365d",
+        "bmi_max_365d",
+        "bmi_first_365d",
+        "bmi_last_365d"
+      ]
+    },
+    "glucose": {
+      "display_name": "Fasting Blood Glucose",
+      "unit": "mg/dL",
+      "normal_range_hint": "70 – 99 mg/dL (Normal) / 100-125 (Prediabetes)",
+      "default_min": 60.0,
+      "default_max": 350.0,
+      "plausible_min": 65.0,
+      "plausible_max": 300.0,
+      "step": 1.0,
+      "type": "additive",
+      "target_columns": [
+        "glucose_latest",
+        "glucose_mean_365d",
+        "glucose_min_365d",
+        "glucose_max_365d",
+        "glucose_first_365d",
+        "glucose_last_365d"
+      ],
+      "derived_columns": []
+    },
+    "hba1c": {
+      "display_name": "Glycated Hemoglobin (HbA1c)",
+      "unit": "%",
+      "normal_range_hint": "< 5.7% (Normal) / 5.7–6.4% (Prediabetes) / ≥ 6.5% (Diabetes)",
+      "default_min": 4.0,
+      "default_max": 15.0,
+      "plausible_min": 4.5,
+      "plausible_max": 13.0,
+      "step": 0.1,
+      "type": "additive",
+      "target_columns": [
+        "hba1c_latest",
+        "hba1c_mean_365d",
+        "hba1c_min_365d",
+        "hba1c_max_365d",
+        "hba1c_first_365d",
+        "hba1c_last_365d"
+      ],
+      "derived_columns": []
+    }
+  },
+  "condition_toggles": [
+    {"key": "htn_history", "label": "Documented Hypertension History", "feature": "htn_history"},
+    {"key": "diabetes_history", "label": "Type 2 Diabetes History", "feature": "diabetes_history"},
+    {"key": "obesity_history", "label": "Class 1+ Obesity History", "feature": "obesity_history"},
+    {"key": "cvd_history", "label": "Cardiovascular Disease History", "feature": "cvd_history"},
+    {"key": "ckd_history", "label": "Chronic Kidney Disease History", "feature": "ckd_history"}
+  ],
+  "medication_toggles": [
+    {"key": "antihypertensive_med_history", "label": "Antihypertensive Medication Prescribed", "feature": "antihypertensive_med_history"},
+    {"key": "antidiabetic_med_history", "label": "Antidiabetic Medication Prescribed", "feature": "antidiabetic_med_history"},
+    {"key": "statin_lipid_med_history", "label": "Statin / Lipid-Lowering Rx", "feature": "statin_lipid_med_history"}
+  ],
+  "trend_modifiers": {
+    "improving": {
+      "label": "Improving (Down-trending)",
+      "sbp_change": -8.0,
+      "sbp_slope": -0.05,
+      "dbp_change": -5.0,
+      "dbp_slope": -0.03
+    },
+    "stable": {
+      "label": "Stable (Flat)",
+      "sbp_change": 0.0,
+      "sbp_slope": 0.0,
+      "dbp_change": 0.0,
+      "dbp_slope": 0.0
+    },
+    "worsening": {
+      "label": "Worsening (Up-trending)",
+      "sbp_change": 10.0,
+      "sbp_slope": 0.07,
+      "dbp_change": 6.0,
+      "dbp_slope": 0.04
+    }
+  }
+}

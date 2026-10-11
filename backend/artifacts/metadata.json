@@ -1,0 +1,32 @@
+{
+  "schema_hash": "3b23539853334c98",
+  "model_hash": "8d798b1c6e042e83",
+  "forbidden_columns": [
+    "event_date",
+    "last_followup",
+    "patient_id",
+    "prediction_end",
+    "status",
+    "target_label"
+  ],
+  "feature_count": 132,
+  "model_type": "XGBoost Pipeline",
+  "prediction_target": "365-day hypertension decompensation risk",
+  "lookback_days": 365,
+  "prediction_horizon_days": 365,
+  "roc_auc": 0.8069,
+  "roc_auc_ci": [
+    0.691,
+    0.908
+  ],
+  "pr_auc": 0.0644,
+  "event_rate": 0.01457,
+  "positive_cases": 94,
+  "total_rows": 6451,
+  "test_positives": 14,
+  "validation_threshold": 0.7562,
+  "synthetic_data": true,
+  "clinical_validation": false,
+  "exported_at": "2026-10-07T07:59:30.055673",
+  "shap_available": true
+}

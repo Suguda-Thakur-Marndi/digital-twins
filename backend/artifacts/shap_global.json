@@ -1,0 +1,167 @@
+{
+  "title": "Global Longitudinal Feature Importance",
+  "method": "Mean Absolute SHAP / XGBoost Gain Weighting",
+  "cohort_size": 6451,
+  "top_features": [
+    {
+      "rank": 1,
+      "feature": "dbp_std_365d",
+      "display_name": "Dbp Std 365D",
+      "category": "Hemodynamics & BP",
+      "relative_importance": 0.0618,
+      "clinical_rationale": "Captures longitudinal trends and variability in dbp std 365d over the 365-day observation window."
+    },
+    {
+      "rank": 2,
+      "feature": "dbp_mean_365d",
+      "display_name": "Annual Mean Diastolic BP",
+      "category": "Hemodynamics & BP",
+      "relative_importance": 0.034,
+      "clinical_rationale": "Captures longitudinal trends and variability in annual mean diastolic bp over the 365-day observation window."
+    },
+    {
+      "rank": 3,
+      "feature": "dbp_change_365d",
+      "display_name": "Dbp Change 365D",
+      "category": "Hemodynamics & BP",
+      "relative_importance": 0.0241,
+      "clinical_rationale": "Captures longitudinal trends and variability in dbp change 365d over the 365-day observation window."
+    },
+    {
+      "rank": 4,
+      "feature": "total_prior_conditions",
+      "display_name": "Total Prior Conditions",
+      "category": "Clinical Laboratory",
+      "relative_importance": 0.0221,
+      "clinical_rationale": "Captures longitudinal trends and variability in total prior conditions over the 365-day observation window."
+    },
+    {
+      "rank": 5,
+      "feature": "feature_189",
+      "display_name": "Feature 189",
+      "category": "Clinical Laboratory",
+      "relative_importance": 0.0212,
+      "clinical_rationale": "Captures longitudinal trends and variability in feature 189 over the 365-day observation window."
+    },
+    {
+      "rank": 6,
+      "feature": "days_with_observations",
+      "display_name": "Days With Observations",
+      "category": "Demographics & Exposure",
+      "relative_importance": 0.0212,
+      "clinical_rationale": "Captures longitudinal trends and variability in days with observations over the 365-day observation window."
+    },
+    {
+      "rank": 7,
+      "feature": "sbp_slope_365d",
+      "display_name": "Sbp Slope 365D",
+      "category": "Hemodynamics & BP",
+      "relative_importance": 0.0208,
+      "clinical_rationale": "Captures longitudinal trends and variability in sbp slope 365d over the 365-day observation window."
+    },
+    {
+      "rank": 8,
+      "feature": "feature_187",
+      "display_name": "Feature 187",
+      "category": "Clinical Laboratory",
+      "relative_importance": 0.0171,
+      "clinical_rationale": "Captures longitudinal trends and variability in feature 187 over the 365-day observation window."
+    },
+    {
+      "rank": 9,
+      "feature": "wellness_encounter_count",
+      "display_name": "Wellness Encounter Count",
+      "category": "Clinical Laboratory",
+      "relative_importance": 0.0168,
+      "clinical_rationale": "Captures longitudinal trends and variability in wellness encounter count over the 365-day observation window."
+    },
+    {
+      "rank": 10,
+      "feature": "days_since_last_measurement",
+      "display_name": "Days Since Last Measurement",
+      "category": "Demographics & Exposure",
+      "relative_importance": 0.0165,
+      "clinical_rationale": "Captures longitudinal trends and variability in days since last measurement over the 365-day observation window."
+    },
+    {
+      "rank": 11,
+      "feature": "hr_mean_365d",
+      "display_name": "Hr Mean 365D",
+      "category": "Clinical Laboratory",
+      "relative_importance": 0.0159,
+      "clinical_rationale": "Captures longitudinal trends and variability in hr mean 365d over the 365-day observation window."
+    },
+    {
+      "rank": 12,
+      "feature": "bmi_mean_365d",
+      "display_name": "Bmi Mean 365D",
+      "category": "Metabolic & Anthropometric",
+      "relative_importance": 0.0156,
+      "clinical_rationale": "Captures longitudinal trends and variability in bmi mean 365d over the 365-day observation window."
+    },
+    {
+      "rank": 13,
+      "feature": "gender",
+      "display_name": "Gender",
+      "category": "Clinical Laboratory",
+      "relative_importance": 0.0156,
+      "clinical_rationale": "Captures longitudinal trends and variability in gender over the 365-day observation window."
+    },
+    {
+      "rank": 14,
+      "feature": "ethnicity",
+      "display_name": "Ethnicity",
+      "category": "Clinical Laboratory",
+      "relative_importance": 0.0149,
+      "clinical_rationale": "Captures longitudinal trends and variability in ethnicity over the 365-day observation window."
+    },
+    {
+      "rank": 15,
+      "feature": "antihypertensive_med_history",
+      "display_name": "Antihypertensive Medication Prescriptions",
+      "category": "Pharmacotherapy",
+      "relative_importance": 0.0133,
+      "clinical_rationale": "Captures longitudinal trends and variability in antihypertensive medication prescriptions over the 365-day observation window."
+    },
+    {
+      "rank": 16,
+      "feature": "weight_slope_365d",
+      "display_name": "Weight Slope 365D",
+      "category": "Metabolic & Anthropometric",
+      "relative_importance": 0.0132,
+      "clinical_rationale": "Captures longitudinal trends and variability in weight slope 365d over the 365-day observation window."
+    },
+    {
+      "rank": 17,
+      "feature": "days_since_last_medication",
+      "display_name": "Days Since Last Medication",
+      "category": "Demographics & Exposure",
+      "relative_importance": 0.013,
+      "clinical_rationale": "Captures longitudinal trends and variability in days since last medication over the 365-day observation window."
+    },
+    {
+      "rank": 18,
+      "feature": "days_since_first_record",
+      "display_name": "Days Since First Record",
+      "category": "Demographics & Exposure",
+      "relative_importance": 0.0129,
+      "clinical_rationale": "Captures longitudinal trends and variability in days since first record over the 365-day observation window."
+    },
+    {
+      "rank": 19,
+      "feature": "hr_count_365d",
+      "display_name": "Hr Count 365D",
+      "category": "Clinical Laboratory",
+      "relative_importance": 0.0124,
+      "clinical_rationale": "Captures longitudinal trends and variability in hr count 365d over the 365-day observation window."
+    },
+    {
+      "rank": 20,
+      "feature": "bmi_std_365d",
+      "display_name": "Bmi Std 365D",
+      "category": "Metabolic & Anthropometric",
+      "relative_importance": 0.0122,
+      "clinical_rationale": "Captures longitudinal trends and variability in bmi std 365d over the 365-day observation window."
+    }
+  ]
+}
