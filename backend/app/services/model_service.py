@@ -31,6 +31,22 @@ from app.services.calibrator import PlattCalibratorWrapper
 logger = logging.getLogger(__name__)
 
 
+def _score_to_tier(calibrated_risk: float, tiers: Optional[Dict[str, Any]] = None) -> str:
+    """Categorize calibrated risk score into Low, Moderate, High based on thresholds."""
+    if tiers is not None:
+        high_min = float(tiers.get("high", {}).get("min_risk", 0.40))
+        mod_min = float(tiers.get("moderate", {}).get("min_risk", 0.15))
+    else:
+        high_min = 0.40
+        mod_min = 0.15
+
+    if calibrated_risk >= high_min:
+        return "High"
+    elif calibrated_risk >= mod_min:
+        return "Moderate"
+    return "Low"
+
+
 class ModelService:
     LEVEL_SUFFIXES = ["latest", "mean_365d", "min_365d", "max_365d", "first_365d", "last_365d"]
 
@@ -188,18 +204,18 @@ class ModelService:
     @staticmethod
     def _safe_int(value: Any, default: int = 0) -> int:
         if value is None or value == "":
-            return int(default)
+            return default
         try:
             if isinstance(value, str):
                 value = value.strip()
                 if value == "":
-                    return int(default)
+                    return default
             numeric = float(value)
             if pd.isna(numeric):
-                return int(default)
-            return int(round(numeric))
+                return default
+            return round(numeric)
         except (TypeError, ValueError):
-            return int(default)
+            return default
 
     @staticmethod
     def _extract_patient_id(x_input: pd.DataFrame) -> str:
@@ -260,14 +276,19 @@ class ModelService:
     def get_risk_tier(self, calibrated_risk: float) -> str:
         """Categorize into Low, Moderate, High based on metadata thresholds."""
         tiers = self._metadata.get("risk_tiers", {})
-        high_min = tiers.get("high", {}).get("min_risk", 0.40)
-        mod_min = tiers.get("moderate", {}).get("min_risk", 0.15)
+        return _score_to_tier(calibrated_risk, tiers)
 
-        if calibrated_risk >= high_min:
-            return "High"
-        elif calibrated_risk >= mod_min:
-            return "Moderate"
-        return "Low"
+    def score_row(self, x_input: Any) -> float:
+        """
+        Score a single feature row and return calibrated 1-year decompensation risk.
+        Accepts a pandas DataFrame, Series, or dict.
+        """
+        if isinstance(x_input, pd.Series):
+            x_input = pd.DataFrame([x_input])
+        elif isinstance(x_input, dict):
+            x_input = pd.DataFrame([x_input])
+        pred = self.predict(x_input, context="score_row")
+        return float(pred["calibrated_risk"])
 
     def predict(
         self,

@@ -727,3 +727,53 @@ def test_main_page_feature_links_resolve():
         assert target_file.exists(), f"Route '{route}' does not resolve to an existing page file: {target_file}"
 
 
+# 27. Model service helper functions and score_row
+def test_model_service_score_row_and_tier_mapping(client):
+    from app.services.model_service import _score_to_tier
+    from app.main import _model_svc, _patient_svc
+
+    # Test tier mapping
+    assert _score_to_tier(0.05) == "Low"
+    assert _score_to_tier(0.15) == "Moderate"
+    assert _score_to_tier(0.25) == "Moderate"
+    assert _score_to_tier(0.40) == "High"
+    assert _score_to_tier(0.85) == "High"
+
+    # Test score_row method on ModelService
+    assert _model_svc is not None
+    assert hasattr(_model_svc, "score_row")
+    assert _patient_svc is not None
+    pts = client.get("/api/v1/patients?limit=1").json()
+    pid = pts[0]["id"]
+    x_df = _patient_svc.get_feature_row(pid)
+    assert x_df is not None
+    score = _model_svc.score_row(x_df)
+    assert isinstance(score, float)
+    assert 0.0 <= score <= 1.0
+
+
+# 28. TimelineService get_timeline integration
+def test_timeline_service_get_timeline(client):
+    from app.services.timeline_service import TimelineService
+    from app.main import _model_svc, _patient_svc
+    from pathlib import Path
+
+    assert _patient_svc is not None
+    assert _model_svc is not None
+    artifacts_dir = Path(__file__).resolve().parent.parent / "artifacts"
+    timeline_svc = TimelineService(artifacts_dir, _patient_svc)
+    pts = client.get("/api/v1/patients?limit=1").json()
+    pid = pts[0]["id"]
+
+    timeline = timeline_svc.get_timeline(pid, model_svc=_model_svc)
+    assert timeline is not None
+    assert len(timeline) >= 1
+    snap = timeline[0]
+    assert "prediction_time" in snap
+    assert "sbp" in snap
+    assert "risk_score" in snap
+    assert "risk_tier" in snap
+    assert snap["risk_tier"] in ["Low", "Moderate", "High"]
+
+
+

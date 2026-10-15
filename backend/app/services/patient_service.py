@@ -182,11 +182,11 @@ class PatientService:
 
     def get_patient(self, patient_id: str) -> Optional[Dict[str, Any]]:
         """Return full patient digital twin state."""
-        pid_clean = str(patient_id).strip().lower()
+        pid_clean = patient_id.strip().lower()
         if pid_clean in self._all_by_id:
             return self._all_by_id[pid_clean]
-        if str(patient_id) in self._all_by_id:
-            return self._all_by_id[str(patient_id)]
+        if patient_id in self._all_by_id:
+            return self._all_by_id[patient_id]
         return None
 
     def get_feature_row(self, patient_id: str) -> Optional[pd.DataFrame]:
@@ -201,6 +201,17 @@ class PatientService:
         patient = self.get_patient(patient_id)
         if patient and "snapshots" in patient and patient["snapshots"]:
             return patient["snapshots"]
+        return None
+
+    def get_all_snapshots(self, patient_id: str) -> pd.DataFrame:
+        """Return all historical snapshots for a patient as a DataFrame."""
+        patient = self.get_patient(patient_id)
+        if patient and "snapshots" in patient and patient["snapshots"]:
+            return pd.DataFrame(patient["snapshots"])
+        return pd.DataFrame()
+
+    def get_feature_row_by_index(self, idx: Any) -> Optional[pd.DataFrame]:
+        """Return feature row for a given snapshot index if available."""
         return None
 
     # ── Field Validation & Range Checking ─────────────────────────────────────
@@ -821,13 +832,13 @@ class PatientService:
         with self._lock:
             # Check demo
             for p in self._demo_patients:
-                if str(p["id"]) == str(patient_id) or str(p.get("display_id")) == str(patient_id):
+                if str(p["id"]) == patient_id or str(p.get("display_id")) == patient_id:
                     raise ValueError("Cannot delete baseline synthetic demo patients.")
 
             # Find in registered
             idx = -1
             for i, p in enumerate(self._registered_patients):
-                if str(p["id"]) == str(patient_id) or str(p.get("display_id")) == str(patient_id):
+                if str(p["id"]) == patient_id or str(p.get("display_id")) == patient_id:
                     idx = i
                     break
 
