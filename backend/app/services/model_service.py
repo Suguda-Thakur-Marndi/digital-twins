@@ -151,7 +151,51 @@ class ModelService:
         value = row.get(col)
         if value is None or pd.isna(value):
             return float(default)
-        return float(value)
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return float(default)
+
+    @staticmethod
+    def _safe_float(value: Any, default: float = 0.0) -> float:
+        if value is None or value == "":
+            return float(default)
+        try:
+            if isinstance(value, str):
+                value = value.strip()
+                if value == "":
+                    return float(default)
+            numeric = float(value)
+            if pd.isna(numeric):
+                return float(default)
+            return numeric
+        except (TypeError, ValueError):
+            return float(default)
+
+    @staticmethod
+    def _extract_patient_id(x_input: pd.DataFrame) -> str:
+        if x_input is None or x_input.empty:
+            return ""
+        row = x_input.iloc[0]
+        for key in ("patient_id", "id", "display_id"):
+            value = row.get(key)
+            if value is not None and str(value).strip():
+                return str(value)
+
+        if hasattr(x_input, "attrs") and x_input.attrs.get("patient_id"):
+            return str(x_input.attrs["patient_id"])
+        return ""
+
+    def _strip_metadata_columns(self, df_input: pd.DataFrame) -> pd.DataFrame:
+        """Drop request metadata columns before schema validation while preserving patient context."""
+        if not isinstance(df_input, pd.DataFrame):
+            return df_input
+
+        cleaned = df_input.copy()
+        for col in sorted(self._forbidden_columns):
+            if col in cleaned.columns:
+                cleaned = cleaned.drop(columns=[col])
+        return cleaned
 
     def validate_features_df(self, df_input: pd.DataFrame) -> pd.DataFrame:
         """
@@ -296,16 +340,20 @@ class ModelService:
         if clamped_wt_pct != 0.0:
             for s in self.LEVEL_SUFFIXES:
                 col = f"weight_{s}"
-                if col in scenario.columns and pd.notna(scenario.iloc[0][col]):
-                    val = float(scenario.iloc[0][col]) * wt_multiplier
+                if col in scenario.columns:
+                    cur_val = scenario.iloc[0].get(col)
+                    base_val = float(cur_val) if cur_val is not None and not pd.isna(cur_val) else 70.0
+                    val = base_val * wt_multiplier
                     scenario.loc[scenario.index[0], col] = val
                     features_changed.append(col)
 
             # BMI shifts proportionately with weight
             for s in self.LEVEL_SUFFIXES:
                 col = f"bmi_{s}"
-                if col in scenario.columns and pd.notna(scenario.iloc[0][col]):
-                    val = float(scenario.iloc[0][col]) * wt_multiplier
+                if col in scenario.columns:
+                    cur_val = scenario.iloc[0].get(col)
+                    base_val = float(cur_val) if cur_val is not None and not pd.isna(cur_val) else 25.0
+                    val = base_val * wt_multiplier
                     scenario.loc[scenario.index[0], col] = val
                     features_changed.append(col)
 
@@ -376,10 +424,15 @@ class ModelService:
         warnings: List[str] = []
         is_out_of_range = False
 
+        patient_id = self._extract_patient_id(x_input)
+
         if not levers:
-            # No edits scenario -> exactly baseline
+            # No edits scenario -> exactly baseline. Preserve patient_id from the request context
+            # even when the feature row itself does not carry an explicit patient_id column.
+            if not patient_id and hasattr(x_input, "attrs") and x_input.attrs.get("patient_id"):
+                patient_id = str(x_input.attrs["patient_id"])
             return {
-                "patient_id": levers.get("patient_id", ""),
+                "patient_id": patient_id,
                 "baseline_raw": baseline_pred["raw_score"],
                 "baseline_risk": baseline_pred["calibrated_risk"],
                 "baseline_tier": baseline_pred["risk_tier"],
@@ -406,13 +459,13 @@ class ModelService:
         lever_specs = self._lever_map.get("levers", {})
 
         # 1. SBP
-        curr_sbp = float(safe_x.iloc[0].get("sbp_latest", 125.0))
+        curr_sbp = self._safe_float(safe_x.iloc[0].get("sbp_latest", 125.0), 125.0)
         sbp_val = levers.get("sbp_value")
         sbp_d = levers.get("sbp_delta")
         if sbp_val is not None:
-            sbp_delta = float(sbp_val) - curr_sbp
+            sbp_delta = self._safe_float(sbp_val) - curr_sbp
         elif sbp_d is not None:
-            sbp_delta = float(sbp_d)
+            sbp_delta = self._safe_float(sbp_d)
         else:
             sbp_delta = 0.0
 
@@ -427,13 +480,13 @@ class ModelService:
                     features_changed.append(col)
 
         # 2. DBP
-        curr_dbp = float(safe_x.iloc[0].get("dbp_latest", 80.0))
+        curr_dbp = self._safe_float(safe_x.iloc[0].get("dbp_latest", 80.0), 80.0)
         dbp_val = levers.get("dbp_value")
         dbp_d = levers.get("dbp_delta")
         if dbp_val is not None:
-            dbp_delta = float(dbp_val) - curr_dbp
+            dbp_delta = self._safe_float(dbp_val) - curr_dbp
         elif dbp_d is not None:
-            dbp_delta = float(dbp_d)
+            dbp_delta = self._safe_float(dbp_d)
         else:
             dbp_delta = 0.0
 
@@ -455,13 +508,13 @@ class ModelService:
             features_changed.append("pulse_pressure_latest")
 
         # 3. Heart Rate
-        curr_hr = float(safe_x.iloc[0].get("hr_latest", 72.0))
+        curr_hr = self._safe_float(safe_x.iloc[0].get("hr_latest", 72.0), 72.0)
         hr_val = levers.get("hr_value")
         hr_d = levers.get("hr_delta")
         if hr_val is not None:
-            hr_delta = float(hr_val) - curr_hr
+            hr_delta = self._safe_float(hr_val) - curr_hr
         elif hr_d is not None:
-            hr_delta = float(hr_d)
+            hr_delta = self._safe_float(hr_d)
         else:
             hr_delta = 0.0
 
@@ -507,13 +560,13 @@ class ModelService:
                     features_changed.append(col)
 
         # 5. Glucose
-        curr_gl = float(safe_x.iloc[0].get("glucose_latest", 100.0))
+        curr_gl = self._safe_float(safe_x.iloc[0].get("glucose_latest", 100.0), 100.0)
         gl_val = levers.get("glucose_value")
         gl_d = levers.get("glucose_delta")
         if gl_val is not None:
-            gl_delta = float(gl_val) - curr_gl
+            gl_delta = self._safe_float(gl_val) - curr_gl
         elif gl_d is not None:
-            gl_delta = float(gl_d)
+            gl_delta = self._safe_float(gl_d)
         else:
             gl_delta = 0.0
 
@@ -528,13 +581,13 @@ class ModelService:
                     features_changed.append(col)
 
         # 6. HbA1c
-        curr_a1c = float(safe_x.iloc[0].get("hba1c_latest", 5.6))
+        curr_a1c = self._safe_float(safe_x.iloc[0].get("hba1c_latest", 5.6), 5.6)
         a1c_val = levers.get("hba1c_value")
         a1c_d = levers.get("hba1c_delta")
         if a1c_val is not None:
-            a1c_delta = float(a1c_val) - curr_a1c
+            a1c_delta = self._safe_float(a1c_val) - curr_a1c
         elif a1c_d is not None:
-            a1c_delta = float(a1c_d)
+            a1c_delta = self._safe_float(a1c_d)
         else:
             a1c_delta = 0.0
 
@@ -642,7 +695,7 @@ class ModelService:
         # No edits applied or no features modified -> return exact baseline
         if len(features_changed) == 0:
             return {
-                "patient_id": levers.get("patient_id", ""),
+                "patient_id": patient_id,
                 "baseline_raw": baseline_pred["raw_score"],
                 "baseline_risk": baseline_pred["calibrated_risk"],
                 "baseline_tier": baseline_pred["risk_tier"],
@@ -701,7 +754,7 @@ class ModelService:
         shap_diff.sort(key=lambda x: abs(x["attribution_diff"]), reverse=True)
 
         return {
-            "patient_id": levers.get("patient_id", ""),
+            "patient_id": self._extract_patient_id(x_input),
             "baseline_raw": baseline_pred["raw_score"],
             "baseline_risk": baseline_pred["calibrated_risk"],
             "baseline_tier": baseline_pred["risk_tier"],
@@ -734,7 +787,7 @@ class ModelService:
         curves = {}
 
         # 1. SBP
-        curr_sbp = float(safe_x.iloc[0].get("sbp_latest", 125.0))
+        curr_sbp = self._safe_float(safe_x.iloc[0].get("sbp_latest", 125.0), 125.0)
         sbp_points = []
         for d in [-30, -20, -15, -10, -5, 0, 5, 10, 15, 20, 30]:
             t_val = round(curr_sbp + d, 1)

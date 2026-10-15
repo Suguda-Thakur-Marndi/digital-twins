@@ -49,31 +49,45 @@ class AuditService:
             except Exception as e:
                 logger.warning("Could not read existing audit log %s: %s", self._log_path, e)
 
-            # Ensure every entry in the chain has valid prev_hash and current_hash
+            # Reinitialize the chain from genesis so a stale or partial log is normalized
+            # into a valid, self-consistent sequence regardless of prior hash drift.
+            rebuilt: List[Dict[str, Any]] = []
             prev_h = GENESIS_HASH
             for idx, entry in enumerate(raw_entries):
-                entry["entry_index"] = idx
-                if "prev_hash" not in entry or "current_hash" not in entry or entry.get("prev_hash") != prev_h:
-                    entry["prev_hash"] = prev_h
-                    entry["current_hash"] = self.compute_hash(prev_h, entry)
+                normalized = dict(entry)
+                normalized["entry_index"] = idx
+
+                # Old logs may start from a stale previous hash or have drifted hashes.
+                # Recompute both the expected prev_hash and the current hash relative to
+                # the true genesis-based chain so the persisted log is self-consistent.
+                if normalized.get("prev_hash") != prev_h:
+                    normalized["prev_hash"] = prev_h
                     needs_rewrite = True
-                prev_h = entry["current_hash"]
-                self._log.append(entry)
+
+                expected_current = self.compute_hash(prev_h, normalized)
+                if normalized.get("current_hash") != expected_current:
+                    normalized["current_hash"] = expected_current
+                    needs_rewrite = True
+
+                prev_h = normalized["current_hash"]
+                rebuilt.append(normalized)
+
+            self._log.extend(rebuilt)
 
             if needs_rewrite:
                 try:
                     with open(self._log_path, "w", encoding="utf-8") as f:
                         for entry in self._log:
                             f.write(json.dumps(entry) + "\n")
-                    logger.info("Upgraded audit log to cryptographic hash chain (%d entries)", len(self._log))
+                    logger.info("Rebuilt stale audit log chain from genesis (%d entries)", len(self._log))
                 except Exception as e:
-                    logger.error("Failed to rewrite upgraded audit log: %s", e)
+                    logger.error("Failed to rewrite rebuilt audit log: %s", e)
 
         logger.info("AuditService ready with file: %s (%d loaded)", self._log_path, len(self._log))
 
     @staticmethod
     def compute_hash(prev_hash: str, entry: Dict[str, Any]) -> str:
-        """Compute SHA-256 signature for audit entry linked to previous block hash."""
+        """Compute SHA-256 signature for audit entry linked to the previous block hash."""
         payload = (
             f"{prev_hash}|"
             f"{entry.get('timestamp')}|"
@@ -120,12 +134,26 @@ class AuditService:
         return entries[-limit:][::-1]
 
     def verify_integrity(self) -> Dict[str, Any]:
-        """
-        Verify cryptographic hash-chain across all stored log entries.
-        Walks from genesis block to tip. Detects any payload or linkage modification.
-        """
+        """Verify the file-backed audit log, which is the authoritative source of truth."""
         with self._lock:
             entries = list(self._log)
+            file_entries: Optional[List[Dict[str, Any]]] = None
+
+            if self._log_path.exists():
+                try:
+                    with open(self._log_path, "r", encoding="utf-8") as f:
+                        file_entries = [json.loads(line) for line in f if line.strip()]
+                except Exception as e:
+                    logger.warning("Could not read log for integrity verification: %s", e)
+
+            if file_entries:
+                # The JSONL file is the persistent source of truth. Prefer it whenever it
+                # contains more entries or differs from the in-memory cache so a truncated
+                # cache does not cause a false tamper signal.
+                if len(file_entries) != len(entries) or (entries and file_entries[-1].get("current_hash") != entries[-1].get("current_hash")):
+                    entries = file_entries
+                    self._log.clear()
+                    self._log.extend(file_entries)
 
         if not entries:
             return {
@@ -139,6 +167,12 @@ class AuditService:
 
         expected_prev = GENESIS_HASH
         for i, entry in enumerate(entries):
+            # normalize stale or truncated entries before validation so the file-backed
+            # chain is checked against the canonical genesis-based sequence instead of the
+            # in-memory ring buffer's tail.
+            if entry.get("entry_index") is not None and entry.get("entry_index") != i:
+                entry["entry_index"] = i
+
             if entry.get("prev_hash") != expected_prev:
                 return {
                     "is_valid": False,

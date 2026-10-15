@@ -518,6 +518,16 @@ async def simulate_patient(request: schemas.SimulateRequest):
     if x_df is None:
         raise HTTPException(status_code=404, detail=f"Patient '{request.patient_id}' not found.")
 
+    x_df = x_df.copy()
+    x_df.attrs["patient_id"] = request.patient_id
+    x_df.loc[0, "patient_id"] = request.patient_id
+    x_df.loc[0, "id"] = request.patient_id
+
+    # Preserve the original patient identity in the model input while allowing
+    # validation to reject these metadata columns from the actual feature set.
+    x_df = x_df.drop(columns=["patient_id", "id"], errors="ignore")
+    x_df.attrs["patient_id"] = request.patient_id
+
     levers_dict = {
         k: v for k, v in request.model_dump(exclude_unset=True).items() if k != "patient_id"
     }
