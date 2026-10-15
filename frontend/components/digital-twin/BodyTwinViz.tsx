@@ -39,8 +39,11 @@ import {
   Eye,
 } from "lucide-react";
 
-// Preload the generic rigged humanoid model
-useGLTF.preload("/models/generic-body.glb");
+import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
+
+// Preload the authentic Ready Player Me 3D human models
+useGLTF.preload("/models/human-male.glb");
+useGLTF.preload("/models/human-female.glb");
 
 // ── WebGL Detection ───────────────────────────────────────────────────────────
 function isWebGLAvailable(): boolean {
@@ -114,6 +117,7 @@ function MicroSparkline({
 
 // ── 3D Mannequin Avatar Inner Mesh Component ──────────────────────────────────
 interface AvatarModelProps {
+  modelUrl: string;
   riskColor: string;
   hr: number;
   isReducedMotion: boolean;
@@ -122,16 +126,18 @@ interface AvatarModelProps {
 }
 
 function AvatarModel({
+  modelUrl,
   riskColor,
   hr,
   isReducedMotion,
   isDark,
   onBonePositionsUpdated,
 }: AvatarModelProps) {
-  const { scene } = useGLTF("/models/generic-body.glb");
+  const { scene } = useGLTF(modelUrl);
   const avatarGroupRef = useRef<THREE.Group>(null);
   const heartMeshRef = useRef<THREE.Mesh>(null);
   const cuffMeshRef = useRef<THREE.Mesh>(null);
+  const spineRef = useRef<THREE.Object3D | null>(null);
 
   // Clamped heart rate frequency (45 to 120 bpm for visual calmness)
   const clampedHr = Math.min(120, Math.max(45, hr || 72));
@@ -140,9 +146,9 @@ function AvatarModel({
   // Position offsets: model height is ~1.81m, center around y = 0
   const modelYOffset = -0.9;
 
-  // Clone scene and apply sober, calm clinical editorial shaders
+  // Clone scene with skeleton intact while preserving original textures and materials
   const clone = useMemo(() => {
-    const clonedScene = scene.clone(true);
+    const clonedScene = SkeletonUtils.clone(scene);
 
     clonedScene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
@@ -150,18 +156,17 @@ function AvatarModel({
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        // Sober matte porcelain / slate clinical material
-        mesh.material = new THREE.MeshStandardMaterial({
-          color: isDark ? new THREE.Color("#334155") : new THREE.Color("#e2e8f0"),
-          roughness: 0.82,
-          metalness: 0.12,
-          flatShading: false,
-        });
+        if (mesh.material) {
+          const mat = mesh.material as THREE.MeshStandardMaterial;
+          mat.depthWrite = true;
+          mat.roughness = Math.min(0.85, Math.max(0.4, mat.roughness || 0.6));
+          mat.metalness = Math.min(0.25, mat.metalness || 0.05);
+        }
       }
     });
 
     return clonedScene;
-  }, [scene, isDark]);
+  }, [scene]);
 
   // Extract bone world coordinates after mounting
   useEffect(() => {
@@ -195,6 +200,7 @@ function AvatarModel({
       }
     });
 
+    spineRef.current = clone.getObjectByName("Spine1") || clone.getObjectByName("Spine2") || null;
     onBonePositionsUpdated(positions);
   }, [clone, modelYOffset, onBonePositionsUpdated]);
 
@@ -235,63 +241,10 @@ function AvatarModel({
 
   return (
     <group ref={avatarGroupRef} position={[0, modelYOffset, 0]}>
-      {/* Humanoid Rigged Avatar */}
+      {/* Ready Player Me 3D Human Avatar */}
       <primitive object={clone} />
 
-      {/* ── 3D Cardiac Pulse Core (Heart / Spine2 region) ── */}
-      <group position={[0, 1.334, 0.08]}>
-        <mesh ref={heartMeshRef}>
-          <sphereGeometry args={[0.045, 24, 24]} />
-          <meshStandardMaterial
-            color={riskColor}
-            emissive={new THREE.Color(riskColor)}
-            emissiveIntensity={0.5}
-            roughness={0.3}
-            metalness={0.2}
-          />
-        </mesh>
-        {/* Soft outer cardiac glow aura */}
-        <mesh>
-          <sphereGeometry args={[0.09, 16, 16]} />
-          <meshBasicMaterial
-            color={riskColor}
-            transparent
-            opacity={isDark ? 0.18 : 0.12}
-            side={THREE.BackSide}
-          />
-        </mesh>
-      </group>
-
-      {/* ── 3D Blood Pressure Cuff Ring (Left Upper Arm) ── */}
-      {/* Positioned around mixamorigLeftArm: x ≈ 0.22, y ≈ 1.34 */}
-      <group position={[0.22, 1.34, -0.02]} rotation={[0, 0, -Math.PI / 12]}>
-        {/* Main Cuff Cylinder/Torus Band */}
-        <mesh ref={cuffMeshRef}>
-          <cylinderGeometry args={[0.075, 0.075, 0.1, 32, 1, true]} />
-          <meshStandardMaterial
-            color={isDark ? "#1e293b" : "#cbd5e1"}
-            emissive={new THREE.Color(riskColor)}
-            emissiveIntensity={0.25}
-            roughness={0.4}
-            metalness={0.3}
-            side={THREE.DoubleSide}
-            transparent
-            opacity={0.92}
-          />
-        </mesh>
-        {/* Cuff Upper Rim Accent */}
-        <mesh position={[0, 0.05, 0]}>
-          <torusGeometry args={[0.075, 0.005, 8, 32]} />
-          <meshBasicMaterial color={riskColor} />
-        </mesh>
-        {/* Cuff Lower Rim Accent */}
-        <mesh position={[0, -0.05, 0]}>
-          <torusGeometry args={[0.075, 0.005, 8, 32]} />
-          <meshBasicMaterial color={riskColor} />
-        </mesh>
-      </group>
-
-      {/* ── Subtle Ambient Floor Contact Shadow / Pedestal ── */}
+      {/* Subtle Ambient Floor Contact Shadow / Pedestal */}
       <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <circleGeometry args={[0.75, 32]} />
         <meshBasicMaterial
@@ -465,14 +418,31 @@ export default function BodyTwinViz({
   // Active Selected Hotspot Card
   const [activeRegionId, setActiveRegionId] = useState<string | null>("heart_chest");
 
+  // Avatar gender toggle / auto-detect
+  const isFemaleDefault = useMemo(() => {
+    const g = (gender || "").trim().toUpperCase();
+    return g.startsWith("F") || g === "FEMALE";
+  }, [gender]);
+
+  const [selectedGender, setSelectedGender] = useState<"male" | "female">(
+    isFemaleDefault ? "female" : "male"
+  );
+
+  useEffect(() => {
+    setSelectedGender(isFemaleDefault ? "female" : "male");
+  }, [isFemaleDefault]);
+
+  const activeModelUrl =
+    selectedGender === "female" ? "/models/human-female.glb" : "/models/human-male.glb";
+
   // Bone world positions reported by AvatarModel
   const [bonePositions, setBonePositions] = useState<
     Record<string, [number, number, number]>
   >({
-    heart_chest: [0, 0.434, 0.05],
-    left_arm_bp: [0.22, 0.44, -0.02],
-    abdomen_metabolic: [0, 0.14, 0.04],
-    head_demographics: [0, 0.72, 0.02],
+    heart_chest: [-0.05, 0.38, 0.17],
+    left_arm_bp: [0.20, 0.45, -0.01],
+    abdomen_metabolic: [0, 0.22, 0.04],
+    head_demographics: [0, 0.75, 0.02],
   });
 
   const handleBonePositionsUpdated = useCallback(
@@ -519,7 +489,7 @@ export default function BodyTwinViz({
       case "abdomen_metabolic":
         return bmi ? `BMI ${bmi.toFixed(1)}` : weight ? `${weight.toFixed(0)} kg` : "Metabolic";
       case "head_demographics":
-        return age ? `${age}y · ${gender || "Profile"}` : "Profile";
+        return age ? `${age}y · ${selectedGender === "female" ? "Female" : "Male"}` : "Profile";
       default:
         return "Vitals";
     }
@@ -559,31 +529,9 @@ export default function BodyTwinViz({
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
             <span>
-              <strong>WebGL Acceleration Notice:</strong> Hardware 3D is unavailable or encountered an error. Seamlessly switched to the abstract physiological core twin.
+              <strong>WebGL Acceleration Notice:</strong> Hardware 3D is unavailable or encountered an error.
             </span>
           </div>
-          {onFallbackToCore && (
-            <button
-              type="button"
-              onClick={onFallbackToCore}
-              className="px-2.5 py-1 text-xs font-semibold bg-amber-600 text-white rounded-lg cursor-pointer hover:bg-amber-700 transition"
-            >
-              Use Core View
-            </button>
-          )}
-        </div>
-
-        {/* Fallback to DigitalTwinViz */}
-        <div className="h-72 sm:h-80 w-full relative rounded-2xl overflow-hidden bg-slate-900/10 dark:bg-slate-950/40 border border-[var(--glass-border)] shadow-inner">
-          <DigitalTwinViz
-            riskTier={riskTier}
-            sbp={sbp}
-            dbp={dbp}
-            bmi={bmi}
-            hr={hr}
-            weight={weight}
-            riskScore={riskScore}
-          />
         </div>
 
         {/* Accessible vitals table */}
@@ -609,7 +557,7 @@ export default function BodyTwinViz({
   return (
     <div className={`relative w-full select-none space-y-3 ${className}`}>
       {/* ── Main 3D Canvas Container ───────────────────────────────────────── */}
-      <div className="relative h-80 sm:h-96 w-full rounded-2xl overflow-hidden bg-gradient-to-b from-slate-900/10 via-slate-900/5 to-slate-900/20 dark:from-slate-950/80 dark:via-slate-900/60 dark:to-slate-950/90 border border-[var(--glass-border)] shadow-inner">
+      <div className="relative h-[520px] sm:h-[580px] lg:h-[640px] w-full rounded-2xl overflow-hidden bg-gradient-to-b from-slate-900/10 via-slate-900/5 to-slate-900/20 dark:from-slate-950/80 dark:via-slate-900/60 dark:to-slate-950/90 border border-[var(--glass-border)] shadow-inner">
         {/* Top-Left: Model & Synthetic Patient Regulatory Notice */}
         <div className="absolute top-3 left-3 z-20 pointer-events-none flex flex-col gap-1 max-w-[280px]">
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--bg-surface)]/90 backdrop-blur-md border border-[var(--glass-border)] shadow-xs">
@@ -620,7 +568,7 @@ export default function BodyTwinViz({
               {shapeCue.symbol}
             </span>
             <span className="text-[10px] font-mono font-bold tracking-tight text-[var(--text-primary)]">
-              Synthetic patient, generic model
+              3D Human Digital Twin
             </span>
           </div>
           <span
@@ -637,24 +585,42 @@ export default function BodyTwinViz({
 
         {/* Top-Right: Interaction & Controls HUD */}
         <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
-          {/* Reduced Motion Indicator if active */}
-          {isReducedMotion && (
-            <span
-              className="text-[10px] font-mono text-[var(--text-muted)] bg-[var(--bg-surface)] px-2 py-1 rounded-lg border border-[var(--glass-border)] backdrop-blur-md"
-              title="Animation pulse paused per system prefers-reduced-motion preference"
+          {/* Avatar Gender Toggle */}
+          <div className="flex rounded-lg border border-[var(--glass-border)] p-0.5 bg-[var(--bg-surface)] backdrop-blur-md shadow-xs">
+            <button
+              type="button"
+              onClick={() => setSelectedGender("male")}
+              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition cursor-pointer ${
+                selectedGender === "male"
+                  ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] shadow-2xs"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
+              title="Switch to Male Avatar"
             >
-              Static Pulse (Reduced Motion)
-            </span>
-          )}
+              ♂ Male
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedGender("female")}
+              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition cursor-pointer ${
+                selectedGender === "female"
+                  ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] shadow-2xs"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
+              title="Switch to Female Avatar"
+            >
+              ♀ Female
+            </button>
+          </div>
 
-          <div className="text-[10px] font-mono text-[var(--text-muted)] bg-[var(--bg-surface)] px-2 py-1 rounded-lg border border-[var(--glass-border)] backdrop-blur-md shadow-xs">
+          <div className="text-[10px] font-mono text-[var(--text-muted)] bg-[var(--bg-surface)] px-2 py-1 rounded-lg border border-[var(--glass-border)] backdrop-blur-md shadow-xs hidden sm:block">
             Drag to rotate · Click hotspots
           </div>
         </div>
 
         {/* ── 3D Canvas Scene ─────────────────────────────────────────────── */}
         <Canvas
-          camera={{ position: [0, 0.95, 2.3], fov: 42 }}
+          camera={{ position: [0, 0.05, 3.25], fov: 34 }}
           dpr={[1, 2]}
           gl={{
             antialias: true,
@@ -669,28 +635,29 @@ export default function BodyTwinViz({
           onError={() => setHasWebGLError(true)}
         >
           {/* Editorial Studio Lighting (Soft, calm, non-sci-fi) */}
-          <ambientLight intensity={isDark ? 0.6 : 0.85} />
+          <ambientLight intensity={isDark ? 0.7 : 0.9} />
           <directionalLight
-            position={[2, 3, 2]}
-            intensity={isDark ? 1.2 : 1.0}
+            position={[2, 3, 2.5]}
+            intensity={isDark ? 1.3 : 1.1}
             color="#f8fafc"
             castShadow
           />
           <directionalLight
             position={[-2, 1, -1]}
-            intensity={isDark ? 0.5 : 0.4}
+            intensity={isDark ? 0.55 : 0.4}
             color="#e2e8f0"
           />
           {/* Subtle warm rim light */}
           <pointLight
             position={[0, 2, -2]}
-            intensity={0.4}
+            intensity={0.5}
             color={riskColor}
           />
 
           {/* Model with Suspense Skeleton Placeholder */}
           <Suspense fallback={<LoadingSkeletonFallback isDark={isDark} />}>
             <AvatarModel
+              modelUrl={activeModelUrl}
               riskColor={riskColor}
               hr={hr || 72}
               isReducedMotion={isReducedMotion}
@@ -723,11 +690,13 @@ export default function BodyTwinViz({
           {/* Orbit Controls with bounded angles */}
           <OrbitControls
             enablePan={false}
-            minDistance={1.4}
-            maxDistance={3.6}
+            minDistance={1.8}
+            maxDistance={4.5}
             minPolarAngle={Math.PI / 4}
             maxPolarAngle={(2 * Math.PI) / 3}
-            target={[0, 0, 0]}
+            target={[0, 0.02, 0]}
+            autoRotate
+            autoRotateSpeed={0.35}
             makeDefault
           />
         </Canvas>

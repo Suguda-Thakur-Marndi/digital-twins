@@ -504,34 +504,15 @@ function TwinDashboardContent() {
             <div className="glass-card p-5 border border-[var(--glass-border)] space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-hairline)] pb-2.5">
                 <div className="flex items-center gap-2">
-                  <div
-                    className={`w-2.5 h-2.5 rounded-full ${
-                      twinView === "body" ? "bg-emerald-400" : "bg-cyan-400"
-                    } animate-pulse`}
-                  />
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)]">
-                    {twinView === "body"
-                      ? "3D Human Rigged Avatar · Anatomical Telemetry"
-                      : "3D Virtual Twin Lattice Network"}
+                    3D Human Digital Twin · Anatomical Spatial Telemetry
                   </h3>
                 </div>
 
-                {/* View Mode Toggle: Core | Body */}
+                {/* View Mode Toggle: Hotspots vs Compact Spatial */}
                 <div className="flex items-center gap-2">
                   <div className="flex rounded-xl border border-[var(--glass-border)] p-0.5 bg-[var(--bg-subtle)] text-xs no-print backdrop-blur-md">
-                    <button
-                      type="button"
-                      onClick={() => setTwinView("core")}
-                      className={`px-3 py-1 rounded-lg transition-all font-mono font-bold cursor-pointer text-xs ${
-                        twinView === "core"
-                          ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] shadow-xs"
-                          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                      }`}
-                      aria-pressed={twinView === "core"}
-                      title="Abstract physiological lattice core view"
-                    >
-                      Core
-                    </button>
                     <button
                       type="button"
                       onClick={() => setTwinView("body")}
@@ -541,22 +522,35 @@ function TwinDashboardContent() {
                           : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                       }`}
                       aria-pressed={twinView === "body"}
-                      title="Realistic rigged 3D human body view with mapped physiological hotspots"
+                      title="3D Human body view with interactive physiological hotspots and vital summaries"
                     >
-                      <span>Body</span>
+                      <span>Hotspots</span>
                       <span className="text-[9px] px-1 py-0.2 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-semibold border border-cyan-500/20">
                         3D
                       </span>
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setTwinView("core")}
+                      className={`px-3 py-1 rounded-lg transition-all font-mono font-bold cursor-pointer text-xs ${
+                        twinView === "core"
+                          ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] shadow-xs"
+                          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      }`}
+                      aria-pressed={twinView === "core"}
+                      title="3D Human Twin focused spatial telemetry view"
+                    >
+                      Spatial Twin
+                    </button>
                   </div>
                   <span className="hidden sm:inline-block text-[10px] font-mono text-[var(--text-muted)] bg-[var(--bg-subtle)] px-2 py-0.5 rounded-md border border-[var(--glass-border)]">
-                    {twinView === "body" ? "Mixamo Rig · Mapped Vitals" : "Interactive Three.js Core"}
+                    {twinView === "body" ? "Anatomical Telemetry" : "3D Spatial Avatar"}
                   </span>
                 </div>
               </div>
 
               {twinView === "core" ? (
-                <div className="h-72 sm:h-80 w-full relative rounded-2xl overflow-hidden bg-slate-900/10 dark:bg-slate-950/40 border border-[var(--glass-border)] shadow-inner">
+                <div className="h-[520px] sm:h-[580px] lg:h-[640px] w-full relative rounded-2xl overflow-hidden bg-slate-900/10 dark:bg-slate-950/40 border border-[var(--glass-border)] shadow-inner">
                   <DigitalTwinViz
                     riskTier={activeRisk.risk_tier}
                     sbp={activeVitals.sbp}
@@ -565,6 +559,9 @@ function TwinDashboardContent() {
                     hr={activeVitals.hr}
                     weight={activeVitals.weight}
                     riskScore={activeRisk.calibrated_risk}
+                    gender={patient.gender}
+                    age={patient.age}
+                    patientName={patient.name}
                   />
                 </div>
               ) : (

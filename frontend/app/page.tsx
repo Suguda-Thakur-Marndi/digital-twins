@@ -15,7 +15,6 @@ import {
   ModelInfo,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/i18n";
-import { LanguageSelector } from "@/components/LanguageSelector";
 import { normalizeTier, RISK_BADGE_CLASSES } from "@/lib/types";
 import {
   ArrowRight,
@@ -214,9 +213,6 @@ export default function OverviewPage() {
                 Patient View
               </button>
             </div>
-
-            {/* Language Selector */}
-            <LanguageSelector compact />
 
             {/* Primary Action Button */}
             <Link
@@ -455,7 +451,7 @@ export default function OverviewPage() {
             </div>
           </div>
 
-          {/* 2. THREE.JS SPATIAL VISUALIZATION (Abstract Lattice, Theme-Aware) */}
+          {/* 2. THREE.JS 3D HUMAN DIGITAL TWIN (Anatomical Physiological Telemetry) */}
           <div className="relative rounded-2xl overflow-hidden border border-[var(--border-subtle)] bg-white/20 dark:bg-slate-950/40 shadow-inner">
             <DigitalTwinViz
               sbp={currentSbp}

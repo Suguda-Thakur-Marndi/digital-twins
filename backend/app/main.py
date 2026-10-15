@@ -523,6 +523,7 @@ async def simulate_patient(request: schemas.SimulateRequest):
     }
     try:
         sim_res = model_svc.simulate(x_df, levers=levers_dict, shap_svc=shap_svc)
+        sim_res["patient_id"] = request.patient_id
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
 
