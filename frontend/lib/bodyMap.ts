@@ -36,9 +36,9 @@ export const BODY_REGIONS: BodyRegionConfig[] = [
     id: "heart_chest",
     name: "Heart & Cardiovascular Core",
     anatomicalLabel: "Thoracic Cavity · Upper Spine",
-    boneName: "mixamorigSpine2",
-    boneAliases: ["mixamorig:Spine2", "Spine2", "mixamorigSpine1"],
-    fallbackPosition: [0, 1.334, 0.05],
+    boneName: "Spine2",
+    boneAliases: ["Spine2", "mixamorigSpine2", "mixamorig:Spine2", "Spine1"],
+    fallbackPosition: [0, 1.37, 0.05],
     markerOffset: [0, 0.04, 0.16],
     vitals: [
       {
@@ -69,8 +69,8 @@ export const BODY_REGIONS: BodyRegionConfig[] = [
     id: "left_arm_bp",
     name: "Left Upper Arm (BP Cuff)",
     anatomicalLabel: "Brachial Artery · Left Bicep",
-    boneName: "mixamorigLeftArm",
-    boneAliases: ["mixamorig:LeftArm", "LeftArm"],
+    boneName: "LeftArm",
+    boneAliases: ["LeftArm", "mixamorigLeftArm", "mixamorig:LeftArm"],
     fallbackPosition: [0.22, 1.34, -0.02],
     markerOffset: [0.18, -0.02, 0.12],
     vitals: [
@@ -102,10 +102,10 @@ export const BODY_REGIONS: BodyRegionConfig[] = [
     id: "abdomen_metabolic",
     name: "Metabolic & Abdomen",
     anatomicalLabel: "Abdominal Cavity · Pelvic Axis",
-    boneName: "mixamorigHips",
-    boneAliases: ["mixamorig:Hips", "Hips", "mixamorigSpine"],
-    fallbackPosition: [0, 1.04, 0.04],
-    markerOffset: [0, 0.02, 0.18],
+    boneName: "Spine",
+    boneAliases: ["Spine", "mixamorigSpine", "mixamorig:Spine", "Hips"],
+    fallbackPosition: [0, 1.13, 0.04],
+    markerOffset: [0, 0.0, 0.15],
     vitals: [
       {
         key: "weight",
@@ -142,9 +142,9 @@ export const BODY_REGIONS: BodyRegionConfig[] = [
     id: "head_demographics",
     name: "Cranial Profile & Regimen",
     anatomicalLabel: "Cephalic Center · Neurovascular",
-    boneName: "mixamorigHead",
-    boneAliases: ["mixamorig:Head", "Head"],
-    fallbackPosition: [0, 1.62, 0.02],
+    boneName: "Head",
+    boneAliases: ["Head", "mixamorigHead", "mixamorig:Head"],
+    fallbackPosition: [0, 1.65, 0.02],
     markerOffset: [0, 0.08, 0.14],
     vitals: [
       {

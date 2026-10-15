@@ -47,6 +47,19 @@ class ModelService:
                 f"FATAL: Required model pipeline artifact missing at {pipeline_path}. "
                 "Ensure backend/artifacts/model_pipeline.joblib exists."
             )
+        # Compatibility shim for scikit-learn version differences during unpickling
+        try:
+            import sklearn.compose._column_transformer as _ct
+            if not hasattr(_ct, "_RemainderColsList"):
+                _ct._RemainderColsList = type("_RemainderColsList", (list,), {})
+            from sklearn.impute import SimpleImputer
+            if not hasattr(SimpleImputer, "_fill_dtype"):
+                SimpleImputer._fill_dtype = property(
+                    lambda self: getattr(self, "_fit_dtype", getattr(self.statistics_, "dtype", float))
+                )
+        except Exception:
+            pass
+
         self._pipeline = joblib.load(pipeline_path)
         logger.info("Loaded model pipeline from %s", pipeline_path)
 
@@ -455,7 +468,8 @@ class ModelService:
             features_changed.append("pulse_pressure_latest")
 
         # 3. Heart Rate
-        curr_hr = float(safe_x.iloc[0].get("hr_latest", 72.0))
+        raw_hr = safe_x.iloc[0].get("hr_latest")
+        curr_hr = float(raw_hr) if pd.notna(raw_hr) and raw_hr not in (None, "") else 72.0
         hr_val = levers.get("hr_value")
         hr_d = levers.get("hr_delta")
         if hr_val is not None:
@@ -507,7 +521,8 @@ class ModelService:
                     features_changed.append(col)
 
         # 5. Glucose
-        curr_gl = float(safe_x.iloc[0].get("glucose_latest", 100.0))
+        raw_gl = safe_x.iloc[0].get("glucose_latest")
+        curr_gl = float(raw_gl) if pd.notna(raw_gl) and raw_gl not in (None, "") else 100.0
         gl_val = levers.get("glucose_value")
         gl_d = levers.get("glucose_delta")
         if gl_val is not None:
@@ -528,7 +543,8 @@ class ModelService:
                     features_changed.append(col)
 
         # 6. HbA1c
-        curr_a1c = float(safe_x.iloc[0].get("hba1c_latest", 5.6))
+        raw_a1c = safe_x.iloc[0].get("hba1c_latest")
+        curr_a1c = float(raw_a1c) if pd.notna(raw_a1c) and raw_a1c not in (None, "") else 5.6
         a1c_val = levers.get("hba1c_value")
         a1c_d = levers.get("hba1c_delta")
         if a1c_val is not None:
