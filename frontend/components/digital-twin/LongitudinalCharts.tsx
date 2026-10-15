@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
-import { Table, Activity, Pill, HeartPulse } from "lucide-react";
+import { Table, Pill, HeartPulse } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 
 interface LongitudinalChartsProps {

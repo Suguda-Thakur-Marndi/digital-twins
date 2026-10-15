@@ -522,7 +522,7 @@ export interface SimulateRequest {
   trend?: "improving" | "stable" | "worsening" | null;
   conditions?: Record<string, number> | null;
   medications?: Record<string, number> | null;
-  custom_features?: Record<string, any> | null;
+  custom_features?: Record<string, unknown> | null;
 }
 
 export interface SHAPDiffItem {
@@ -659,7 +659,7 @@ export interface FHIRMappingReport {
   simulated_prediction: Record<string, any> | null;
 }
 
-export async function postFHIRImport(bundle: any): Promise<FHIRMappingReport> {
+export async function postFHIRImport(bundle: unknown): Promise<FHIRMappingReport> {
   return apiFetch<FHIRMappingReport>("/api/v1/import/fhir", {
     method: "POST",
     body: JSON.stringify({ bundle }),
@@ -718,7 +718,7 @@ export interface PatientRegisterRequest {
   family_history_hypertension?: boolean;
   salt_intake?: string;
   physical_activity?: string;
-  custom_features?: Record<string, any>;
+  custom_features?: Record<string, unknown>;
 }
 
 export interface PatientRegisterResponse {

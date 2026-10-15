@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useRef, useMemo, useState, useEffect, Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, useGLTF, Html } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 import { RiskTier, RISK_COLORS, normalizeTier } from "@/lib/types";
@@ -147,12 +147,96 @@ function HumanAvatar({
   );
 }
 
-// -- Compact Anatomical Hotspot with Subtle Leader Line ------------------------
-interface AnatomicalHotspotProps {
+// -- Anatomical Hotspot Anchors Calibration ----------------------------------
+// Derived from vertex buffers of Wolf3D_Outfit_Top & Wolf3D_Body in human-male.glb & human-female.glb (model offset Y = -0.91m)
+function getHotspotAnchors(isFemale: boolean) {
+  return {
+    heart: {
+      pos: [0.045, 0.365, isFemale ? 0.155 : 0.133] as [number, number, number],
+      normal: [0.15, 0.0, 0.98] as [number, number, number],
+    },
+    bmi: {
+      pos: [0.0, 0.445, isFemale ? 0.144 : 0.139] as [number, number, number],
+      normal: [0.0, 0.05, 0.99] as [number, number, number],
+    },
+    bp: {
+      pos: [-0.35, 0.36, isFemale ? -0.005 : -0.02] as [number, number, number],
+      normal: [-0.9, 0.05, 0.42] as [number, number, number],
+    },
+    pp: {
+      pos: [isFemale ? 0.405 : 0.45, 0.125, isFemale ? 0.075 : 0.065] as [number, number, number],
+      normal: [0.65, 0.1, 0.75] as [number, number, number],
+    },
+  };
+}
+
+interface HotspotConfig {
+  id: "heart" | "bp" | "pp" | "bmi";
+  pos: [number, number, number];
+  normal: [number, number, number];
+  ref: React.RefObject<HTMLDivElement | null>;
+  isActive: boolean;
+  isPinned: boolean;
+}
+
+// -- Hardware-Accelerated 3D-to-2D Viewport Projector (Runs inside R3F Scene) ---
+function HotspotProjector({ configs }: { configs: HotspotConfig[] }) {
+  const { camera, size } = useThree();
+  const tempVec = useRef(new THREE.Vector3());
+  const dirVec = useRef(new THREE.Vector3());
+  const posVecs = useMemo(
+    () => configs.map((c) => new THREE.Vector3(...c.pos)),
+    [configs]
+  );
+  const normalVecs = useMemo(
+    () => configs.map((c) => new THREE.Vector3(...c.normal).normalize()),
+    [configs]
+  );
+
+  useFrame(() => {
+    if (size.width === 0 || size.height === 0) return;
+    const widthHalf = size.width / 2;
+    const heightHalf = size.height / 2;
+
+    for (let i = 0; i < configs.length; i++) {
+      const cfg = configs[i];
+      const el = cfg.ref.current;
+      if (!el) continue;
+
+      const pVec = posVecs[i];
+      const nVec = normalVecs[i];
+
+      tempVec.current.copy(pVec).project(camera);
+
+      // Check if behind camera plane
+      const isBehind = tempVec.current.z > 1;
+
+      // Check angle with camera
+      dirVec.current.subVectors(camera.position, pVec).normalize();
+      const dot = dirVec.current.dot(nVec);
+      const isFacing = cfg.isActive || cfg.isPinned || dot > -0.35;
+
+      if (isBehind || !isFacing) {
+        el.style.opacity = "0";
+        el.style.pointerEvents = "none";
+      } else {
+        const screenX = tempVec.current.x * widthHalf + widthHalf;
+        const screenY = -(tempVec.current.y * heightHalf) + heightHalf;
+
+        el.style.transform = `translate3d(${screenX}px, ${screenY}px, 0)`;
+        el.style.opacity = "1";
+        el.style.pointerEvents = "auto";
+      }
+    }
+  });
+
+  return null;
+}
+
+// -- Compact Anatomical Hotspot Card Component (Zero-Root Pure DOM) -------------
+interface AnatomicalHotspotCardProps {
   id: "heart" | "bp" | "pp" | "bmi";
   side: "left" | "right";
-  anchorPos: [number, number, number];
-  surfaceNormal: [number, number, number];
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   value: string;
@@ -163,16 +247,15 @@ interface AnatomicalHotspotProps {
   accentColor: string;
   isActive: boolean;
   isPinned: boolean;
+  domRef: React.RefObject<HTMLDivElement | null>;
   onTogglePin: () => void;
   onHover: () => void;
   onLeave: () => void;
 }
 
-function AnatomicalHotspot({
+function AnatomicalHotspotCard({
   id,
   side,
-  anchorPos,
-  surfaceNormal,
   icon: Icon,
   title,
   value,
@@ -183,190 +266,156 @@ function AnatomicalHotspot({
   accentColor,
   isActive,
   isPinned,
+  domRef,
   onTogglePin,
   onHover,
   onLeave,
-}: AnatomicalHotspotProps) {
+}: AnatomicalHotspotCardProps) {
   const isLeft = side === "left";
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isFacingRef = useRef(true);
-
-  const anchorVec = useMemo(() => new THREE.Vector3(...anchorPos), [anchorPos]);
-  const normalVec = useMemo(
-    () => new THREE.Vector3(...surfaceNormal).normalize(),
-    [surfaceNormal]
-  );
-  const dirVec = useRef(new THREE.Vector3());
-
-  // Dynamically detect camera angle and directly mutate DOM opacity to avoid React re-renders in useFrame
-  useFrame(({ camera }) => {
-    dirVec.current.subVectors(camera.position, anchorVec).normalize();
-    const dot = dirVec.current.dot(normalVec);
-    // Stay visible when facing camera, viewing in profile (dot > -0.35), or when pinned/active
-    const facing = isActive || isPinned || dot > -0.35;
-    if (facing !== isFacingRef.current) {
-      isFacingRef.current = facing;
-      if (containerRef.current) {
-        if (facing) {
-          containerRef.current.style.opacity = "1";
-          containerRef.current.style.pointerEvents = "auto";
-        } else {
-          containerRef.current.style.opacity = "0";
-          containerRef.current.style.pointerEvents = "none";
-        }
-      }
-    }
-  });
 
   return (
-    <Html
-      position={anchorPos}
-      zIndexRange={[80, 20]}
-      style={{ pointerEvents: "none" }}
+    <div
+      ref={domRef}
+      className="absolute top-0 left-0 select-none pointer-events-auto transition-opacity duration-200"
+      style={{ transform: "translate3d(-9999px, -9999px, 0)", opacity: 0 }}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
     >
-      <div
-        ref={containerRef}
-        className="relative select-none pointer-events-auto transition-opacity duration-200"
-        style={{ opacity: 1 }}
-        onMouseEnter={onHover}
-        onMouseLeave={onLeave}
+      {/* 1. Hotspot Anchor Pulse Dot on Anatomical Surface */}
+      <button
+        type="button"
+        onClick={onTogglePin}
+        className="absolute -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full flex items-center justify-center cursor-pointer group outline-none focus-visible:ring-2 focus-visible:ring-white"
+        aria-label={`${title}: ${value} ${unit} (${statusLabel}). Click to pin.`}
+        title={`${title}: ${value} ${unit} · Click to pin`}
       >
-        {/* 1. Hotspot Anchor Pulse Dot on Anatomical Surface */}
-        <button
-          type="button"
-          onClick={onTogglePin}
-          className="absolute -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full flex items-center justify-center cursor-pointer group outline-none focus-visible:ring-2 focus-visible:ring-white"
-          aria-label={`${title}: ${value} ${unit} (${statusLabel}). Click to pin.`}
-          title={`${title}: ${value} ${unit} · Click to pin`}
-        >
-          {/* Outer Breathing Pulse Ring */}
-          <span
-            className="absolute w-4 h-4 rounded-full animate-ping opacity-60"
-            style={{
-              backgroundColor: accentColor,
-              animationDuration: id === "heart" ? "1.1s" : "2s",
-            }}
-          />
-          {/* Inner Core Dot */}
-          <span
-            className={`w-2.5 h-2.5 rounded-full border border-white/90 shadow-md transition-transform duration-200 ${
-              isActive ? "scale-125 ring-2 ring-white/70" : "group-hover:scale-125"
-            }`}
-            style={{ backgroundColor: accentColor }}
-          />
-        </button>
+        {/* Outer Breathing Pulse Ring */}
+        <span
+          className="absolute w-4 h-4 rounded-full animate-ping opacity-60"
+          style={{
+            backgroundColor: accentColor,
+            animationDuration: id === "heart" ? "1.1s" : "2s",
+          }}
+        />
+        {/* Inner Core Dot */}
+        <span
+          className={`w-2.5 h-2.5 rounded-full border border-white/90 shadow-md transition-transform duration-200 ${
+            isActive ? "scale-125 ring-2 ring-white/70" : "group-hover:scale-125"
+          }`}
+          style={{ backgroundColor: accentColor }}
+        />
+      </button>
 
-        {/* 2. Delicate Leader Line connecting Anchor to Card */}
-        {isLeft ? (
-          <svg
-            className={`absolute pointer-events-none transition-opacity duration-200 ${
-              isActive ? "opacity-100" : "opacity-0"
-            }`}
-            style={{
-              right: 2,
-              top: -8,
-              width: 50,
-              height: 20,
-              overflow: "visible",
-            }}
-          >
-            <polyline
-              points="48,8 24,8 0,8"
-              fill="none"
-              stroke={accentColor}
-              strokeWidth="1.25"
-              strokeDasharray="2,2"
-            />
-            <circle cx="0" cy="8" r="1.75" fill={accentColor} />
-          </svg>
-        ) : (
-          <svg
-            className={`absolute pointer-events-none transition-opacity duration-200 ${
-              isActive ? "opacity-100" : "opacity-0"
-            }`}
-            style={{
-              left: 2,
-              top: -8,
-              width: 50,
-              height: 20,
-              overflow: "visible",
-            }}
-          >
-            <polyline
-              points="0,8 24,8 48,8"
-              fill="none"
-              stroke={accentColor}
-              strokeWidth="1.25"
-              strokeDasharray="2,2"
-            />
-            <circle cx="48" cy="8" r="1.75" fill={accentColor} />
-          </svg>
-        )}
-
-        {/* 3. Compact Anatomical Telemetry Indicator Card (135–165px wide, 50–56px high) */}
-        <div
-          className={`absolute transition-all duration-200 ease-out ${
-            isActive
-              ? "opacity-100 scale-100 pointer-events-auto"
-              : "opacity-0 scale-95 pointer-events-none"
+      {/* 2. Delicate Leader Line connecting Anchor to Card */}
+      {isLeft ? (
+        <svg
+          className={`absolute pointer-events-none transition-opacity duration-200 ${
+            isActive ? "opacity-100" : "opacity-0"
           }`}
           style={{
-            [isLeft ? "right" : "left"]: 48,
-            top: -26,
-            width: isLeft ? 152 : 160,
+            right: 2,
+            top: -8,
+            width: 50,
+            height: 20,
+            overflow: "visible",
           }}
         >
-          <div
-            className="rounded-xl border shadow-xl backdrop-blur-md p-2 bg-slate-950/90 dark:bg-slate-950/95"
-            style={{
-              borderColor: `${accentColor}55`,
-              boxShadow: `0 8px 24px -4px rgba(0,0,0,0.6), 0 0 10px -2px ${accentColor}25`,
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border"
-                style={{
-                  backgroundColor: `${accentColor}18`,
-                  borderColor: `${accentColor}40`,
-                  color: accentColor,
-                }}
-              >
-                <Icon className="w-3.5 h-3.5" />
-              </div>
-              <div className="flex flex-col min-w-0 flex-1 leading-none">
-                <span className="text-[8px] font-mono uppercase tracking-wider text-slate-400 font-semibold truncate">
-                  {title}
+          <polyline
+            points="48,8 24,8 0,8"
+            fill="none"
+            stroke={accentColor}
+            strokeWidth="1.25"
+            strokeDasharray="2,2"
+          />
+          <circle cx="0" cy="8" r="1.75" fill={accentColor} />
+        </svg>
+      ) : (
+        <svg
+          className={`absolute pointer-events-none transition-opacity duration-200 ${
+            isActive ? "opacity-100" : "opacity-0"
+          }`}
+          style={{
+            left: 2,
+            top: -8,
+            width: 50,
+            height: 20,
+            overflow: "visible",
+          }}
+        >
+          <polyline
+            points="0,8 24,8 48,8"
+            fill="none"
+            stroke={accentColor}
+            strokeWidth="1.25"
+            strokeDasharray="2,2"
+          />
+          <circle cx="48" cy="8" r="1.75" fill={accentColor} />
+        </svg>
+      )}
+
+      {/* 3. Compact Anatomical Telemetry Indicator Card */}
+      <div
+        className={`absolute transition-all duration-200 ease-out ${
+          isActive
+            ? "opacity-100 scale-100 pointer-events-auto"
+            : "opacity-0 scale-95 pointer-events-none"
+        }`}
+        style={{
+          [isLeft ? "right" : "left"]: 48,
+          top: -26,
+          width: isLeft ? 152 : 160,
+        }}
+      >
+        <div
+          className="rounded-xl border shadow-xl backdrop-blur-md p-2 bg-slate-950/90 dark:bg-slate-950/95"
+          style={{
+            borderColor: `${accentColor}55`,
+            boxShadow: `0 8px 24px -4px rgba(0,0,0,0.6), 0 0 10px -2px ${accentColor}25`,
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border"
+              style={{
+                backgroundColor: `${accentColor}18`,
+                borderColor: `${accentColor}40`,
+                color: accentColor,
+              }}
+            >
+              <Icon className="w-3.5 h-3.5" />
+            </div>
+            <div className="flex flex-col min-w-0 flex-1 leading-none">
+              <span className="text-[8px] font-mono uppercase tracking-wider text-slate-400 font-semibold truncate">
+                {title}
+              </span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-xs sm:text-sm font-mono font-bold text-white tracking-tight">
+                  {value}
                 </span>
-                <div className="flex items-baseline gap-1 mt-0.5">
-                  <span className="text-xs sm:text-sm font-mono font-bold text-white tracking-tight">
-                    {value}
+                <span className="text-[8px] font-mono text-slate-400">{unit}</span>
+              </div>
+              <div className="flex items-center gap-1 mt-0.5">
+                <span
+                  className="text-[7.5px] font-mono px-1 py-0.2 rounded font-medium border"
+                  style={{
+                    color: statusColor,
+                    borderColor: `${statusColor}40`,
+                    backgroundColor: `${statusColor}15`,
+                  }}
+                >
+                  {statusLabel}
+                </span>
+                {subValue && (
+                  <span className="text-[7.5px] font-mono text-slate-400 truncate">
+                    {subValue}
                   </span>
-                  <span className="text-[8px] font-mono text-slate-400">{unit}</span>
-                </div>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <span
-                    className="text-[7.5px] font-mono px-1 py-0.2 rounded font-medium border"
-                    style={{
-                      color: statusColor,
-                      borderColor: `${statusColor}40`,
-                      backgroundColor: `${statusColor}15`,
-                    }}
-                  >
-                    {statusLabel}
-                  </span>
-                  {subValue && (
-                    <span className="text-[7.5px] font-mono text-slate-400 truncate">
-                      {subValue}
-                    </span>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-    </Html>
+    </div>
   );
 }
 
@@ -375,14 +424,7 @@ function Scene({
   modelUrl,
   riskColor,
   isDark,
-  heartbeat,
-  bp,
-  bmiVal,
-  pulsePressure,
-  hrStatus,
-  bpStatus,
-  bmiStatus,
-  ppStatus,
+  hotspotConfigs,
   activeHotspot,
   isPinned,
   onHoverHotspot,
@@ -394,14 +436,7 @@ function Scene({
   modelUrl: string;
   riskColor: string;
   isDark: boolean;
-  heartbeat: number;
-  bp: { sbp: number; dbp: number };
-  bmiVal: number;
-  pulsePressure: number;
-  hrStatus: { label: string; color: string };
-  bpStatus: { label: string; color: string };
-  bmiStatus: { label: string; color: string };
-  ppStatus: { label: string; color: string };
+  hotspotConfigs: HotspotConfig[];
   activeHotspot: "heart" | "bp" | "pp" | "bmi" | null;
   isPinned: boolean;
   onHoverHotspot: (id: "heart" | "bp" | "pp" | "bmi") => void;
@@ -410,29 +445,6 @@ function Scene({
   onAvatarPointerOver: () => void;
   onAvatarPointerOut: () => void;
 }) {
-  const isFemale = modelUrl.includes("female");
-
-  // Calibrated Anatomical Anchors on the Visible Torso & Limb Surfaces
-  // Derived from vertex buffers of Wolf3D_Outfit_Top & Wolf3D_Body in human-male.glb & human-female.glb (model offset Y = -0.91m):
-
-  // A. Heart Rate — Anatomical Heart (Left chest / precordium, slightly left of sternum from patient's perspective)
-  const HEART_POS: [number, number, number] = [0.045, 0.365, isFemale ? 0.155 : 0.133];
-  const HEART_NORMAL: [number, number, number] = [0.15, 0.0, 0.98];
-
-  // B. BMI — Chest (Center of upper-to-middle chest over pectoral region, below collarbone, above upper abdomen)
-  const BMI_POS: [number, number, number] = [0.0, 0.445, isFemale ? 0.144 : 0.139];
-  const BMI_NORMAL: [number, number, number] = [0.0, 0.05, 0.99];
-
-  // C. Blood Pressure — Triceps (Outer upper arm between shoulder and elbow over triceps region)
-  // Patient's right upper arm (X < 0), visible on the lateral/outer arm contour in front view
-  const BP_POS: [number, number, number] = [-0.350, 0.360, isFemale ? -0.005 : -0.020];
-  const BP_NORMAL: [number, number, number] = [-0.90, 0.05, 0.42];
-
-  // D. Pulse Pressure — Wrist (Visible wrist surface near transition between forearm and hand)
-  // Patient's left wrist (X > 0), anterior/lateral face
-  const PP_POS: [number, number, number] = [isFemale ? 0.405 : 0.450, 0.125, isFemale ? 0.075 : 0.065];
-  const PP_NORMAL: [number, number, number] = [0.65, 0.10, 0.75];
-
   return (
     <>
       {/* Studio Lighting Tailored for Ready Player Me Mannequin */}
@@ -455,165 +467,30 @@ function Scene({
       </Suspense>
 
       {/* Raycasting invisible hover hitboxes over anatomical zones (compact 0.08m radius prevents overlap) */}
-      {/* 1. Heart Precordium Hitbox */}
-      <mesh
-        position={HEART_POS}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          onHoverHotspot("heart");
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation();
-          onLeaveHotspot();
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          onTogglePinHotspot("heart");
-        }}
-        visible={false}
-      >
-        <sphereGeometry args={[0.08, 12, 12]} />
-      </mesh>
+      {hotspotConfigs.map((cfg) => (
+        <mesh
+          key={cfg.id}
+          position={cfg.pos}
+          onPointerOver={(e) => {
+            e.stopPropagation();
+            onHoverHotspot(cfg.id);
+          }}
+          onPointerOut={(e) => {
+            e.stopPropagation();
+            onLeaveHotspot();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onTogglePinHotspot(cfg.id);
+          }}
+          visible={false}
+        >
+          <sphereGeometry args={[0.08, 12, 12]} />
+        </mesh>
+      ))}
 
-      {/* 2. BMI Center Chest Hitbox */}
-      <mesh
-        position={BMI_POS}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          onHoverHotspot("bmi");
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation();
-          onLeaveHotspot();
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          onTogglePinHotspot("bmi");
-        }}
-        visible={false}
-      >
-        <sphereGeometry args={[0.08, 12, 12]} />
-      </mesh>
-
-      {/* 3. Blood Pressure Triceps Hitbox */}
-      <mesh
-        position={BP_POS}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          onHoverHotspot("bp");
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation();
-          onLeaveHotspot();
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          onTogglePinHotspot("bp");
-        }}
-        visible={false}
-      >
-        <sphereGeometry args={[0.08, 12, 12]} />
-      </mesh>
-
-      {/* 4. Pulse Pressure Wrist Hitbox */}
-      <mesh
-        position={PP_POS}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          onHoverHotspot("pp");
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation();
-          onLeaveHotspot();
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          onTogglePinHotspot("pp");
-        }}
-        visible={false}
-      >
-        <sphereGeometry args={[0.08, 12, 12]} />
-      </mesh>
-
-      {/* 1. Heart Rate Hotspot Indicator (Rose) — Anatomical Heart (Left Chest) */}
-      <AnatomicalHotspot
-        id="heart"
-        side="right"
-        anchorPos={HEART_POS}
-        surfaceNormal={HEART_NORMAL}
-        icon={Heart}
-        title="Heart Rate"
-        value={`${heartbeat}`}
-        unit="bpm"
-        statusLabel={hrStatus.label}
-        statusColor={hrStatus.color}
-        accentColor="#f43f5e"
-        isActive={isPinned || activeHotspot === "heart"}
-        isPinned={isPinned}
-        onTogglePin={() => onTogglePinHotspot("heart")}
-        onHover={() => onHoverHotspot("heart")}
-        onLeave={onLeaveHotspot}
-      />
-
-      {/* 2. BMI Hotspot Indicator (Amber) — Chest (Upper-to-Middle Chest / Pectoral) */}
-      <AnatomicalHotspot
-        id="bmi"
-        side="left"
-        anchorPos={BMI_POS}
-        surfaceNormal={BMI_NORMAL}
-        icon={Scale}
-        title="Body Mass Index"
-        value={bmiVal.toFixed(1)}
-        unit="kg/m²"
-        statusLabel={bmiStatus.label}
-        statusColor={bmiStatus.color}
-        accentColor="#f59e0b"
-        isActive={isPinned || activeHotspot === "bmi"}
-        isPinned={isPinned}
-        onTogglePin={() => onTogglePinHotspot("bmi")}
-        onHover={() => onHoverHotspot("bmi")}
-        onLeave={onLeaveHotspot}
-      />
-
-      {/* 3. Blood Pressure Hotspot Indicator (Cyan) — Triceps (Outer Upper Arm) */}
-      <AnatomicalHotspot
-        id="bp"
-        side="left"
-        anchorPos={BP_POS}
-        surfaceNormal={BP_NORMAL}
-        icon={Activity}
-        title="Blood Pressure"
-        value={`${bp.sbp}/${bp.dbp}`}
-        unit="mmHg"
-        statusLabel={bpStatus.label}
-        statusColor={bpStatus.color}
-        accentColor="#38bdf8"
-        isActive={isPinned || activeHotspot === "bp"}
-        isPinned={isPinned}
-        onTogglePin={() => onTogglePinHotspot("bp")}
-        onHover={() => onHoverHotspot("bp")}
-        onLeave={onLeaveHotspot}
-      />
-
-      {/* 4. Pulse Pressure Hotspot Indicator (Amber / Gold) — Wrist (Visible Forearm/Hand transition) */}
-      <AnatomicalHotspot
-        id="pp"
-        side="right"
-        anchorPos={PP_POS}
-        surfaceNormal={PP_NORMAL}
-        icon={Zap}
-        title="Pulse Pressure"
-        value={`${pulsePressure}`}
-        unit="mmHg"
-        statusLabel={ppStatus.label}
-        statusColor={ppStatus.color}
-        accentColor="#eab308"
-        isActive={isPinned || activeHotspot === "pp"}
-        isPinned={isPinned}
-        onTogglePin={() => onTogglePinHotspot("pp")}
-        onHover={() => onHoverHotspot("pp")}
-        onLeave={onLeaveHotspot}
-      />
+      {/* Synchronous 3D-to-2D Coordinate Projector for zero-root DOM hotspots */}
+      <HotspotProjector configs={hotspotConfigs} />
 
       {/* Orbit Controls with full body framing bounds */}
       <OrbitControls
@@ -706,6 +583,49 @@ export default function DigitalTwinViz({
 
   const activeModelUrl =
     selectedGender === "female" ? "/models/human-female.glb" : "/models/human-male.glb";
+
+  const isFemaleModel = activeModelUrl.includes("female");
+  const anchors = useMemo(() => getHotspotAnchors(isFemaleModel), [isFemaleModel]);
+
+  const hotspotHeartRef = useRef<HTMLDivElement>(null);
+  const hotspotBmiRef = useRef<HTMLDivElement>(null);
+  const hotspotBpRef = useRef<HTMLDivElement>(null);
+  const hotspotPpRef = useRef<HTMLDivElement>(null);
+
+  const hotspotConfigs = useMemo<HotspotConfig[]>(() => [
+    {
+      id: "heart",
+      pos: anchors.heart.pos,
+      normal: anchors.heart.normal,
+      ref: hotspotHeartRef,
+      isActive: isPinned || activeHotspot === "heart",
+      isPinned,
+    },
+    {
+      id: "bmi",
+      pos: anchors.bmi.pos,
+      normal: anchors.bmi.normal,
+      ref: hotspotBmiRef,
+      isActive: isPinned || activeHotspot === "bmi",
+      isPinned,
+    },
+    {
+      id: "bp",
+      pos: anchors.bp.pos,
+      normal: anchors.bp.normal,
+      ref: hotspotBpRef,
+      isActive: isPinned || activeHotspot === "bp",
+      isPinned,
+    },
+    {
+      id: "pp",
+      pos: anchors.pp.pos,
+      normal: anchors.pp.normal,
+      ref: hotspotPpRef,
+      isActive: isPinned || activeHotspot === "pp",
+      isPinned,
+    },
+  ], [anchors, isPinned, activeHotspot]);
 
   // Normalize risk tier and color
   const tier = normalizeTier(riskTier);
@@ -938,6 +858,81 @@ export default function DigitalTwinViz({
         </div>
       </div>
 
+      {/* -- Hotspots 2D Overlay (Zero-Root Pure DOM Projection) -- */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-[15]">
+        <AnatomicalHotspotCard
+          id="heart"
+          side="right"
+          icon={Heart}
+          title="Heart Rate"
+          value={`${currentHr}`}
+          unit="bpm"
+          statusLabel={hrStatus.label}
+          statusColor={hrStatus.color}
+          accentColor="#f43f5e"
+          isActive={isPinned || activeHotspot === "heart"}
+          isPinned={isPinned}
+          domRef={hotspotHeartRef}
+          onTogglePin={() => handleTogglePinHotspot("heart")}
+          onHover={() => handleHoverHotspot("heart")}
+          onLeave={handleLeaveHotspot}
+        />
+
+        <AnatomicalHotspotCard
+          id="bmi"
+          side="left"
+          icon={Scale}
+          title="Body Mass Index"
+          value={currentBmi.toFixed(1)}
+          unit="kg/m²"
+          statusLabel={bmiStatus.label}
+          statusColor={bmiStatus.color}
+          accentColor="#f59e0b"
+          isActive={isPinned || activeHotspot === "bmi"}
+          isPinned={isPinned}
+          domRef={hotspotBmiRef}
+          onTogglePin={() => handleTogglePinHotspot("bmi")}
+          onHover={() => handleHoverHotspot("bmi")}
+          onLeave={handleLeaveHotspot}
+        />
+
+        <AnatomicalHotspotCard
+          id="bp"
+          side="left"
+          icon={Activity}
+          title="Blood Pressure"
+          value={`${currentSbp}/${currentDbp}`}
+          unit="mmHg"
+          statusLabel={bpStatus.label}
+          statusColor={bpStatus.color}
+          accentColor="#38bdf8"
+          isActive={isPinned || activeHotspot === "bp"}
+          isPinned={isPinned}
+          domRef={hotspotBpRef}
+          onTogglePin={() => handleTogglePinHotspot("bp")}
+          onHover={() => handleHoverHotspot("bp")}
+          onLeave={handleLeaveHotspot}
+        />
+
+        <AnatomicalHotspotCard
+          id="pp"
+          side="right"
+          icon={Zap}
+          title="Pulse Pressure"
+          value={`${currentPulsePressure}`}
+          unit="mmHg"
+          statusLabel={ppStatus.label}
+          statusColor={ppStatus.color}
+          accentColor="#eab308"
+          isActive={isPinned || activeHotspot === "pp"}
+          isPinned={isPinned}
+          domRef={hotspotPpRef}
+          onTogglePin={() => handleTogglePinHotspot("pp")}
+          onHover={() => handleHoverHotspot("pp")}
+          onLeave={handleLeaveHotspot}
+        />
+      </div>
+
       {/* -- 3D Canvas Scene (Framed Head to Toe) -- */}
       <Canvas
         camera={{ position: [0, 0.05, 3.25], fov: 34 }}
@@ -953,14 +948,7 @@ export default function DigitalTwinViz({
           modelUrl={activeModelUrl}
           riskColor={riskColor}
           isDark={isDark}
-          heartbeat={currentHr}
-          bp={{ sbp: currentSbp, dbp: currentDbp }}
-          bmiVal={currentBmi}
-          pulsePressure={currentPulsePressure}
-          hrStatus={hrStatus}
-          bpStatus={bpStatus}
-          bmiStatus={bmiStatus}
-          ppStatus={ppStatus}
+          hotspotConfigs={hotspotConfigs}
           activeHotspot={activeHotspot}
           isPinned={isPinned}
           onHoverHotspot={handleHoverHotspot}

@@ -21,7 +21,7 @@ export default function AboutPage() {
           About TwinCare · Responsible Clinical AI Charter
         </h1>
         <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-          Developed for the Happiest Health "Reimagining and Reforming Healthcare in India Summit 2026" under the theme <em>Digital Twin in Healthcare</em>.
+          Developed for the Happiest Health &ldquo;Reimagining and Reforming Healthcare in India Summit 2026&rdquo; under the theme <em>Digital Twin in Healthcare</em>.
         </p>
       </div>
 

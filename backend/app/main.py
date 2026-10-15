@@ -735,7 +735,9 @@ async def get_audit_log(limit: int = 50):
 
 
 @app.get("/api/v1/audit/verify", response_model=schemas.AuditVerifyResponse, tags=["Audit"])
+@app.post("/api/v1/audit/verify", response_model=schemas.AuditVerifyResponse, tags=["Audit"])
 @app.get("/api/audit/verify", response_model=schemas.AuditVerifyResponse, tags=["Audit"])
+@app.post("/api/audit/verify", response_model=schemas.AuditVerifyResponse, tags=["Audit"])
 async def verify_audit_log():
     """Verify cryptographic SHA-256 hash-chain integrity across all stored log entries."""
     if _audit_svc is None:

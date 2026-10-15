@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ContributingFactor } from "@/lib/api";
-import { TrendingUp, TrendingDown, HelpCircle, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 
 interface SHAPChartProps {
   factors: ContributingFactor[];

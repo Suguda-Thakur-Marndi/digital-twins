@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useEffect, ReactNode } from "react";
 
 export type Language = "en" | "hi" | "kn";
 
@@ -239,7 +239,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const setLanguage = (_lang: Language) => {
+  const setLanguage = () => {
     // Language locked to English only
   };
 

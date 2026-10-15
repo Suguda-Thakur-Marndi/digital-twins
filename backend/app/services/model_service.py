@@ -186,6 +186,22 @@ class ModelService:
             return float(default)
 
     @staticmethod
+    def _safe_int(value: Any, default: int = 0) -> int:
+        if value is None or value == "":
+            return int(default)
+        try:
+            if isinstance(value, str):
+                value = value.strip()
+                if value == "":
+                    return int(default)
+            numeric = float(value)
+            if pd.isna(numeric):
+                return int(default)
+            return int(round(numeric))
+        except (TypeError, ValueError):
+            return int(default)
+
+    @staticmethod
     def _extract_patient_id(x_input: pd.DataFrame) -> str:
         if x_input is None or x_input.empty:
             return ""
@@ -515,13 +531,13 @@ class ModelService:
 
         # Recompute pulse pressure if SBP or DBP changed
         if (abs(sbp_delta) > 1e-4 or abs(dbp_delta) > 1e-4) and "pulse_pressure_latest" in scenario.columns:
-            new_sbp = float(scenario.iloc[0]["sbp_latest"])
-            new_dbp = float(scenario.iloc[0]["dbp_latest"])
+            new_sbp = self._safe_float(scenario.iloc[0]["sbp_latest"], 120.0)
+            new_dbp = self._safe_float(scenario.iloc[0]["dbp_latest"], 80.0)
             scenario.loc[scenario.index[0], "pulse_pressure_latest"] = new_sbp - new_dbp
             features_changed.append("pulse_pressure_latest")
 
         # 3. Heart Rate
-        curr_hr = float(safe_x.iloc[0].get("hr_latest", 72.0))
+        curr_hr = self._safe_float(safe_x.iloc[0].get("hr_latest", 72.0), 72.0)
         hr_val = levers.get("hr_value")
         hr_d = levers.get("hr_delta")
         if hr_val is not None:
@@ -542,7 +558,7 @@ class ModelService:
 
         # 4. Weight & BMI
         curr_wt = safe_x.iloc[0].get("weight_latest")
-        curr_wt_val = float(curr_wt) if pd.notna(curr_wt) and curr_wt not in (None, "") else 70.0
+        curr_wt_val = self._safe_float(curr_wt, 70.0)
         wt_val = levers.get("weight_value")
         wt_pct = levers.get("weight_delta_pct")
         if wt_val is not None and curr_wt_val > 0:
@@ -573,7 +589,7 @@ class ModelService:
                     features_changed.append(col)
 
         # 5. Glucose
-        curr_gl = float(safe_x.iloc[0].get("glucose_latest", 100.0))
+        curr_gl = self._safe_float(safe_x.iloc[0].get("glucose_latest", 100.0), 100.0)
         gl_val = levers.get("glucose_value")
         gl_d = levers.get("glucose_delta")
         if gl_val is not None:
@@ -594,7 +610,7 @@ class ModelService:
                     features_changed.append(col)
 
         # 6. HbA1c
-        curr_a1c = float(safe_x.iloc[0].get("hba1c_latest", 5.6))
+        curr_a1c = self._safe_float(safe_x.iloc[0].get("hba1c_latest", 5.6), 5.6)
         a1c_val = levers.get("hba1c_value")
         a1c_d = levers.get("hba1c_delta")
         if a1c_val is not None:
@@ -646,14 +662,14 @@ class ModelService:
             c_diff = 0
             for c_col, c_val in conds.items():
                 if c_col in scenario.columns and c_val is not None:
-                    orig_val = int(safe_x.iloc[0].get(c_col, 0))
-                    new_val = int(c_val)
+                    orig_val = self._safe_int(safe_x.iloc[0].get(c_col, 0))
+                    new_val = self._safe_int(c_val)
                     if orig_val != new_val:
                         scenario.loc[scenario.index[0], c_col] = new_val
                         features_changed.append(c_col)
                         c_diff += (new_val - orig_val)
             if c_diff != 0 and "total_prior_conditions" in scenario.columns:
-                old_tot = int(safe_x.iloc[0].get("total_prior_conditions", 0))
+                old_tot = self._safe_int(safe_x.iloc[0].get("total_prior_conditions", 0))
                 scenario.loc[scenario.index[0], "total_prior_conditions"] = max(0, old_tot + c_diff)
                 features_changed.append("total_prior_conditions")
 
@@ -663,14 +679,14 @@ class ModelService:
             m_diff = 0
             for m_col, m_val in meds.items():
                 if m_col in scenario.columns and m_val is not None:
-                    orig_val = int(safe_x.iloc[0].get(m_col, 0))
-                    new_val = int(m_val)
+                    orig_val = self._safe_int(safe_x.iloc[0].get(m_col, 0))
+                    new_val = self._safe_int(m_val)
                     if orig_val != new_val:
                         scenario.loc[scenario.index[0], m_col] = new_val
                         features_changed.append(m_col)
                         m_diff += (new_val - orig_val)
             if m_diff != 0 and "total_prior_medications" in scenario.columns:
-                old_tot = int(safe_x.iloc[0].get("total_prior_medications", 0))
+                old_tot = self._safe_int(safe_x.iloc[0].get("total_prior_medications", 0))
                 scenario.loc[scenario.index[0], "total_prior_medications"] = max(0, old_tot + m_diff)
                 features_changed.append("total_prior_medications")
 
@@ -820,7 +836,7 @@ class ModelService:
         }
 
         # 2. DBP
-        curr_dbp = float(safe_x.iloc[0].get("dbp_latest", 80.0))
+        curr_dbp = self._safe_float(safe_x.iloc[0].get("dbp_latest", 80.0), 80.0)
         dbp_points = []
         for d in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
             t_val = round(curr_dbp + d, 1)
@@ -840,7 +856,7 @@ class ModelService:
         }
 
         # 3. Weight
-        curr_wt = float(safe_x.iloc[0].get("weight_latest", 70.0))
+        curr_wt = self._safe_float(safe_x.iloc[0].get("weight_latest", 70.0), 70.0)
         wt_points = []
         for pct in [-0.15, -0.10, -0.05, 0.0, 0.05, 0.10, 0.15]:
             t_val = round(curr_wt * (1.0 + pct), 1)
@@ -860,7 +876,7 @@ class ModelService:
         }
 
         # 4. Heart Rate
-        curr_hr = float(safe_x.iloc[0].get("hr_latest", 72.0))
+        curr_hr = self._safe_float(safe_x.iloc[0].get("hr_latest", 72.0), 72.0)
         hr_points = []
         for d in [-20, -10, -5, 0, 5, 10, 20]:
             t_val = round(curr_hr + d, 1)
@@ -880,7 +896,7 @@ class ModelService:
         }
 
         # 5. Glucose
-        curr_gl = float(safe_x.iloc[0].get("glucose_latest", 100.0))
+        curr_gl = self._safe_float(safe_x.iloc[0].get("glucose_latest", 100.0), 100.0)
         gl_points = []
         for d in [-30, -20, -10, 0, 10, 20, 30, 50]:
             t_val = round(curr_gl + d, 1)
@@ -900,7 +916,7 @@ class ModelService:
         }
 
         # 6. HbA1c
-        curr_a1c = float(safe_x.iloc[0].get("hba1c_latest", 5.6))
+        curr_a1c = self._safe_float(safe_x.iloc[0].get("hba1c_latest", 5.6), 5.6)
         a1c_points = []
         for d in [-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5]:
             t_val = round(curr_a1c + d, 1)

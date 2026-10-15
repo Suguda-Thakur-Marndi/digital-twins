@@ -633,6 +633,10 @@ def test_add_reading_and_deletion_and_audit_chain(client):
     assert verify_res.status_code == 200
     assert verify_res.json()["is_valid"] is True
 
+    verify_post = client.post("/api/v1/audit/verify")
+    assert verify_post.status_code == 200
+    assert verify_post.json()["is_valid"] is True
+
     # 4. Attempt deleting a demo patient -> 403 Forbidden
     del_demo = client.delete("/api/v1/patients/PT-101")
     assert del_demo.status_code == 403
