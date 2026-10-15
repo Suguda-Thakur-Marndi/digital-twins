@@ -51,7 +51,7 @@ class ModelService:
         try:
             import sklearn.compose._column_transformer as _ct
             if not hasattr(_ct, "_RemainderColsList"):
-                _ct._RemainderColsList = type("_RemainderColsList", (list,), {})
+                _ct._RemainderColsList = type("_RemainderColsList", (list,), {})  # type: ignore[attr-defined]
             from sklearn.impute import SimpleImputer
             if not hasattr(SimpleImputer, "_fill_dtype"):
                 SimpleImputer._fill_dtype = property(
