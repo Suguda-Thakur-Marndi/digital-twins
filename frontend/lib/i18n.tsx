@@ -229,30 +229,22 @@ const LanguageContext = createContext<LanguageContextType>({
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("en");
+  const language: Language = "en";
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("twincare_language") as Language;
-      if (saved && (saved === "en" || saved === "hi" || saved === "kn")) {
-        setLanguageState(saved);
-      }
+      localStorage.setItem("twincare_language", "en");
     } catch {
       // localStorage may not be available during SSR
     }
   }, []);
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    try {
-      localStorage.setItem("twincare_language", lang);
-    } catch {
-      // ignore
-    }
+  const setLanguage = (_lang: Language) => {
+    // Language locked to English only
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t: TRANSLATIONS[language] }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t: TRANSLATIONS.en }}>
       {children}
     </LanguageContext.Provider>
   );

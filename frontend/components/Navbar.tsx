@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeProvider";
-import { LanguageSelector } from "@/components/LanguageSelector";
 import {
   Activity,
   Layers,
@@ -152,11 +151,6 @@ export function Navbar() {
 
           {/* Right Action Controls */}
           <div className="flex items-center gap-2">
-            {/* Language Selector */}
-            <div className="hidden sm:block">
-              <LanguageSelector compact />
-            </div>
-
             {/* Dark / Light Theme Toggle Switcher */}
             <ThemeToggle />
 
@@ -212,8 +206,7 @@ export function Navbar() {
                   </Link>
                 );
               })}
-              <div className="pt-3 mt-2 border-t border-[var(--glass-border)] flex items-center justify-between">
-                <LanguageSelector />
+              <div className="pt-3 mt-2 border-t border-[var(--glass-border)] flex items-center justify-end">
                 <Link
                   href="/twin?patient=PT-101"
                   onClick={() => setMobileMenuOpen(false)}

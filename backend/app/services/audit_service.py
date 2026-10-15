@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-MAX_LOG_ENTRIES = 1000
+MAX_LOG_ENTRIES = 50000
 GENESIS_HASH = "0" * 64
 
 
@@ -165,7 +165,7 @@ class AuditService:
                 "message": "Audit log is empty; hash-chain initialized at genesis.",
             }
 
-        expected_prev = GENESIS_HASH
+        expected_prev = entries[0].get("prev_hash", GENESIS_HASH) if entries[0].get("entry_index", 0) > 0 else GENESIS_HASH
         for i, entry in enumerate(entries):
             # normalize stale or truncated entries before validation so the file-backed
             # chain is checked against the canonical genesis-based sequence instead of the

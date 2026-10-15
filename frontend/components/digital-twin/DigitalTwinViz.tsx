@@ -1,385 +1,28 @@
 "use client";
 
-import React, { useRef, useMemo, useCallback, useState } from "react";
-import { Canvas, useFrame, ThreeEvent } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import React, { useRef, useMemo, useState, useEffect, Suspense } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
-import { RiskTier, RISK_COLORS } from "@/lib/types";
+import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
+import { RiskTier, RISK_COLORS, normalizeTier } from "@/lib/types";
 import { useTheme } from "@/components/ThemeProvider";
+import { getRiskShapeCue } from "@/lib/bodyMap";
+import {
+  Heart,
+  Activity,
+  Scale,
+  Zap,
+  AlertTriangle,
+  Pin,
+  CheckCircle2,
+} from "lucide-react";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-interface VitalNode {
-  id: string;
-  label: string;
-  value: string | null;
-  angle: number; // radians around center
-  radius: number;
-  height: number;
-  color: string;
-}
+// Preload Ready Player Me 3D human models
+useGLTF.preload("/models/human-male.glb");
+useGLTF.preload("/models/human-female.glb");
 
-// ── Core glow sphere ─────────────────────────────────────────────────────────
-function CoreSphere({ riskTier, riskColor, isDark }: { riskTier: RiskTier | null; riskColor: string; isDark: boolean }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const glowRef = useRef<THREE.Mesh>(null);
-
-  const speed = riskTier === "HIGH" ? 2.0 : riskTier === "MEDIUM" ? 1.0 : 0.4;
-
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    if (meshRef.current) {
-      const mat = meshRef.current.material as THREE.MeshStandardMaterial;
-      mat.emissiveIntensity = (isDark ? 0.45 : 0.3) + Math.sin(t * speed) * 0.25;
-      meshRef.current.rotation.y = t * 0.2;
-      meshRef.current.rotation.x = Math.sin(t * 0.15) * 0.05;
-    }
-    if (glowRef.current) {
-      const s = 1 + Math.sin(t * speed * 0.7) * 0.04;
-      glowRef.current.scale.setScalar(s);
-      const mat = glowRef.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = (isDark ? 0.08 : 0.05) + Math.sin(t * speed) * 0.03;
-    }
-  });
-
-  const mat = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: riskColor,
-        emissive: new THREE.Color(riskColor),
-        emissiveIntensity: isDark ? 0.55 : 0.35,
-        roughness: 0.25,
-        metalness: isDark ? 0.6 : 0.4,
-        transparent: true,
-        opacity: 0.92,
-      }),
-    [riskColor, isDark]
-  );
-
-  const glowMat = useMemo(
-    () =>
-      new THREE.MeshBasicMaterial({
-        color: riskColor,
-        transparent: true,
-        opacity: isDark ? 0.1 : 0.06,
-        side: THREE.BackSide,
-      }),
-    [riskColor, isDark]
-  );
-
-  return (
-    <group>
-      {/* Main core */}
-      <mesh ref={meshRef} material={mat}>
-        <icosahedronGeometry args={[0.28, 3]} />
-      </mesh>
-      {/* Outer glow */}
-      <mesh ref={glowRef} material={glowMat}>
-        <sphereGeometry args={[0.52, 24, 24]} />
-      </mesh>
-    </group>
-  );
-}
-
-// ── Animated connection line ─────────────────────────────────────────────────
-function ConnectionLine({
-  start,
-  end,
-  color,
-  opacity = 0.25,
-  speed = 1.0,
-}: {
-  start: THREE.Vector3;
-  end: THREE.Vector3;
-  color: string;
-  opacity?: number;
-  speed?: number;
-}) {
-  const lineRef = useRef<THREE.Line>(null);
-
-  const points = useMemo(() => [start, end], [start, end]);
-  const geometry = useMemo(() => {
-    const g = new THREE.BufferGeometry().setFromPoints(points);
-    return g;
-  }, [points]);
-
-  useFrame(({ clock }) => {
-    if (lineRef.current) {
-      const mat = lineRef.current.material as THREE.LineBasicMaterial;
-      mat.opacity = opacity * (0.5 + 0.5 * Math.sin(clock.getElapsedTime() * speed + Math.random() * Math.PI));
-    }
-  });
-
-  return (
-    <primitive
-      object={
-        new THREE.Line(
-          geometry,
-          new THREE.LineBasicMaterial({ color, transparent: true, opacity })
-        )
-      }
-      ref={lineRef}
-    />
-  );
-}
-
-// ── Data node sphere (vital sign) ────────────────────────────────────────────
-function DataNode({
-  node,
-  riskTier,
-  active,
-  isDark,
-  onHover,
-  onLeave,
-  onClick,
-}: {
-  node: VitalNode;
-  riskTier: RiskTier | null;
-  active: boolean;
-  isDark: boolean;
-  onHover: () => void;
-  onLeave: () => void;
-  onClick: () => void;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const speed = riskTier === "HIGH" ? 0.6 : riskTier === "MEDIUM" ? 0.35 : 0.18;
-
-  useFrame(({ clock }) => {
-    if (!meshRef.current) return;
-    const t = clock.getElapsedTime();
-    // Orbit around center
-    const theta = node.angle + t * speed * 0.25;
-    meshRef.current.position.x = Math.cos(theta) * node.radius;
-    meshRef.current.position.z = Math.sin(theta) * node.radius;
-    meshRef.current.position.y = node.height + Math.sin(t * speed + node.angle) * 0.06;
-    // Pulse scale
-    const s = active ? 1.4 : 1 + Math.sin(t * speed * 2 + node.angle) * 0.08;
-    meshRef.current.scale.setScalar(s);
-  });
-
-  const mat = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: node.color,
-        emissive: new THREE.Color(node.color),
-        emissiveIntensity: active ? 0.95 : isDark ? 0.45 : 0.3,
-        roughness: 0.25,
-        metalness: isDark ? 0.6 : 0.3,
-        transparent: true,
-        opacity: active ? 1 : 0.88,
-      }),
-    [node.color, active, isDark]
-  );
-
-  return (
-    <mesh
-      ref={meshRef}
-      material={mat}
-      onPointerOver={(e: ThreeEvent<PointerEvent>) => {
-        e.stopPropagation();
-        onHover();
-      }}
-      onPointerOut={onLeave}
-      onClick={(e: ThreeEvent<MouseEvent>) => {
-        e.stopPropagation();
-        onClick();
-      }}
-    >
-      <sphereGeometry args={[active ? 0.11 : 0.085, 20, 20]} />
-    </mesh>
-  );
-}
-
-// ── Orbital ring ────────────────────────────────────────────────────────────
-function OrbitalRing({
-  radius,
-  color,
-  tilt = 0,
-  speed = 0.1,
-  opacity = 0.12,
-}: {
-  radius: number;
-  color: string;
-  tilt?: number;
-  speed?: number;
-  opacity?: number;
-}) {
-  const ref = useRef<THREE.Mesh>(null);
-  useFrame(({ clock }) => {
-    if (!ref.current) return;
-    ref.current.rotation.z = clock.getElapsedTime() * speed;
-  });
-  const mat = useMemo(
-    () => new THREE.MeshBasicMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide }),
-    [color, opacity]
-  );
-  return (
-    <mesh ref={ref} rotation={[Math.PI / 2 + tilt, 0, 0]} material={mat}>
-      <torusGeometry args={[radius, 0.007, 4, 80]} />
-    </mesh>
-  );
-}
-
-// ── Floating data particles ──────────────────────────────────────────────────
-function DataParticles({ riskTier, riskColor, isDark }: { riskTier: RiskTier | null; riskColor: string; isDark: boolean }) {
-  const count = 75;
-  const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const r = 0.6 + Math.random() * 1.8;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      arr[i * 3 + 1] = r * Math.cos(phi);
-      arr[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-    }
-    return arr;
-  }, []);
-
-  const speeds = useMemo(() => Array.from({ length: count }, () => Math.random() * 0.5 + 0.2), []);
-
-  const pointsRef = useRef<THREE.Points>(null);
-  const speed = riskTier === "HIGH" ? 1.5 : riskTier === "MEDIUM" ? 0.8 : 0.4;
-
-  useFrame(({ clock }) => {
-    if (!pointsRef.current) return;
-    const t = clock.getElapsedTime();
-    const posAttr = pointsRef.current.geometry.getAttribute("position") as THREE.BufferAttribute;
-    for (let i = 0; i < count; i++) {
-      const s = speeds[i];
-      posAttr.setY(i, positions[i * 3 + 1] + Math.sin(t * speed * s + i) * 0.03);
-    }
-    posAttr.needsUpdate = true;
-    pointsRef.current.rotation.y = t * 0.04;
-  });
-
-  const geo = useMemo(() => {
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(positions.slice(), 3));
-    return g;
-  }, [positions]);
-
-  const mat = useMemo(
-    () =>
-      new THREE.PointsMaterial({
-        color: riskColor,
-        size: isDark ? 0.022 : 0.016,
-        transparent: true,
-        opacity: isDark ? 0.55 : 0.35,
-      }),
-    [riskColor, isDark]
-  );
-
-  return <points ref={pointsRef} geometry={geo} material={mat} />;
-}
-
-// ── Default fallback nodes ───────────────────────────────────────────────────
-const DEMO_NODES: VitalNode[] = [
-  { id: "sbp", label: "SBP", value: null, angle: 0, radius: 1.1, height: 0.3, color: "#06b6d4" },
-  { id: "dbp", label: "DBP", value: null, angle: (2 * Math.PI) / 5, radius: 1.0, height: 0.0, color: "#8b5cf6" },
-  { id: "bmi", label: "BMI", value: null, angle: (4 * Math.PI) / 5, radius: 1.1, height: 0.2, color: "#f59e0b" },
-  { id: "hr", label: "HR", value: null, angle: (6 * Math.PI) / 5, radius: 0.95, height: -0.1, color: "#ef4444" },
-  { id: "weight", label: "WEIGHT", value: null, angle: (8 * Math.PI) / 5, radius: 1.05, height: 0.1, color: "#22c55e" },
-  { id: "risk", label: "RISK", value: null, angle: Math.PI / 5, radius: 0.85, height: 0.4, color: "#94a3b8" },
-];
-
-// ── Scene ─────────────────────────────────────────────────────────────────────
-function Scene({
-  riskTier,
-  riskColor,
-  nodes,
-  isDark,
-  onActiveNodeChange,
-}: {
-  riskTier: RiskTier | null;
-  riskColor: string;
-  nodes: VitalNode[];
-  isDark: boolean;
-  onActiveNodeChange: (node: VitalNode | null) => void;
-}) {
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  const activeId = hoveredId ?? selectedId;
-
-  const handleHover = useCallback(
-    (node: VitalNode) => {
-      setHoveredId(node.id);
-      onActiveNodeChange(node);
-    },
-    [onActiveNodeChange]
-  );
-
-  const handleLeave = useCallback(() => {
-    setHoveredId(null);
-    onActiveNodeChange(selectedId ? nodes.find((n) => n.id === selectedId) ?? null : null);
-  }, [selectedId, nodes, onActiveNodeChange]);
-
-  const handleClick = useCallback(
-    (node: VitalNode) => {
-      setSelectedId((prev) => {
-        const next = prev === node.id ? null : node.id;
-        onActiveNodeChange(next ? node : null);
-        return next;
-      });
-    },
-    [onActiveNodeChange]
-  );
-
-  return (
-    <>
-      {/* Dynamic Theme Lighting */}
-      <ambientLight intensity={isDark ? 0.45 : 0.7} />
-      <pointLight position={[2, 3, 2]} intensity={isDark ? 1.4 : 1.1} color={isDark ? "#93c5fd" : "#2563eb"} />
-      <pointLight position={[-2, -1, -2]} intensity={0.6} color={riskColor} />
-      <pointLight position={[0, 2, 0]} intensity={isDark ? 0.4 : 0.25} color="#22d3ee" />
-
-      {/* Grid helper with theme-aware styling */}
-      <gridHelper
-        args={[8, 20, isDark ? "#1e293b" : "#cbd5e1", isDark ? "#0f172a" : "#e2e8f0"]}
-        position={[0, -1.0, 0]}
-      />
-
-      {/* Core */}
-      <CoreSphere riskTier={riskTier} riskColor={riskColor} isDark={isDark} />
-
-      {/* Orbital rings */}
-      <OrbitalRing radius={0.75} color={riskColor} tilt={0.2} speed={0.08} opacity={isDark ? 0.16 : 0.1} />
-      <OrbitalRing radius={1.15} color={isDark ? "#38bdf8" : "#0284c7"} tilt={-0.1} speed={-0.05} opacity={isDark ? 0.12 : 0.08} />
-      <OrbitalRing radius={1.55} color={isDark ? "#818cf8" : "#4f46e5"} tilt={0.4} speed={0.03} opacity={isDark ? 0.1 : 0.06} />
-
-      {/* Vital data nodes */}
-      {nodes.map((node) => (
-        <DataNode
-          key={node.id}
-          node={node}
-          riskTier={riskTier}
-          active={activeId === node.id}
-          isDark={isDark}
-          onHover={() => handleHover(node)}
-          onLeave={handleLeave}
-          onClick={() => handleClick(node)}
-        />
-      ))}
-
-      {/* Floating particles */}
-      <DataParticles riskTier={riskTier} riskColor={riskColor} isDark={isDark} />
-
-      {/* Orbit controls */}
-      <OrbitControls
-        enablePan={false}
-        minDistance={2.0}
-        maxDistance={6.0}
-        minPolarAngle={Math.PI / 6}
-        maxPolarAngle={(2 * Math.PI) / 3}
-        autoRotate
-        autoRotateSpeed={riskTier === "HIGH" ? 1.5 : riskTier === "MEDIUM" ? 0.8 : 0.4}
-        makeDefault
-      />
-    </>
-  );
-}
-
-// ── Public component ──────────────────────────────────────────────────────────
+// -- Props ---------------------------------------------------------------------
 export interface DigitalTwinVizProps {
   riskTier: RiskTier | null;
   loading?: boolean;
@@ -389,12 +32,606 @@ export interface DigitalTwinVizProps {
   bmi?: number | null;
   hr?: number | null;
   weight?: number | null;
+  glucose?: number | null;
+  hba1c?: number | null;
+  age?: number | null;
+  gender?: string | null;
   riskScore?: number | null;
   patientName?: string;
   height?: string;
   className?: string;
 }
 
+// -- Clinical evaluation helpers -----------------------------------------------
+function getBpCategory(sbp: number, dbp: number): { label: string; color: string } {
+  if (sbp >= 140 || dbp >= 90) return { label: "Stage 2 HTN", color: "#f43f5e" };
+  if (sbp >= 130 || dbp >= 80) return { label: "Stage 1 HTN", color: "#f59e0b" };
+  if (sbp >= 120 && dbp < 80) return { label: "Elevated", color: "#38bdf8" };
+  return { label: "Optimal", color: "#10b981" };
+}
+
+function getHrCategory(hr: number): { label: string; color: string } {
+  if (hr > 100) return { label: "Tachycardia", color: "#f43f5e" };
+  if (hr < 60) return { label: "Bradycardia", color: "#38bdf8" };
+  return { label: "Normal", color: "#10b981" };
+}
+
+function getBmiCategory(bmi: number): { label: string; color: string } {
+  if (bmi >= 30) return { label: "Obesity", color: "#f43f5e" };
+  if (bmi >= 25) return { label: "Overweight", color: "#f59e0b" };
+  if (bmi >= 18.5) return { label: "Normal weight", color: "#10b981" };
+  return { label: "Underweight", color: "#38bdf8" };
+}
+
+function getPpCategory(pp: number): { label: string; color: string } {
+  if (pp > 60) return { label: "Stiff Arteries", color: "#f43f5e" };
+  if (pp > 50) return { label: "Borderline", color: "#f59e0b" };
+  return { label: "Normal", color: "#10b981" };
+}
+
+// -- Clean 3D Human Avatar (Centered vertically at origin) ---------------------
+function HumanAvatar({
+  modelUrl,
+  isDark,
+  onPointerOver,
+  onPointerOut,
+}: {
+  modelUrl: string;
+  isDark: boolean;
+  onPointerOver: () => void;
+  onPointerOut: () => void;
+}) {
+  const { scene } = useGLTF(modelUrl);
+  const avatarGroupRef = useRef<THREE.Group>(null);
+  const spineRef = useRef<THREE.Object3D | null>(null);
+
+  // Model spans ~ [-0.04m, 1.86m] in Y. Offset by -0.91m centers head-to-toe around Y = 0.
+  const modelYOffset = -0.91;
+
+  // Clone scene with skeleton intact while preserving original textures and materials
+  const clone = useMemo(() => {
+    const cloned = SkeletonUtils.clone(scene);
+
+    cloned.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
+        if (mesh.material) {
+          const mat = mesh.material as THREE.MeshStandardMaterial;
+          mat.depthWrite = true;
+          mat.roughness = Math.min(0.85, Math.max(0.4, mat.roughness || 0.6));
+          mat.metalness = Math.min(0.25, mat.metalness || 0.05);
+        }
+      }
+    });
+
+    return cloned;
+  }, [scene]);
+
+  useEffect(() => {
+    if (!avatarGroupRef.current) return;
+    avatarGroupRef.current.updateMatrixWorld(true);
+    spineRef.current = clone.getObjectByName("Spine1") || clone.getObjectByName("Spine2") || null;
+  }, [clone]);
+
+  // Subtle natural breathing cycle on spine
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    if (spineRef.current) {
+      spineRef.current.rotation.x = Math.sin(t * 1.5) * 0.012;
+    }
+  });
+
+  return (
+    <group
+      ref={avatarGroupRef}
+      position={[0, modelYOffset, 0]}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+    >
+      {/* Ready Player Me 3D Human Avatar */}
+      <primitive object={clone} />
+
+      {/* Subtle floor contact shadow pedestal directly beneath feet */}
+      <mesh position={[0, -0.04, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[0.72, 32]} />
+        <meshBasicMaterial
+          color={isDark ? "#020617" : "#cbd5e1"}
+          transparent
+          opacity={isDark ? 0.45 : 0.25}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+// -- Compact Anatomical Hotspot with Subtle Leader Line ------------------------
+interface AnatomicalHotspotProps {
+  id: "heart" | "bp" | "pp" | "bmi";
+  side: "left" | "right";
+  anchorPos: [number, number, number];
+  surfaceNormal: [number, number, number];
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  value: string;
+  unit: string;
+  statusLabel: string;
+  statusColor: string;
+  subValue?: string;
+  accentColor: string;
+  isActive: boolean;
+  isPinned: boolean;
+  onTogglePin: () => void;
+  onHover: () => void;
+  onLeave: () => void;
+}
+
+function AnatomicalHotspot({
+  id,
+  side,
+  anchorPos,
+  surfaceNormal,
+  icon: Icon,
+  title,
+  value,
+  unit,
+  statusLabel,
+  statusColor,
+  subValue,
+  accentColor,
+  isActive,
+  isPinned,
+  onTogglePin,
+  onHover,
+  onLeave,
+}: AnatomicalHotspotProps) {
+  const isLeft = side === "left";
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isFacingRef = useRef(true);
+
+  const anchorVec = useMemo(() => new THREE.Vector3(...anchorPos), [anchorPos]);
+  const normalVec = useMemo(
+    () => new THREE.Vector3(...surfaceNormal).normalize(),
+    [surfaceNormal]
+  );
+  const dirVec = useRef(new THREE.Vector3());
+
+  // Dynamically detect camera angle and directly mutate DOM opacity to avoid React re-renders in useFrame
+  useFrame(({ camera }) => {
+    dirVec.current.subVectors(camera.position, anchorVec).normalize();
+    const dot = dirVec.current.dot(normalVec);
+    // Stay visible when facing camera, viewing in profile (dot > -0.35), or when pinned/active
+    const facing = isActive || isPinned || dot > -0.35;
+    if (facing !== isFacingRef.current) {
+      isFacingRef.current = facing;
+      if (containerRef.current) {
+        if (facing) {
+          containerRef.current.style.opacity = "1";
+          containerRef.current.style.pointerEvents = "auto";
+        } else {
+          containerRef.current.style.opacity = "0";
+          containerRef.current.style.pointerEvents = "none";
+        }
+      }
+    }
+  });
+
+  return (
+    <Html
+      position={anchorPos}
+      zIndexRange={[80, 20]}
+      style={{ pointerEvents: "none" }}
+    >
+      <div
+        ref={containerRef}
+        className="relative select-none pointer-events-auto transition-opacity duration-200"
+        style={{ opacity: 1 }}
+        onMouseEnter={onHover}
+        onMouseLeave={onLeave}
+      >
+        {/* 1. Hotspot Anchor Pulse Dot on Anatomical Surface */}
+        <button
+          type="button"
+          onClick={onTogglePin}
+          className="absolute -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full flex items-center justify-center cursor-pointer group outline-none focus-visible:ring-2 focus-visible:ring-white"
+          aria-label={`${title}: ${value} ${unit} (${statusLabel}). Click to pin.`}
+          title={`${title}: ${value} ${unit} · Click to pin`}
+        >
+          {/* Outer Breathing Pulse Ring */}
+          <span
+            className="absolute w-4 h-4 rounded-full animate-ping opacity-60"
+            style={{
+              backgroundColor: accentColor,
+              animationDuration: id === "heart" ? "1.1s" : "2s",
+            }}
+          />
+          {/* Inner Core Dot */}
+          <span
+            className={`w-2.5 h-2.5 rounded-full border border-white/90 shadow-md transition-transform duration-200 ${
+              isActive ? "scale-125 ring-2 ring-white/70" : "group-hover:scale-125"
+            }`}
+            style={{ backgroundColor: accentColor }}
+          />
+        </button>
+
+        {/* 2. Delicate Leader Line connecting Anchor to Card */}
+        {isLeft ? (
+          <svg
+            className={`absolute pointer-events-none transition-opacity duration-200 ${
+              isActive ? "opacity-100" : "opacity-0"
+            }`}
+            style={{
+              right: 2,
+              top: -8,
+              width: 50,
+              height: 20,
+              overflow: "visible",
+            }}
+          >
+            <polyline
+              points="48,8 24,8 0,8"
+              fill="none"
+              stroke={accentColor}
+              strokeWidth="1.25"
+              strokeDasharray="2,2"
+            />
+            <circle cx="0" cy="8" r="1.75" fill={accentColor} />
+          </svg>
+        ) : (
+          <svg
+            className={`absolute pointer-events-none transition-opacity duration-200 ${
+              isActive ? "opacity-100" : "opacity-0"
+            }`}
+            style={{
+              left: 2,
+              top: -8,
+              width: 50,
+              height: 20,
+              overflow: "visible",
+            }}
+          >
+            <polyline
+              points="0,8 24,8 48,8"
+              fill="none"
+              stroke={accentColor}
+              strokeWidth="1.25"
+              strokeDasharray="2,2"
+            />
+            <circle cx="48" cy="8" r="1.75" fill={accentColor} />
+          </svg>
+        )}
+
+        {/* 3. Compact Anatomical Telemetry Indicator Card (135–165px wide, 50–56px high) */}
+        <div
+          className={`absolute transition-all duration-200 ease-out ${
+            isActive
+              ? "opacity-100 scale-100 pointer-events-auto"
+              : "opacity-0 scale-95 pointer-events-none"
+          }`}
+          style={{
+            [isLeft ? "right" : "left"]: 48,
+            top: -26,
+            width: isLeft ? 152 : 160,
+          }}
+        >
+          <div
+            className="rounded-xl border shadow-xl backdrop-blur-md p-2 bg-slate-950/90 dark:bg-slate-950/95"
+            style={{
+              borderColor: `${accentColor}55`,
+              boxShadow: `0 8px 24px -4px rgba(0,0,0,0.6), 0 0 10px -2px ${accentColor}25`,
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <div
+                className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border"
+                style={{
+                  backgroundColor: `${accentColor}18`,
+                  borderColor: `${accentColor}40`,
+                  color: accentColor,
+                }}
+              >
+                <Icon className="w-3.5 h-3.5" />
+              </div>
+              <div className="flex flex-col min-w-0 flex-1 leading-none">
+                <span className="text-[8px] font-mono uppercase tracking-wider text-slate-400 font-semibold truncate">
+                  {title}
+                </span>
+                <div className="flex items-baseline gap-1 mt-0.5">
+                  <span className="text-xs sm:text-sm font-mono font-bold text-white tracking-tight">
+                    {value}
+                  </span>
+                  <span className="text-[8px] font-mono text-slate-400">{unit}</span>
+                </div>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <span
+                    className="text-[7.5px] font-mono px-1 py-0.2 rounded font-medium border"
+                    style={{
+                      color: statusColor,
+                      borderColor: `${statusColor}40`,
+                      backgroundColor: `${statusColor}15`,
+                    }}
+                  >
+                    {statusLabel}
+                  </span>
+                  {subValue && (
+                    <span className="text-[7.5px] font-mono text-slate-400 truncate">
+                      {subValue}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Html>
+  );
+}
+
+// -- Main 3D Canvas Scene ------------------------------------------------------
+function Scene({
+  modelUrl,
+  riskColor,
+  isDark,
+  heartbeat,
+  bp,
+  bmiVal,
+  pulsePressure,
+  hrStatus,
+  bpStatus,
+  bmiStatus,
+  ppStatus,
+  activeHotspot,
+  isPinned,
+  onHoverHotspot,
+  onLeaveHotspot,
+  onTogglePinHotspot,
+  onAvatarPointerOver,
+  onAvatarPointerOut,
+}: {
+  modelUrl: string;
+  riskColor: string;
+  isDark: boolean;
+  heartbeat: number;
+  bp: { sbp: number; dbp: number };
+  bmiVal: number;
+  pulsePressure: number;
+  hrStatus: { label: string; color: string };
+  bpStatus: { label: string; color: string };
+  bmiStatus: { label: string; color: string };
+  ppStatus: { label: string; color: string };
+  activeHotspot: "heart" | "bp" | "pp" | "bmi" | null;
+  isPinned: boolean;
+  onHoverHotspot: (id: "heart" | "bp" | "pp" | "bmi") => void;
+  onLeaveHotspot: () => void;
+  onTogglePinHotspot: (id: "heart" | "bp" | "pp" | "bmi") => void;
+  onAvatarPointerOver: () => void;
+  onAvatarPointerOut: () => void;
+}) {
+  const isFemale = modelUrl.includes("female");
+
+  // Calibrated Anatomical Anchors on the Visible Torso & Limb Surfaces
+  // Derived from vertex buffers of Wolf3D_Outfit_Top & Wolf3D_Body in human-male.glb & human-female.glb (model offset Y = -0.91m):
+
+  // A. Heart Rate — Anatomical Heart (Left chest / precordium, slightly left of sternum from patient's perspective)
+  const HEART_POS: [number, number, number] = [0.045, 0.365, isFemale ? 0.155 : 0.133];
+  const HEART_NORMAL: [number, number, number] = [0.15, 0.0, 0.98];
+
+  // B. BMI — Chest (Center of upper-to-middle chest over pectoral region, below collarbone, above upper abdomen)
+  const BMI_POS: [number, number, number] = [0.0, 0.445, isFemale ? 0.144 : 0.139];
+  const BMI_NORMAL: [number, number, number] = [0.0, 0.05, 0.99];
+
+  // C. Blood Pressure — Triceps (Outer upper arm between shoulder and elbow over triceps region)
+  // Patient's right upper arm (X < 0), visible on the lateral/outer arm contour in front view
+  const BP_POS: [number, number, number] = [-0.350, 0.360, isFemale ? -0.005 : -0.020];
+  const BP_NORMAL: [number, number, number] = [-0.90, 0.05, 0.42];
+
+  // D. Pulse Pressure — Wrist (Visible wrist surface near transition between forearm and hand)
+  // Patient's left wrist (X > 0), anterior/lateral face
+  const PP_POS: [number, number, number] = [isFemale ? 0.405 : 0.450, 0.125, isFemale ? 0.075 : 0.065];
+  const PP_NORMAL: [number, number, number] = [0.65, 0.10, 0.75];
+
+  return (
+    <>
+      {/* Studio Lighting Tailored for Ready Player Me Mannequin */}
+      <ambientLight intensity={isDark ? 0.75 : 0.95} />
+      <directionalLight position={[2, 3, 2.5]} intensity={isDark ? 1.4 : 1.2} color="#ffffff" castShadow />
+      <directionalLight position={[-2, 1.5, -1.5]} intensity={isDark ? 0.6 : 0.45} color="#e0f2fe" />
+      {/* Subtle clinical rim light */}
+      <pointLight position={[0, 1.5, -2]} intensity={0.5} color={riskColor} />
+      {/* Soft fill light from below */}
+      <pointLight position={[0, -0.8, 1]} intensity={isDark ? 0.25 : 0.15} color="#38bdf8" />
+
+      {/* Clean Human Avatar loaded asynchronously via Suspense */}
+      <Suspense fallback={null}>
+        <HumanAvatar
+          modelUrl={modelUrl}
+          isDark={isDark}
+          onPointerOver={onAvatarPointerOver}
+          onPointerOut={onAvatarPointerOut}
+        />
+      </Suspense>
+
+      {/* Raycasting invisible hover hitboxes over anatomical zones (compact 0.08m radius prevents overlap) */}
+      {/* 1. Heart Precordium Hitbox */}
+      <mesh
+        position={HEART_POS}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          onHoverHotspot("heart");
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          onLeaveHotspot();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onTogglePinHotspot("heart");
+        }}
+        visible={false}
+      >
+        <sphereGeometry args={[0.08, 12, 12]} />
+      </mesh>
+
+      {/* 2. BMI Center Chest Hitbox */}
+      <mesh
+        position={BMI_POS}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          onHoverHotspot("bmi");
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          onLeaveHotspot();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onTogglePinHotspot("bmi");
+        }}
+        visible={false}
+      >
+        <sphereGeometry args={[0.08, 12, 12]} />
+      </mesh>
+
+      {/* 3. Blood Pressure Triceps Hitbox */}
+      <mesh
+        position={BP_POS}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          onHoverHotspot("bp");
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          onLeaveHotspot();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onTogglePinHotspot("bp");
+        }}
+        visible={false}
+      >
+        <sphereGeometry args={[0.08, 12, 12]} />
+      </mesh>
+
+      {/* 4. Pulse Pressure Wrist Hitbox */}
+      <mesh
+        position={PP_POS}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          onHoverHotspot("pp");
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          onLeaveHotspot();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onTogglePinHotspot("pp");
+        }}
+        visible={false}
+      >
+        <sphereGeometry args={[0.08, 12, 12]} />
+      </mesh>
+
+      {/* 1. Heart Rate Hotspot Indicator (Rose) — Anatomical Heart (Left Chest) */}
+      <AnatomicalHotspot
+        id="heart"
+        side="right"
+        anchorPos={HEART_POS}
+        surfaceNormal={HEART_NORMAL}
+        icon={Heart}
+        title="Heart Rate"
+        value={`${heartbeat}`}
+        unit="bpm"
+        statusLabel={hrStatus.label}
+        statusColor={hrStatus.color}
+        accentColor="#f43f5e"
+        isActive={isPinned || activeHotspot === "heart"}
+        isPinned={isPinned}
+        onTogglePin={() => onTogglePinHotspot("heart")}
+        onHover={() => onHoverHotspot("heart")}
+        onLeave={onLeaveHotspot}
+      />
+
+      {/* 2. BMI Hotspot Indicator (Amber) — Chest (Upper-to-Middle Chest / Pectoral) */}
+      <AnatomicalHotspot
+        id="bmi"
+        side="left"
+        anchorPos={BMI_POS}
+        surfaceNormal={BMI_NORMAL}
+        icon={Scale}
+        title="Body Mass Index"
+        value={bmiVal.toFixed(1)}
+        unit="kg/m²"
+        statusLabel={bmiStatus.label}
+        statusColor={bmiStatus.color}
+        accentColor="#f59e0b"
+        isActive={isPinned || activeHotspot === "bmi"}
+        isPinned={isPinned}
+        onTogglePin={() => onTogglePinHotspot("bmi")}
+        onHover={() => onHoverHotspot("bmi")}
+        onLeave={onLeaveHotspot}
+      />
+
+      {/* 3. Blood Pressure Hotspot Indicator (Cyan) — Triceps (Outer Upper Arm) */}
+      <AnatomicalHotspot
+        id="bp"
+        side="left"
+        anchorPos={BP_POS}
+        surfaceNormal={BP_NORMAL}
+        icon={Activity}
+        title="Blood Pressure"
+        value={`${bp.sbp}/${bp.dbp}`}
+        unit="mmHg"
+        statusLabel={bpStatus.label}
+        statusColor={bpStatus.color}
+        accentColor="#38bdf8"
+        isActive={isPinned || activeHotspot === "bp"}
+        isPinned={isPinned}
+        onTogglePin={() => onTogglePinHotspot("bp")}
+        onHover={() => onHoverHotspot("bp")}
+        onLeave={onLeaveHotspot}
+      />
+
+      {/* 4. Pulse Pressure Hotspot Indicator (Amber / Gold) — Wrist (Visible Forearm/Hand transition) */}
+      <AnatomicalHotspot
+        id="pp"
+        side="right"
+        anchorPos={PP_POS}
+        surfaceNormal={PP_NORMAL}
+        icon={Zap}
+        title="Pulse Pressure"
+        value={`${pulsePressure}`}
+        unit="mmHg"
+        statusLabel={ppStatus.label}
+        statusColor={ppStatus.color}
+        accentColor="#eab308"
+        isActive={isPinned || activeHotspot === "pp"}
+        isPinned={isPinned}
+        onTogglePin={() => onTogglePinHotspot("pp")}
+        onHover={() => onHoverHotspot("pp")}
+        onLeave={onLeaveHotspot}
+      />
+
+      {/* Orbit Controls with full body framing bounds */}
+      <OrbitControls
+        enablePan={false}
+        minDistance={1.8}
+        maxDistance={4.5}
+        minPolarAngle={Math.PI / 4}
+        maxPolarAngle={(2 * Math.PI) / 3}
+        target={[0, 0.02, 0]}
+        autoRotate={!isPinned && !activeHotspot}
+        autoRotateSpeed={0.35}
+        makeDefault
+      />
+    </>
+  );
+}
+
+// -- Public DigitalTwinViz Component -------------------------------------------
 export default function DigitalTwinViz({
   riskTier,
   loading,
@@ -404,47 +641,82 @@ export default function DigitalTwinViz({
   bmi,
   hr,
   weight,
+  glucose,
+  hba1c,
+  age,
+  gender,
   riskScore,
   patientName,
   height,
   className = "",
 }: DigitalTwinVizProps) {
-  const [activeNode, setActiveNode] = useState<VitalNode | null>(null);
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
-  const riskColor =
-    riskTier === "HIGH"
-      ? RISK_COLORS.HIGH
-      : riskTier === "MEDIUM"
-      ? RISK_COLORS.MEDIUM
-      : riskTier === "LOW"
-      ? RISK_COLORS.LOW
-      : isDark
-      ? "#60A5FA"
-      : "#2563EB";
+  // Hover and Pin states
+  const [activeHotspot, setActiveHotspot] = useState<"heart" | "bp" | "pp" | "bmi" | null>(null);
+  const [isPinned, setIsPinned] = useState(false);
+  const [isAvatarHovered, setIsAvatarHovered] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Build vital nodes from real data if available
-  const nodes = useMemo<VitalNode[]>(() => {
-    const hasData = sbp != null || dbp != null;
-    if (!hasData) return DEMO_NODES;
-    return [
-      { id: "sbp", label: "SBP", value: sbp != null ? `${Math.round(sbp)} mmHg` : null, angle: 0, radius: 1.1, height: 0.3, color: "#06b6d4" },
-      { id: "dbp", label: "DBP", value: dbp != null ? `${Math.round(dbp)} mmHg` : null, angle: (2 * Math.PI) / 5, radius: 1.0, height: 0.0, color: "#8b5cf6" },
-      { id: "bmi", label: "BMI", value: bmi != null ? bmi.toFixed(1) : null, angle: (4 * Math.PI) / 5, radius: 1.1, height: 0.2, color: "#f59e0b" },
-      { id: "hr", label: "HR", value: hr != null ? `${Math.round(hr)} bpm` : null, angle: (6 * Math.PI) / 5, radius: 0.95, height: -0.1, color: "#ef4444" },
-      { id: "weight", label: "WEIGHT", value: weight != null ? `${weight.toFixed(1)} kg` : null, angle: (8 * Math.PI) / 5, radius: 1.05, height: 0.1, color: "#22c55e" },
-      {
-        id: "risk",
-        label: "RISK",
-        value: riskScore != null ? `${(riskScore * 100).toFixed(1)}%` : (riskTier ?? null),
-        angle: Math.PI / 5,
-        radius: 0.85,
-        height: 0.4,
-        color: riskColor,
-      },
-    ];
-  }, [sbp, dbp, bmi, hr, weight, riskScore, riskTier, riskColor]);
+  const handleHoverHotspot = (id: "heart" | "bp" | "pp" | "bmi") => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setActiveHotspot(id);
+  };
+
+  const handleLeaveHotspot = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setActiveHotspot(null);
+    }, 180);
+  };
+
+  const handleTogglePinHotspot = (id: "heart" | "bp" | "pp" | "bmi") => {
+    setActiveHotspot((prev) => (prev === id ? null : id));
+  };
+
+  const handleTogglePinAll = () => {
+    setIsPinned((prev) => !prev);
+  };
+
+  // Fallback defaults to match current patient telemetry
+  const currentHr = hr != null ? Math.round(hr) : 89;
+  const currentSbp = sbp != null ? Math.round(sbp) : 138;
+  const currentDbp = dbp != null ? Math.round(dbp) : 100;
+  const currentBmi = bmi != null ? Number(bmi.toFixed(1)) : 25.9;
+  const currentPulsePressure = currentSbp - currentDbp;
+
+  const bpStatus = getBpCategory(currentSbp, currentDbp);
+  const hrStatus = getHrCategory(currentHr);
+  const bmiStatus = getBmiCategory(currentBmi);
+  const ppStatus = getPpCategory(currentPulsePressure);
+
+  // Gender selection for 3D model: auto-detect from demographic prop, toggleable
+  const isFemaleDefault = useMemo(() => {
+    const g = (gender || "").trim().toUpperCase();
+    return g.startsWith("F") || g === "FEMALE";
+  }, [gender]);
+
+  const [selectedGender, setSelectedGender] = useState<"male" | "female">(
+    isFemaleDefault ? "female" : "male"
+  );
+
+  useEffect(() => {
+    setSelectedGender(isFemaleDefault ? "female" : "male");
+  }, [isFemaleDefault]);
+
+  const activeModelUrl =
+    selectedGender === "female" ? "/models/human-female.glb" : "/models/human-male.glb";
+
+  // Normalize risk tier and color
+  const tier = normalizeTier(riskTier);
+  const riskColor =
+    tier === "High"
+      ? RISK_COLORS.HIGH
+      : tier === "Moderate"
+      ? RISK_COLORS.MEDIUM
+      : RISK_COLORS.LOW;
+
+  const shapeCue = getRiskShapeCue(tier);
 
   if (loading) {
     return (
@@ -452,9 +724,8 @@ export default function DigitalTwinViz({
         <div className="relative w-14 h-14">
           <div className="absolute inset-0 rounded-full border-2 border-[var(--color-primary)]/20 animate-pulse" />
           <div className="absolute inset-2 rounded-full border-2 border-[var(--color-primary)] border-t-transparent animate-spin" />
-          <div className="absolute inset-4 rounded-full bg-[var(--color-primary)]/10 animate-pulse" />
         </div>
-        <p className="text-xs text-[var(--text-muted)] font-mono">Initializing Three.js Digital Twin…</p>
+        <p className="text-xs text-[var(--text-muted)] font-mono">Loading 3D Human Digital Twin...</p>
       </div>
     );
   }
@@ -463,67 +734,242 @@ export default function DigitalTwinViz({
     return (
       <div className={`flex items-center justify-center h-full min-h-[300px] text-center px-6 ${className}`}>
         <div>
-          <div className="w-10 h-10 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-3 shadow-inner">
-            <span className="text-red-400 text-base font-bold">!</span>
+          <div className="w-10 h-10 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-3">
+            <AlertTriangle className="w-5 h-5 text-red-400" />
           </div>
-          <p className="text-xs font-semibold text-red-400">Digital Twin service unavailable.</p>
-          <p className="text-[10px] text-[var(--text-muted)] mt-1">Verify FastAPI is running on port 8000.</p>
+          <p className="text-xs font-semibold text-red-400">3D Digital Twin unavailable.</p>
+          <p className="text-[10px] text-[var(--text-muted)] mt-1">Verify WebGL acceleration is enabled.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`relative w-full h-full min-h-[320px] select-none ${className}`}>
-      {/* Risk signal badge */}
-      {riskTier && (
-        <div className="absolute top-3 left-3 z-10 pointer-events-none">
-          <span
-            className="text-[11px] font-semibold px-2.5 py-1 rounded-full border shadow-2xs backdrop-blur-md"
+    <div
+      className={`relative w-full h-full select-none group ${className}`}
+      style={height ? { height } : undefined}
+    >
+      {/* -- Top-Left: Risk Signal Badge & Interactive Hint -- */}
+      <div className="absolute top-3 left-3 z-10 pointer-events-none flex flex-col gap-1.5">
+        {riskTier && (
+          <div
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full border shadow-2xs backdrop-blur-md transition-all duration-200"
             style={{
               color: riskColor,
               borderColor: `${riskColor}50`,
               background: `${riskColor}15`,
             }}
           >
-            {riskTier} · 365d Complication Signal
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: riskColor }} />
+            <span className="text-[11px] font-semibold tracking-tight">
+              {shapeCue.symbol} {tier} · 365d Complication Signal
+            </span>
+          </div>
+        )}
+
+        <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--bg-surface)]/80 backdrop-blur-md border border-[var(--glass-border)] shadow-xs w-fit">
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${
+              activeHotspot || isPinned ? "bg-emerald-400 animate-ping" : "bg-sky-400"
+            }`}
+          />
+          <span className="text-[9px] font-mono text-[var(--text-muted)]">
+            {isPinned
+              ? "Vitals Pinned · Visible"
+              : activeHotspot
+              ? "Pointing at Anatomical Hotspot"
+              : isAvatarHovered
+              ? "Hover hotspots on body to inspect"
+              : "Point at model to reveal vitals"}
           </span>
         </div>
-      )}
-
-      {/* Active Node HUD Pill */}
-      {activeNode && (
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 z-20 pointer-events-none px-4 py-1.5 rounded-full glass-modal border border-[var(--glass-border)] shadow-xl flex items-center gap-2.5 transition-all duration-150">
-          <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" style={{ backgroundColor: activeNode.color }} />
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">{activeNode.label}</span>
-          <span className="text-xs font-mono font-bold text-[var(--text-primary)]">{activeNode.value ?? "—"}</span>
-        </div>
-      )}
-
-      {/* Orbit Navigation Hint */}
-      <div className="absolute top-3 right-3 z-10 text-[10px] font-mono text-[var(--text-muted)] bg-[var(--bg-surface)] px-2 py-0.5 rounded-lg border border-[var(--glass-border)] backdrop-blur-md">
-        Drag to orbit · hover nodes
       </div>
 
+      {/* -- Top-Right: Interaction Controls & Avatar Switcher -- */}
+      <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+        {/* Pin Vitals Toggle Button */}
+        <button
+          type="button"
+          onClick={handleTogglePinAll}
+          className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-semibold transition cursor-pointer border backdrop-blur-md shadow-xs flex items-center gap-1.5 ${
+            isPinned
+              ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/50"
+              : "bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--glass-border)] hover:text-[var(--text-primary)]"
+          }`}
+          title={isPinned ? "Unpin vitals markers" : "Pin all vitals markers visible"}
+        >
+          <Pin className={`w-3 h-3 ${isPinned ? "rotate-45 text-cyan-400" : ""}`} />
+          <span>{isPinned ? "Pinned" : "Pin Vitals"}</span>
+        </button>
+
+        {/* Avatar Gender Toggle */}
+        <div className="flex rounded-lg border border-[var(--glass-border)] p-0.5 bg-[var(--bg-surface)] backdrop-blur-md shadow-xs">
+          <button
+            type="button"
+            onClick={() => setSelectedGender("male")}
+            className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition cursor-pointer ${
+              selectedGender === "male"
+                ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] shadow-2xs"
+                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            }`}
+            title="Switch to Male Avatar"
+          >
+            ♂ Male
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedGender("female")}
+            className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition cursor-pointer ${
+              selectedGender === "female"
+                ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] shadow-2xs"
+                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            }`}
+            title="Switch to Female Avatar"
+          >
+            ♀ Female
+          </button>
+        </div>
+
+        <div className="text-[10px] font-mono text-[var(--text-muted)] bg-[var(--bg-surface)] px-2 py-1 rounded-lg border border-[var(--glass-border)] backdrop-blur-md hidden sm:block">
+          Drag to rotate · Scroll to zoom
+        </div>
+      </div>
+
+      {/* -- Bottom Docked Compact Vitals Telemetry Bar (Ultra-slim, never blocks legs) -- */}
+      <div className="absolute bottom-2.5 inset-x-2.5 sm:inset-x-6 z-20 pointer-events-auto">
+        <div className="p-1 sm:p-1.5 rounded-xl bg-slate-950/80 dark:bg-slate-950/90 backdrop-blur-md border border-white/10 shadow-lg grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+          {/* 1. Heartbeat */}
+          <button
+            type="button"
+            onClick={() => handleTogglePinHotspot("heart")}
+            className={`flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left ${
+              activeHotspot === "heart"
+                ? "border-rose-500/60 bg-rose-500/10"
+                : "border-white/5 hover:border-rose-500/30"
+            }`}
+          >
+            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/40 shrink-0" />
+            <div className="flex flex-col min-w-0 leading-tight">
+              <span className="text-[8px] font-mono uppercase text-slate-400">Heart Rate</span>
+              <span className="text-xs font-mono font-bold text-white flex items-center gap-1">
+                {currentHr} <span className="text-[8px] text-slate-400 font-normal">bpm</span>
+                <span
+                  className="w-1.5 h-1.5 rounded-full ml-auto"
+                  style={{ backgroundColor: hrStatus.color }}
+                />
+              </span>
+            </div>
+          </button>
+
+          {/* 2. Blood Pressure */}
+          <button
+            type="button"
+            onClick={() => handleTogglePinHotspot("bp")}
+            className={`flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left ${
+              activeHotspot === "bp"
+                ? "border-cyan-500/60 bg-cyan-500/10"
+                : "border-white/5 hover:border-cyan-500/30"
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <div className="flex flex-col min-w-0 leading-tight">
+              <span className="text-[8px] font-mono uppercase text-slate-400">Blood Pressure</span>
+              <span className="text-xs font-mono font-bold text-white flex items-center gap-1">
+                {currentSbp}/{currentDbp}
+                <span
+                  className="text-[7.5px] font-mono px-1 rounded ml-auto"
+                  style={{ color: bpStatus.color, backgroundColor: `${bpStatus.color}20` }}
+                >
+                  {bpStatus.label}
+                </span>
+              </span>
+            </div>
+          </button>
+
+          {/* 3. Pulse Pressure */}
+          <button
+            type="button"
+            onClick={() => handleTogglePinHotspot("pp")}
+            className={`flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left ${
+              activeHotspot === "pp"
+                ? "border-amber-400/60 bg-amber-400/10"
+                : "border-white/5 hover:border-amber-400/30"
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <div className="flex flex-col min-w-0 leading-tight">
+              <span className="text-[8px] font-mono uppercase text-slate-400">Pulse Pressure</span>
+              <span className="text-xs font-mono font-bold text-white flex items-center gap-1">
+                {currentPulsePressure} <span className="text-[8px] text-slate-400 font-normal">mmHg</span>
+                <span
+                  className="text-[7.5px] font-mono px-1 rounded ml-auto"
+                  style={{ color: ppStatus.color, backgroundColor: `${ppStatus.color}20` }}
+                >
+                  {ppStatus.label}
+                </span>
+              </span>
+            </div>
+          </button>
+
+          {/* 4. BMI */}
+          <button
+            type="button"
+            onClick={() => handleTogglePinHotspot("bmi")}
+            className={`flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left ${
+              activeHotspot === "bmi"
+                ? "border-amber-500/60 bg-amber-500/10"
+                : "border-white/5 hover:border-amber-500/30"
+            }`}
+          >
+            <Scale className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <div className="flex flex-col min-w-0 leading-tight">
+              <span className="text-[8px] font-mono uppercase text-slate-400">BMI</span>
+              <span className="text-xs font-mono font-bold text-white flex items-center gap-1">
+                {currentBmi.toFixed(1)} <span className="text-[8px] text-slate-400 font-normal">kg/m²</span>
+                <span
+                  className="text-[7.5px] font-mono px-1 rounded ml-auto"
+                  style={{ color: bmiStatus.color, backgroundColor: `${bmiStatus.color}20` }}
+                >
+                  {bmiStatus.label}
+                </span>
+              </span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* -- 3D Canvas Scene (Framed Head to Toe) -- */}
       <Canvas
-        camera={{ position: [0, 1.2, 3.8], fov: 42 }}
+        camera={{ position: [0, 0.05, 3.25], fov: 34 }}
         dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         style={{ background: "transparent" }}
+        onCreated={({ gl }) => {
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.05;
+        }}
       >
         <Scene
-          riskTier={riskTier}
+          modelUrl={activeModelUrl}
           riskColor={riskColor}
-          nodes={nodes}
           isDark={isDark}
-          onActiveNodeChange={setActiveNode}
+          heartbeat={currentHr}
+          bp={{ sbp: currentSbp, dbp: currentDbp }}
+          bmiVal={currentBmi}
+          pulsePressure={currentPulsePressure}
+          hrStatus={hrStatus}
+          bpStatus={bpStatus}
+          bmiStatus={bmiStatus}
+          ppStatus={ppStatus}
+          activeHotspot={activeHotspot}
+          isPinned={isPinned}
+          onHoverHotspot={handleHoverHotspot}
+          onLeaveHotspot={handleLeaveHotspot}
+          onTogglePinHotspot={handleTogglePinHotspot}
+          onAvatarPointerOver={() => setIsAvatarHovered(true)}
+          onAvatarPointerOut={() => setIsAvatarHovered(false)}
         />
       </Canvas>
-
-      {/* Scientific disclaimer */}
-      <p className="absolute bottom-2 inset-x-0 text-center text-[10px] font-mono text-[var(--text-muted)] pointer-events-none">
-        Abstract physiological lattice model · Not anatomical imaging
-      </p>
     </div>
   );
 }

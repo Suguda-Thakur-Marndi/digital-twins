@@ -641,7 +641,19 @@ class PatientService:
                 raise ValueError(f"Diastolic BP ({dbp}) must be strictly less than Systolic BP ({sbp}).")
 
             # Update readings list
-            readings = list(p.get("readings", []))
+            readings = list(p.get("readings") or [])
+            if not readings and p.get("snapshots"):
+                for s in p["snapshots"]:
+                    readings.append({
+                        "date": s.get("date"),
+                        "sbp": s.get("sbp"),
+                        "dbp": s.get("dbp"),
+                        "hr": s.get("hr"),
+                        "weight": s.get("weight"),
+                        "glucose": s.get("glucose"),
+                        "hba1c": s.get("hba1c"),
+                    })
+
             r_date = reading_data.get("date") or datetime.now().strftime("%Y-%m-%d")
             new_r = {
                 "date": r_date,
@@ -655,6 +667,72 @@ class PatientService:
             readings.append(new_r)
             p["readings"] = readings
 
+            # Normalize conditions safely (handles dict, list of strings, or list of dicts)
+            raw_conds = p.get("conditions") or []
+            cond_dict: Dict[str, bool] = {}
+            if isinstance(raw_conds, dict):
+                cond_dict = {str(k): bool(v) for k, v in raw_conds.items()}
+            elif isinstance(raw_conds, list):
+                for c in raw_conds:
+                    if isinstance(c, dict):
+                        c_name = str(c.get("name", "")).lower()
+                        c_icd = str(c.get("icd10", "")).lower()
+                        if "hypertens" in c_name or "htn" in c_name or "i10" in c_icd:
+                            cond_dict["hypertension"] = True
+                        if "diabet" in c_name or "t2d" in c_name:
+                            cond_dict["diabetes"] = True
+                        if "cvd" in c_name or "cardio" in c_name:
+                            cond_dict["cvd"] = True
+                        if "ckd" in c_name or "kidney" in c_name:
+                            cond_dict["ckd"] = True
+                        if "obesity" in c_name:
+                            cond_dict["obesity"] = True
+                        if c.get("name"):
+                            cond_dict[str(c["name"])] = True
+                    elif isinstance(c, str):
+                        c_lower = c.lower()
+                        cond_dict[c] = True
+                        if "hypertens" in c_lower or "htn" in c_lower:
+                            cond_dict["hypertension"] = True
+                        if "diabet" in c_lower or "t2d" in c_lower:
+                            cond_dict["diabetes"] = True
+                        if "cvd" in c_lower:
+                            cond_dict["cvd"] = True
+                        if "ckd" in c_lower:
+                            cond_dict["ckd"] = True
+                        if "obesity" in c_lower:
+                            cond_dict["obesity"] = True
+
+            # Normalize medications safely (handles dict, list of strings, or list of dicts)
+            raw_meds = p.get("medications") or []
+            med_dict: Dict[str, bool] = {}
+            if isinstance(raw_meds, dict):
+                med_dict = {str(k): bool(v) for k, v in raw_meds.items()}
+            elif isinstance(raw_meds, list):
+                for m in raw_meds:
+                    if isinstance(m, dict):
+                        m_name = str(m.get("name", "")).lower()
+                        m_cls = str(m.get("class", "")).lower()
+                        if any(k in m_name for k in ["amlodipine", "telmisartan", "hydrochlorothiazide", "hctz", "lisinopril", "losartan", "hypertens"]) or any(k in m_cls for k in ["ccb", "arb", "ace", "diuretic", "beta"]):
+                            med_dict["antihypertensive"] = True
+                        if any(k in m_name for k in ["metformin", "glipizide", "insulin", "diabet"]) or "biguanide" in m_cls:
+                            med_dict["antidiabetic"] = True
+                        if any(k in m_name for k in ["statin", "atorvastatin", "rosuvastatin"]) or "lipid" in m_cls or "statin" in m_cls:
+                            med_dict["statin"] = True
+                            med_dict["statin_lipid"] = True
+                        if m.get("name"):
+                            med_dict[str(m["name"])] = True
+                    elif isinstance(m, str):
+                        m_lower = m.lower()
+                        med_dict[m] = True
+                        if any(k in m_lower for k in ["antihypertensive", "amlodipine", "telmisartan", "hctz", "hydrochlorothiazide"]):
+                            med_dict["antihypertensive"] = True
+                        if any(k in m_lower for k in ["antidiabetic", "metformin", "insulin"]):
+                            med_dict["antidiabetic"] = True
+                        if any(k in m_lower for k in ["statin", "atorvastatin", "lipid"]):
+                            med_dict["statin"] = True
+                            med_dict["statin_lipid"] = True
+
             # Re-derive feature row
             payload_reconstruct = {
                 "age": p["age"],
@@ -662,10 +740,15 @@ class PatientService:
                 "race": p.get("race", "other"),
                 "ethnicity": p.get("ethnicity", "non-hispanic"),
                 "readings": readings,
-                "conditions": {c: True for c in p.get("conditions", [])},
-                "medications": {m: True for m in p.get("medications", [])},
+                "conditions": cond_dict,
+                "medications": med_dict,
             }
             feature_row, completeness_pct, warnings = self.build_feature_row(payload_reconstruct)
+            if p.get("feature_row"):
+                base_feat = dict(p["feature_row"])
+                base_feat.update({k: v for k, v in feature_row.items() if pd.notna(v)})
+                feature_row = base_feat
+                completeness_pct = 100.0
             p["feature_row"] = feature_row
             p["data_completeness_pct"] = completeness_pct
 

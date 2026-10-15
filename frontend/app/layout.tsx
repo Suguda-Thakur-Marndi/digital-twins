@@ -77,7 +77,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen flex flex-col antialiased font-sans relative selection:bg-blue-500/20 selection:text-blue-700 dark:selection:text-blue-300">
+      <body
+        className="min-h-screen flex flex-col antialiased font-sans relative selection:bg-blue-500/20 selection:text-blue-700 dark:selection:text-blue-300"
+        suppressHydrationWarning
+      >
         {/* Layered background visual apparatus: Image + radial glows + subtle circuit grid */}
         <div className="twincare-bg-layer" aria-hidden="true" />
         <div className="twincare-bg-grid" aria-hidden="true" />
