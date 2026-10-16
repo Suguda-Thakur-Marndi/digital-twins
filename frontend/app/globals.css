@@ -541,6 +541,9 @@ textarea {
   header,
   footer,
   .no-print,
+  [role="status"],
+  .animate-pulse,
+  .animate-spin,
   button,
   input[type="range"] {
     display: none !important;

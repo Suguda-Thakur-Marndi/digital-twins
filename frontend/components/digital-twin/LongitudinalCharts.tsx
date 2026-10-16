@@ -33,8 +33,12 @@ export function LongitudinalCharts({
 
   if (!timeline || timeline.length === 0) {
     return (
-      <div className="glass-card p-6 border border-[var(--glass-border)] text-center text-xs text-[var(--text-muted)]">
-        No longitudinal clinical recordings available for this patient.
+      <div className="glass-card p-6 border border-[var(--glass-border)] text-center text-xs text-[var(--text-muted)] space-y-1.5">
+        <div className="font-semibold text-[var(--text-secondary)]">No Empirical Clinical Recordings on File</div>
+        <p>No confirmed EHR encounter recordings are documented for this profile.</p>
+        <p className="text-[11px] text-[var(--text-muted)]">
+          Reconstructed longitudinal digital twin trajectory snapshots are displayed in the model scrubber below.
+        </p>
       </div>
     );
   }

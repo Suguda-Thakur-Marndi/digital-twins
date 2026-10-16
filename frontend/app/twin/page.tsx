@@ -177,6 +177,14 @@ function TwinDashboardContent() {
         calibrated_risk: reading.updated_risk?.calibrated_risk ?? patient.latest_risk.calibrated_risk,
         risk_tier: reading.updated_risk?.risk_tier ?? patient.latest_risk.risk_tier,
       },
+      feature_row: patient.feature_row
+        ? {
+            ...patient.feature_row,
+            sbp_latest: reading.updated_vitals?.sbp ?? patient.feature_row.sbp_latest,
+            dbp_latest: reading.updated_vitals?.dbp ?? patient.feature_row.dbp_latest,
+            hr_latest: reading.updated_vitals?.hr ?? patient.feature_row.hr_latest,
+          }
+        : patient.feature_row,
     };
     setPatient(updatedPatient);
 
@@ -318,32 +326,65 @@ function TwinDashboardContent() {
       }
     : patient.latest_vitals;
 
+  // Determine active risk source state
+  const activeRiskSource: "counterfactual_simulation" | "historical_replay" | "baseline" =
+    simulatedScenario?.res
+      ? "counterfactual_simulation"
+      : isReplaying && currentSnapshot
+      ? "historical_replay"
+      : "baseline";
+
   // Active risk: either current replay snapshot, simulated scenario, or model prediction
-  const activeRisk: RiskState = isReplaying && currentSnapshot
-    ? {
-        raw_score: currentSnapshot.raw_score,
-        calibrated_risk: currentSnapshot.calibrated_risk,
-        risk_tier: currentSnapshot.risk_tier,
-      }
-    : simulatedScenario?.res
-    ? {
-        raw_score: simulatedScenario.res.scenario_raw ?? patient.latest_risk.raw_score,
-        calibrated_risk: simulatedScenario.res.scenario_risk ?? patient.latest_risk.calibrated_risk,
-        risk_tier: simulatedScenario.res.scenario_tier ?? patient.latest_risk.risk_tier,
-      }
-    : prediction
-    ? {
-        raw_score: prediction.raw_score,
-        calibrated_risk: prediction.calibrated_risk,
-        risk_tier: prediction.risk_tier,
-        confidence_interval_95: prediction.confidence_interval_95,
-      }
-    : patient.latest_risk;
+  const activeRisk: RiskState =
+    activeRiskSource === "historical_replay" && currentSnapshot
+      ? {
+          raw_score: currentSnapshot.raw_score,
+          calibrated_risk: currentSnapshot.calibrated_risk,
+          risk_tier: currentSnapshot.risk_tier,
+        }
+      : activeRiskSource === "counterfactual_simulation" && simulatedScenario?.res
+      ? {
+          raw_score: simulatedScenario.res.scenario_raw ?? patient.latest_risk.raw_score,
+          calibrated_risk: simulatedScenario.res.scenario_risk ?? patient.latest_risk.calibrated_risk,
+          risk_tier: simulatedScenario.res.scenario_tier ?? patient.latest_risk.risk_tier,
+        }
+      : prediction
+      ? {
+          raw_score: prediction.raw_score,
+          calibrated_risk: prediction.calibrated_risk,
+          risk_tier: prediction.risk_tier,
+          confidence_interval_95: prediction.confidence_interval_95,
+        }
+      : patient.latest_risk;
 
   const tier = normalizeTier(activeRisk.risk_tier);
 
+  const riskStateLabel =
+    activeRiskSource === "counterfactual_simulation"
+      ? "Counterfactual Scenario (Simulated Projection)"
+      : activeRiskSource === "historical_replay"
+      ? `Historical Snapshot #${activeSnapshotIdx + 1} (${currentSnapshot?.date ?? "Replay"})`
+      : "Model Baseline (Current EHR)";
+
+  // Strict CI validation: only justified for baseline prediction where ci bounds enclose calibrated_risk.
+  // For counterfactual simulation or replay snapshots, uncertainty is not computed/justified.
+  const rawCi =
+    activeRiskSource === "baseline"
+      ? activeRisk.confidence_interval_95 || prediction?.confidence_interval_95
+      : undefined;
+  const isCiValid =
+    Array.isArray(rawCi) &&
+    rawCi.length === 2 &&
+    typeof rawCi[0] === "number" &&
+    typeof rawCi[1] === "number" &&
+    !isNaN(rawCi[0]) &&
+    !isNaN(rawCi[1]) &&
+    rawCi[0] <= activeRisk.calibrated_risk &&
+    activeRisk.calibrated_risk <= rawCi[1];
+  const validCi = isCiValid ? (rawCi as [number, number]) : undefined;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 print:hidden">
       {/* ── TOP PATIENT HEADER ────────────────────────────────────────────── */}
       <div className="glass-panel p-5 border border-[var(--glass-border)]">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -360,9 +401,19 @@ function TwinDashboardContent() {
                 <span className={RISK_BADGE_CLASSES[tier]}>
                   {tier} Tier
                 </span>
-                {isReplaying && (
+                {activeRiskSource === "counterfactual_simulation" && (
+                  <span className="text-[10px] bg-purple-500/20 text-purple-800 dark:text-purple-200 border border-purple-500/40 px-2 py-0.5 rounded-full font-mono font-bold">
+                    SIMULATED SCENARIO
+                  </span>
+                )}
+                {activeRiskSource === "historical_replay" && (
                   <span className="text-[10px] bg-amber-500/20 text-amber-800 dark:text-amber-200 border border-amber-500/40 px-2 py-0.5 rounded-full font-mono font-bold animate-pulse">
                     REPLAYING SNAPSHOT #{activeSnapshotIdx + 1}
+                  </span>
+                )}
+                {activeRiskSource === "baseline" && (
+                  <span className="text-[10px] bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full font-mono font-bold">
+                    MODEL BASELINE
                   </span>
                 )}
               </div>
@@ -625,6 +676,14 @@ function TwinDashboardContent() {
               risk={activeRisk}
               percentileInCohort={patient.latest_risk.percentile_in_cohort || 65}
               alertThreshold={0.40}
+              stateSource={activeRiskSource}
+              stateLabel={
+                activeRiskSource === "counterfactual_simulation"
+                  ? "Simulated Scenario"
+                  : activeRiskSource === "historical_replay"
+                  ? `Snapshot #${activeSnapshotIdx + 1}`
+                  : "Model Baseline"
+              }
             />
 
             {/* 2. Key Contributing Drivers (SHAP) */}
@@ -655,31 +714,64 @@ function TwinDashboardContent() {
           </div>
         </div>
 
-        {/* Patient Demographics & Current Vitals */}
+        {/* State Attribution Banner */}
+        <div className="bg-slate-100 border border-slate-300 p-2 flex justify-between items-center text-[11px] font-mono">
+          <span>Active State: <strong>{riskStateLabel}</strong></span>
+          <span className="uppercase font-bold px-2 py-0.5 border border-slate-400 bg-white">
+            {activeRiskSource === "counterfactual_simulation"
+              ? "Simulated Projection"
+              : activeRiskSource === "historical_replay"
+              ? "Historical Replay"
+              : "Baseline EHR"}
+          </span>
+        </div>
+
+        {/* Patient Demographics & Active Vitals */}
         <div className="grid grid-cols-2 gap-4 border p-3">
           <div>
             <h2 className="font-bold text-xs uppercase text-gray-700 mb-1">Patient Details</h2>
             <div className="space-y-0.5">
               <div>Name: <strong>{patient.name}</strong> ({patient.display_id})</div>
               <div>Age: <strong>{patient.age}y</strong> | Gender: <strong>{patient.gender}</strong></div>
-              <div>Record As-Of: <strong>{patient.as_of_date}</strong></div>
+              <div>Race / Ethnicity: <strong>{patient.race ? patient.race.charAt(0).toUpperCase() + patient.race.slice(1) : "Not available"} / {patient.ethnicity ? patient.ethnicity.charAt(0).toUpperCase() + patient.ethnicity.slice(1) : "Not available"}</strong></div>
+              <div>Record As-Of: <strong>{isReplaying && currentSnapshot ? currentSnapshot.date : patient.as_of_date}</strong></div>
             </div>
           </div>
           <div>
-            <h2 className="font-bold text-xs uppercase text-gray-700 mb-1">Current State / Latest Vitals</h2>
+            <h2 className="font-bold text-xs uppercase text-gray-700 mb-1">
+              {activeRiskSource === "counterfactual_simulation"
+                ? "Simulated Scenario Vitals"
+                : activeRiskSource === "historical_replay"
+                ? `Snapshot #${activeSnapshotIdx + 1} Vitals (${currentSnapshot?.date})`
+                : "Current State / Latest Vitals"}
+            </h2>
             <div className="grid grid-cols-2 gap-1 font-mono text-[11px]">
-              <div>BP: <strong>{patient.latest_vitals.sbp}/{patient.latest_vitals.dbp} mmHg</strong></div>
-              <div>HR: <strong>{patient.latest_vitals.hr} bpm</strong></div>
-              <div>Weight: <strong>{patient.latest_vitals.weight} kg</strong></div>
-              <div>BMI: <strong>{patient.latest_vitals.bmi} kg/m²</strong></div>
+              <div>BP: <strong>{activeVitals.sbp ?? "—"}/{activeVitals.dbp ?? "—"} mmHg</strong></div>
+              <div>HR: <strong>{activeVitals.hr ?? "—"} bpm</strong></div>
+              <div>Weight: <strong>{activeVitals.weight ?? "—"} kg</strong></div>
+              <div>BMI: <strong>{activeVitals.bmi ?? "—"} kg/m²</strong></div>
             </div>
+            {activeRiskSource === "counterfactual_simulation" && simulatedScenario?.res && (
+              <div className="mt-1 text-[10px] text-gray-600 italic">
+                Counterfactual scenario: SBP Δ {simulatedScenario.res.sbp_delta_applied ?? 0} mmHg, Wt Δ {((simulatedScenario.res.weight_change_pct_applied ?? 0) * 100).toFixed(0)}%
+              </div>
+            )}
           </div>
         </div>
 
         {/* Calibrated Risk with Uncertainty */}
         <div className="border p-3 space-y-1">
-          <h2 className="font-bold text-xs uppercase text-gray-700">Calibrated 365-Day Decompensation Risk</h2>
-          <div className="flex items-baseline gap-4">
+          <div className="flex justify-between items-center">
+            <h2 className="font-bold text-xs uppercase text-gray-700">Calibrated 365-Day Decompensation Risk</h2>
+            <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 border">
+              {activeRiskSource === "counterfactual_simulation"
+                ? "Simulated Projection"
+                : activeRiskSource === "historical_replay"
+                ? "Historical Snapshot"
+                : "Baseline State"}
+            </span>
+          </div>
+          <div className="flex items-baseline gap-4 flex-wrap">
             <div className="text-2xl font-bold font-mono">
               {(activeRisk.calibrated_risk * 100).toFixed(1)}%
             </div>
@@ -687,7 +779,7 @@ function TwinDashboardContent() {
               {activeRisk.risk_tier} Risk Tier
             </div>
             <div className="text-[11px] font-mono text-gray-600">
-              95% Confidence Interval: [{prediction?.confidence_interval_95 ? `${(prediction.confidence_interval_95[0]*100).toFixed(1)}% – ${(prediction.confidence_interval_95[1]*100).toFixed(1)}%` : "—"}]
+              95% Confidence Interval: [{validCi ? `${(validCi[0]*100).toFixed(1)}% – ${(validCi[1]*100).toFixed(1)}%` : activeRiskSource === "counterfactual_simulation" ? "Uncertainty unavailable for dynamic scenario" : "Uncertainty unavailable"}]
             </div>
             <div className="text-[11px] font-mono text-gray-600">
               Raw Score: {activeRisk.raw_score.toFixed(4)}

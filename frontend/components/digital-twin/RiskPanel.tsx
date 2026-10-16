@@ -10,21 +10,56 @@ interface RiskPanelProps {
   risk: RiskState;
   percentileInCohort?: number;
   alertThreshold?: number;
+  stateSource?: "baseline" | "historical_replay" | "counterfactual_simulation";
+  stateLabel?: string;
 }
 
 export function RiskPanel({
   risk,
   percentileInCohort = 50,
   alertThreshold = 0.40,
+  stateSource = "baseline",
+  stateLabel,
 }: RiskPanelProps) {
   const tier = normalizeTier(risk.risk_tier);
   const calibratedPct = (risk.calibrated_risk * 100).toFixed(1);
   const rawScore = risk.raw_score.toFixed(4);
   const ci = risk.confidence_interval_95;
 
-  const ciText = ci
+  // Validate CI strictly against the estimate. If the interval is undefined or does not enclose the
+  // calibrated estimate (e.g., during counterfactual simulation), omit it and state uncertainty is unavailable.
+  const isCiValid =
+    Array.isArray(ci) &&
+    ci.length === 2 &&
+    typeof ci[0] === "number" &&
+    typeof ci[1] === "number" &&
+    !isNaN(ci[0]) &&
+    !isNaN(ci[1]) &&
+    ci[0] <= risk.calibrated_risk &&
+    risk.calibrated_risk <= ci[1];
+
+  const ciText = isCiValid
     ? `${(ci[0] * 100).toFixed(1)}% – ${(ci[1] * 100).toFixed(1)}%`
-    : "± 3.8% (95% CI)";
+    : stateSource === "counterfactual_simulation"
+    ? "Uncertainty unavailable for dynamic scenario"
+    : stateSource === "historical_replay"
+    ? "Uncertainty unavailable for historical snapshot"
+    : "Uncertainty unavailable";
+
+  const resolvedStateLabel =
+    stateLabel ||
+    (stateSource === "counterfactual_simulation"
+      ? "Simulated Projection"
+      : stateSource === "historical_replay"
+      ? "Historical Snapshot"
+      : "Baseline State");
+
+  const stateBadgeClass =
+    stateSource === "counterfactual_simulation"
+      ? "bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30"
+      : stateSource === "historical_replay"
+      ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
+      : "bg-blue-500/10 text-[var(--color-primary)] border-blue-500/20";
 
   // Clinical guidance per tier with theme-aware styling
   const tierGuidance = {
@@ -59,9 +94,14 @@ export function RiskPanel({
             Hypertension Decompensation Risk
           </h4>
         </div>
-        <span className={RISK_BADGE_CLASSES[tier]}>
-          {tier} Risk Tier
-        </span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full border ${stateBadgeClass}`}>
+            {resolvedStateLabel}
+          </span>
+          <span className={RISK_BADGE_CLASSES[tier]}>
+            {tier} Risk Tier
+          </span>
+        </div>
       </div>
 
       {/* Main Metric Display */}
@@ -120,11 +160,11 @@ export function RiskPanel({
             style={{ left: "1.5%" }}
             title="Cohort Base Rate: 1.46%"
           />
-          {/* Alert threshold tick at 40% */}
+          {/* Alert threshold tick at 40% (High-Risk action threshold) */}
           <div
             className="absolute top-0 bottom-0 w-0.5 bg-rose-500 z-10"
             style={{ left: `${alertThreshold * 100}%` }}
-            title={`Alert Threshold: ${(alertThreshold * 100).toFixed(0)}%`}
+            title={`High-Risk Action Threshold: ${(alertThreshold * 100).toFixed(0)}% (Moderate/High tier boundary)`}
           />
           {/* Patient Position Marker */}
           <div
@@ -132,15 +172,17 @@ export function RiskPanel({
             style={{ left: `${Math.min(98, Math.max(2, risk.calibrated_risk * 100))}%` }}
           />
           {/* Subdued background zones */}
-          <div className="absolute inset-y-0 left-0 w-[15%] bg-emerald-500/20" />
-          <div className="absolute inset-y-0 left-[15%] w-[25%] bg-amber-500/20" />
-          <div className="absolute inset-y-0 left-[40%] right-0 bg-rose-500/20" />
+          <div className="absolute inset-y-0 left-0 w-[15%] bg-emerald-500/20" title="Low Risk Tier (&lt;15%)" />
+          <div className="absolute inset-y-0 left-[15%] w-[25%] bg-amber-500/20" title="Moderate Risk Tier (15%–40%)" />
+          <div className="absolute inset-y-0 left-[40%] right-0 bg-rose-500/20" title="High Risk Tier (&gt;=40%)" />
         </div>
 
         <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] font-mono flex-wrap gap-1">
           <span>0%</span>
-          <span className="text-blue-500">Base: 1.46%</span>
-          <span className="text-rose-500">Alert: {(alertThreshold * 100).toFixed(0)}%</span>
+          <span className="text-blue-500" title="Cohort base incidence rate">Base: 1.46%</span>
+          <span className="text-rose-500 font-semibold" title="High-Risk Action Threshold (40% calibrated probability tier boundary; distinct from 5% surveillance threshold)">
+            High-Risk Action Threshold: {(alertThreshold * 100).toFixed(0)}%
+          </span>
           <span>100%</span>
         </div>
       </div>

@@ -466,7 +466,11 @@ export default function OverviewPage() {
                   {(currentRiskScore * 100).toFixed(1)}%
                 </span>
                 <span className="text-[11px] text-[var(--text-secondary)] font-mono font-medium block mt-0.5">
-                  95% CI: [{((patientPredict?.confidence_interval_95?.[0] ?? currentRiskScore * 0.85) * 100).toFixed(1)}%, {((patientPredict?.confidence_interval_95?.[1] ?? currentRiskScore * 1.15) * 100).toFixed(1)}%]
+                  95% CI: [{patientPredict?.confidence_interval_95 &&
+                  patientPredict.confidence_interval_95[0] <= currentRiskScore &&
+                  currentRiskScore <= patientPredict.confidence_interval_95[1]
+                    ? `${(patientPredict.confidence_interval_95[0] * 100).toFixed(1)}% – ${(patientPredict.confidence_interval_95[1] * 100).toFixed(1)}%`
+                    : "Uncertainty unavailable"}]
                 </span>
               </div>
 

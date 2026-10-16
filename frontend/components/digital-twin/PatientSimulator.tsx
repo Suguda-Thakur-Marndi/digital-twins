@@ -64,14 +64,29 @@ export function PatientSimulator({
   featureRow,
   onScenarioChange,
 }: PatientSimulatorProps) {
-  // Baseline initial values with robust clinical fallbacks
-  const baseSbp = initialVitals.sbp ?? (featureRow?.sbp_latest as number | undefined) ?? 125;
-  const baseDbp = initialVitals.dbp ?? (featureRow?.dbp_latest as number | undefined) ?? 80;
-  const baseHr = initialVitals.hr ?? (featureRow?.hr_latest as number | undefined) ?? 72;
-  const baseWeight = initialVitals.weight ?? (featureRow?.weight_latest as number | undefined) ?? 70;
-  const baseBmi = initialVitals.bmi ?? (featureRow?.bmi_latest as number | undefined) ?? (baseWeight / (1.7 * 1.7));
-  const baseGlucose = initialVitals.glucose ?? (featureRow?.glucose_latest as number | undefined) ?? 100;
-  const baseHba1c = initialVitals.hba1c ?? (featureRow?.hba1c_latest as number | undefined) ?? 5.6;
+  // Baseline initial values: Prioritize the model's actual feature_row values so controls,
+  // sensitivity curves, and advanced feature table start from the exact same values.
+  const baseSbp = (featureRow?.sbp_latest !== undefined && featureRow?.sbp_latest !== null)
+    ? Number(featureRow.sbp_latest)
+    : (initialVitals.sbp ?? 125);
+  const baseDbp = (featureRow?.dbp_latest !== undefined && featureRow?.dbp_latest !== null)
+    ? Number(featureRow.dbp_latest)
+    : (initialVitals.dbp ?? 80);
+  const baseHr = (featureRow?.hr_latest !== undefined && featureRow?.hr_latest !== null)
+    ? Number(featureRow.hr_latest)
+    : (initialVitals.hr ?? 72);
+  const baseWeight = (featureRow?.weight_latest !== undefined && featureRow?.weight_latest !== null)
+    ? Number(featureRow.weight_latest)
+    : (initialVitals.weight ?? 70);
+  const baseBmi = (featureRow?.bmi_latest !== undefined && featureRow?.bmi_latest !== null)
+    ? Number(featureRow.bmi_latest)
+    : (initialVitals.bmi ?? (baseWeight / (1.7 * 1.7)));
+  const baseGlucose = (featureRow?.glucose_latest !== undefined && featureRow?.glucose_latest !== null)
+    ? Number(featureRow.glucose_latest)
+    : (initialVitals.glucose ?? 100);
+  const baseHba1c = (featureRow?.hba1c_latest !== undefined && featureRow?.hba1c_latest !== null)
+    ? Number(featureRow.hba1c_latest)
+    : (initialVitals.hba1c ?? 5.6);
 
   // Primary Clinical Levers State
   const [sbpVal, setSbpVal] = useState<number>(baseSbp);
@@ -311,7 +326,7 @@ export function PatientSimulator({
                 Clinical Simulation Engine
               </span>
               {loading && (
-                <span className="text-[10px] text-[var(--accent-teal)] font-mono animate-pulse">
+                <span className="text-[10px] text-[var(--accent-teal)] font-mono animate-pulse no-print" role="status">
                   Computing scenario…
                 </span>
               )}
@@ -880,17 +895,45 @@ export function PatientSimulator({
                       </thead>
                       <tbody className="divide-y divide-[var(--border-hairline)]">
                         {advancedCatalog.map((item) => {
-                          const origVal =
-                            featureRow?.[item.name] !== undefined
-                              ? Number(featureRow[item.name])
-                              : (item.plausible_min ?? item.min);
+                          const rawVal = featureRow?.[item.name];
+                          const isMissing = rawVal === undefined || rawVal === null;
+                          const isCat = item.is_cat || typeof rawVal === "string";
+
+                          let origDisplay: string;
+                          let origNumericVal: number = item.plausible_min ?? item.min;
+
+                          if (isMissing) {
+                            origDisplay = "Not available";
+                          } else if (isCat) {
+                            const str = String(rawVal).trim();
+                            if (item.name === "gender") {
+                              origDisplay = str.toUpperCase().startsWith("M")
+                                ? "Male"
+                                : str.toUpperCase().startsWith("F")
+                                ? "Female"
+                                : str;
+                            } else {
+                              origDisplay = str ? str.charAt(0).toUpperCase() + str.slice(1) : "Not available";
+                            }
+                          } else {
+                            const num = Number(rawVal);
+                            if (isNaN(num)) {
+                              origDisplay = "Not available";
+                            } else {
+                              origNumericVal = num;
+                              origDisplay = Number.isInteger(num) ? num.toString() : num.toFixed(1);
+                            }
+                          }
+
                           const isEdited =
+                            !isCat &&
                             customFeatures[item.name] !== undefined &&
-                            customFeatures[item.name] !== origVal;
+                            customFeatures[item.name] !== origNumericVal;
+
                           const currentVal =
-                            customFeatures[item.name] !== undefined
+                            !isCat && customFeatures[item.name] !== undefined
                               ? customFeatures[item.name]
-                              : origVal;
+                              : origNumericVal;
 
                           return (
                             <tr
@@ -904,32 +947,38 @@ export function PatientSimulator({
                                 <div className="font-mono text-[9px] text-[var(--text-muted)]">{item.name}</div>
                               </td>
                               <td className="p-2 text-[10px] font-mono text-[var(--text-muted)]">
-                                [{item.min}, {item.max}]
+                                {isCat ? "Categorical" : `[${item.min}, ${item.max}]`}
                               </td>
                               <td className="p-2 text-center text-[10px] font-mono text-[var(--text-secondary)]">
-                                {origVal}
+                                {origDisplay}
                               </td>
                               <td className="p-2 text-right">
-                                <input
-                                  type="number"
-                                  min={item.min}
-                                  max={item.max}
-                                  value={currentVal}
-                                  onChange={(e) =>
-                                    setCustomFeatures({
-                                      ...customFeatures,
-                                      [item.name]: Number(e.target.value),
-                                    })
-                                  }
-                                  className={`w-20 px-1.5 py-0.5 text-xs font-mono text-right border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] ${
-                                    isEdited
-                                      ? "border-[var(--accent-teal)] font-bold text-[var(--accent-teal)]"
-                                      : ""
-                                  }`}
-                                />
+                                {isCat ? (
+                                  <span className="text-[10px] text-[var(--text-muted)] italic font-mono pr-2">
+                                    Fixed demographic
+                                  </span>
+                                ) : (
+                                  <input
+                                    type="number"
+                                    min={item.min}
+                                    max={item.max}
+                                    value={currentVal}
+                                    onChange={(e) =>
+                                      setCustomFeatures({
+                                        ...customFeatures,
+                                        [item.name]: Number(e.target.value),
+                                      })
+                                    }
+                                    className={`w-20 px-1.5 py-0.5 text-xs font-mono text-right border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] ${
+                                      isEdited
+                                        ? "border-[var(--accent-teal)] font-bold text-[var(--accent-teal)]"
+                                        : ""
+                                    }`}
+                                  />
+                                )}
                               </td>
                               <td className="p-2 text-center">
-                                {isEdited && (
+                                {!isCat && isEdited && (
                                   <button
                                     type="button"
                                     onClick={() => {

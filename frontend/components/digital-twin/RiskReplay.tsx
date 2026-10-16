@@ -24,10 +24,8 @@ export function RiskReplay({
   const currentSnap = snapshots[currentSnapshotIndex] || snapshots[0];
 
   // Early Warning surveillance:
-  // Alert threshold: calibrated risk >= 0.05 (5.0%) or tier !== 'Low'
-  const firstAlertIdx = snapshots.findIndex(
-    (s) => s.calibrated_risk >= 0.05 || normalizeTier(s.risk_tier) !== "Low"
-  );
+  // Alert threshold: calibrated risk >= 0.05 (5.0% absolute risk threshold)
+  const firstAlertIdx = snapshots.findIndex((s) => s.calibrated_risk >= 0.05);
   const eventIdx = snapshots.findIndex((s) => !!s.stage_2_decompensation);
 
   let leadTimeDays: number | null = null;
@@ -91,21 +89,24 @@ export function RiskReplay({
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-primary)]">
-                Signature Feature
+                Digital Twin Model Scrubber
               </span>
               <span className="text-[10px] bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white px-2 py-0.5 rounded-full font-mono font-bold shadow-2xs">
-                Live Replay
+                Modeled Trajectory
               </span>
             </div>
             <h4 className="text-sm font-semibold text-[var(--text-primary)]">
-              Longitudinal Risk Evolution Scrubber
+              Digital Twin Trajectory Evolution Scrubber
             </h4>
+            <p className="text-[10px] text-[var(--text-muted)]">
+              {total} Modeled Trajectory Snapshots (Simulated Digital Twin Reconstruction, Distinct from Empirical Clinical Encounters)
+            </p>
           </div>
         </div>
 
         {/* Current Playback Step Status */}
         <div className="flex items-center gap-2 text-xs font-mono">
-          <span className="text-[var(--text-muted)]">Snapshot:</span>
+          <span className="text-[var(--text-muted)]">Trajectory Point:</span>
           <span className="font-bold text-[var(--text-primary)]">
             {currentSnapshotIndex + 1} of {total}
           </span>
@@ -211,17 +212,26 @@ export function RiskReplay({
             <div className="flex flex-wrap items-center justify-between gap-1">
               <span className="font-semibold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
                 <ShieldAlert className="w-3.5 h-3.5 text-amber-500 inline" />
-                Early Warning Lead Time Detected
+                Longitudinal Surveillance Alert History
               </span>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-500/20 text-amber-800 dark:text-amber-200 border border-amber-500/40">
-                {leadTimeDays.toLocaleString()} Days Lead Time ({Math.round(leadTimeDays / 30.4)} months)
+                {leadTimeDays.toLocaleString()} Days Advance Lead Time ({Math.round(leadTimeDays / 30.4)} months)
               </span>
             </div>
             <p className="text-amber-800 dark:text-amber-300 leading-relaxed text-[11px]">
-              Calibrated risk crossed surveillance threshold (≥5.0%) at Snapshot #{firstAlertIdx + 1} on{" "}
+              <span className="font-semibold">Timeline Alert Trigger:</span> Calibrated risk first crossed early warning surveillance threshold (≥5.0%) at Snapshot #{firstAlertIdx + 1} on{" "}
               <strong>{snapshots[firstAlertIdx].date}</strong> ({(snapshots[firstAlertIdx].calibrated_risk * 100).toFixed(1)}%). 
               Documented Stage 2 Decompensation occurred at Snapshot #{eventIdx + 1} on <strong>{snapshots[eventIdx].date}</strong>. 
               The digital twin provided <strong>{leadTimeDays.toLocaleString()} days</strong> of advance clinical warning before acute decompensation.
+              {currentSnapshotIndex === firstAlertIdx ? (
+                <span className="font-bold text-amber-900 dark:text-amber-100 ml-1">
+                  [Currently viewing the alert trigger snapshot #{firstAlertIdx + 1}]
+                </span>
+              ) : (
+                <span className="text-amber-700 dark:text-amber-300 ml-1">
+                  (Currently inspecting Snapshot #{currentSnapshotIndex + 1}: {currentSnap.date}, {(currentSnap.calibrated_risk * 100).toFixed(1)}% — {normalizeTier(currentSnap.risk_tier)} Tier).
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -239,10 +249,17 @@ export function RiskReplay({
         <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-800 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2 backdrop-blur-md">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-            <span>Risk first breached threshold (≥5.0%) on <strong>{snapshots[firstAlertIdx].date}</strong>. Patient in surveillance window.</span>
+            <span>
+              <strong>Surveillance History:</strong> Risk first breached early warning threshold (≥5.0%) at Snapshot #{firstAlertIdx + 1} on <strong>{snapshots[firstAlertIdx].date}</strong> ({(snapshots[firstAlertIdx].calibrated_risk * 100).toFixed(1)}%).
+              {currentSnapshotIndex !== firstAlertIdx && (
+                <span className="ml-1 text-[var(--text-muted)] font-mono">
+                  Currently viewing Snapshot #{currentSnapshotIndex + 1} ({currentSnap.date}: {(currentSnap.calibrated_risk * 100).toFixed(1)}%, {normalizeTier(currentSnap.risk_tier)} Tier).
+                </span>
+              )}
+            </span>
           </div>
           <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 font-semibold bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-500/30">
-            Active Surveillance
+            {currentSnap.calibrated_risk >= 0.05 ? "Active Surveillance" : "Historical Alert Window"}
           </span>
         </div>
       ) : null}
