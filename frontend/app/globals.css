@@ -217,6 +217,53 @@
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
+
+  /* Universal Form Input Base Styling & Contrast Guarantee */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
+  select,
+  textarea {
+    color: var(--text-primary);
+  }
+
+  ::placeholder {
+    color: var(--text-muted);
+    opacity: 0.8;
+  }
+
+  /* ── DARK THEME CONTRAST & ACCESSIBILITY SAFEGUARDS ── */
+  .dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
+  .dark select,
+  .dark textarea {
+    color: var(--text-primary);
+  }
+
+  .dark ::placeholder {
+    color: var(--text-faint);
+    opacity: 0.85;
+  }
+
+  /* Automatically adapt hardcoded light backgrounds in dark mode */
+  .dark input.bg-white,
+  .dark select.bg-white,
+  .dark textarea.bg-white {
+    background-color: var(--bg-surface-strong) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-hairline) !important;
+  }
+
+  .dark button.bg-white {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-hairline) !important;
+  }
+  .dark button.bg-white:hover {
+    background-color: var(--bg-subtle) !important;
+  }
+
+  .dark div.bg-white {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+  }
 }
 
 @layer components {

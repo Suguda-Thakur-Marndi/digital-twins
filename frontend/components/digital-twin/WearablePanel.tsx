@@ -178,7 +178,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
             className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono font-medium rounded border transition-colors ${
               autoSimulate
                 ? "bg-emerald-600 text-white border-emerald-700"
-                : "bg-white text-[var(--text-secondary)] border-[var(--border-hairline)] hover:bg-[var(--bg-subtle)]"
+                : "bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-hairline)] hover:bg-[var(--bg-subtle)]"
             }`}
           >
             {autoSimulate ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
@@ -188,7 +188,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
           <button
             type="button"
             onClick={() => setShowSendForm(!showSendForm)}
-            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded hover:bg-gray-200 text-[var(--text-primary)] transition-colors"
+            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded hover:bg-[var(--bg-panel)] text-[var(--text-primary)] transition-colors"
           >
             <Plus className="w-3 h-3" />
             <span>Send Reading</span>
@@ -198,10 +198,10 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
 
       {/* Manual Reading Ingest Drawer */}
       {showSendForm && (
-        <div className="p-3 bg-blue-50/50 rounded border border-blue-200 space-y-3">
-          <div className="flex items-center justify-between text-xs font-semibold text-blue-900">
+        <div className="p-3 bg-blue-50/50 dark:bg-blue-950/30 rounded border border-blue-200 dark:border-blue-900/50 space-y-3">
+          <div className="flex items-center justify-between text-xs font-semibold text-blue-900 dark:text-blue-200">
             <span>Send New Bluetooth Device / Wearable Reading</span>
-            <span className="text-[10px] font-mono text-blue-600">Simulates real-time IoT ingestion</span>
+            <span className="text-[10px] font-mono text-blue-600 dark:text-blue-400">Simulates real-time IoT ingestion</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-xs">
@@ -212,7 +212,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
                 type="number"
                 value={inputSbp}
                 onChange={(e) => setInputSbp(Number(e.target.value))}
-                className="w-full px-2 py-1 text-xs border rounded bg-white font-mono"
+                className="w-full px-2 py-1 text-xs border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] font-mono focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
               />
             </div>
             <div>
@@ -222,7 +222,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
                 type="number"
                 value={inputDbp}
                 onChange={(e) => setInputDbp(Number(e.target.value))}
-                className="w-full px-2 py-1 text-xs border rounded bg-white font-mono"
+                className="w-full px-2 py-1 text-xs border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] font-mono focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
               />
             </div>
             <div>
@@ -232,7 +232,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
                 type="number"
                 value={inputHr}
                 onChange={(e) => setInputHr(Number(e.target.value))}
-                className="w-full px-2 py-1 text-xs border rounded bg-white font-mono"
+                className="w-full px-2 py-1 text-xs border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] font-mono focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
               />
             </div>
             <div>
@@ -242,7 +242,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
                 type="number"
                 value={inputSpo2}
                 onChange={(e) => setInputSpo2(Number(e.target.value))}
-                className="w-full px-2 py-1 text-xs border rounded bg-white font-mono"
+                className="w-full px-2 py-1 text-xs border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] font-mono focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
               />
             </div>
             <div className="col-span-2 sm:col-span-1">
@@ -252,7 +252,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
                 type="number"
                 value={inputSteps}
                 onChange={(e) => setInputSteps(Number(e.target.value))}
-                className="w-full px-2 py-1 text-xs border rounded bg-white font-mono"
+                className="w-full px-2 py-1 text-xs border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] font-mono focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
               />
             </div>
           </div>

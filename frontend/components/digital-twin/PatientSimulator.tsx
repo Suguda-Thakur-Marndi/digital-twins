@@ -298,7 +298,7 @@ export function PatientSimulator({
   const activeCurve = sensitivity?.curves?.[activeCurveVar];
 
   return (
-    <div className="clinical-card p-4 sm:p-5 bg-white border-[var(--border-hairline)] shadow-2xs space-y-5">
+    <div className="clinical-card p-4 sm:p-5 bg-[var(--bg-surface)] border-[var(--border-hairline)] shadow-2xs space-y-5">
       {/* ── HEADER ────────────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border-hairline)] pb-3">
         <div className="flex items-center gap-2.5">
@@ -331,7 +331,7 @@ export function PatientSimulator({
             className={`px-2.5 py-1 text-xs font-medium border rounded transition-colors ${
               activeTab === "compare"
                 ? "bg-[var(--accent-teal)] text-white border-[var(--accent-teal)]"
-                : "bg-white text-[var(--text-secondary)] border-[var(--border-hairline)] hover:bg-[var(--bg-subtle)]"
+                : "bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-hairline)] hover:bg-[var(--bg-subtle)]"
             }`}
           >
             {activeTab === "live" ? `Compare Scenarios (${savedScenarios.length})` : "Back to Simulator"}
@@ -341,7 +341,7 @@ export function PatientSimulator({
             <button
               type="button"
               onClick={handleResetAll}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded hover:bg-rose-100 transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 text-xs text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset All</span>
@@ -379,14 +379,14 @@ export function PatientSimulator({
         <button
           type="button"
           onClick={() => applyPreset("missed_med")}
-          className="px-2.5 py-1 text-xs bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded text-rose-800 transition-colors"
+          className="px-2.5 py-1 text-xs bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 rounded text-rose-800 dark:text-rose-200 transition-colors"
         >
           Missed Medication (+14 mmHg)
         </button>
         <button
           type="button"
           onClick={() => applyPreset("worsening_diabetes")}
-          className="px-2.5 py-1 text-xs bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded text-amber-800 transition-colors"
+          className="px-2.5 py-1 text-xs bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-800 rounded text-amber-800 dark:text-amber-200 transition-colors"
         >
           Worsening Diabetes (+1.5% HbA1c)
         </button>
@@ -402,7 +402,7 @@ export function PatientSimulator({
             <button
               type="button"
               onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded hover:bg-gray-100 text-[var(--text-secondary)] no-print"
+              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded hover:bg-[var(--bg-panel)] text-[var(--text-secondary)] no-print"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Export Comparison</span>
@@ -416,8 +416,8 @@ export function PatientSimulator({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {/* Baseline column */}
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded space-y-2">
-                <span className="text-[10px] font-mono uppercase font-bold text-slate-500">
+              <div className="p-3 bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded space-y-2">
+                <span className="text-[10px] font-mono uppercase font-bold text-[var(--text-muted)]">
                   Current Baseline
                 </span>
                 <div className="font-mono text-xl font-bold text-[var(--text-primary)]">
@@ -428,14 +428,14 @@ export function PatientSimulator({
                     {simulation?.baseline_tier} Risk
                   </span>
                 </div>
-                <div className="text-[11px] text-[var(--text-muted)] font-mono border-t pt-2">
+                <div className="text-[11px] text-[var(--text-muted)] font-mono border-t border-[var(--border-hairline)] pt-2">
                   Raw Proba: {simulation?.baseline_raw.toFixed(4)}
                 </div>
               </div>
 
               {/* Saved scenarios */}
-              {savedScenarios.map((scen, idx) => (
-                <div key={scen.id} className="p-3 bg-white border border-[var(--accent-teal-border)] rounded space-y-2 shadow-2xs relative">
+              {savedScenarios.map((scen) => (
+                <div key={scen.id} className="p-3 bg-[var(--bg-surface)] border border-[var(--accent-teal-border)] rounded space-y-2 shadow-2xs relative">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono uppercase font-bold text-[var(--accent-teal)]">
                       {scen.name} ({scen.timestamp})
@@ -443,7 +443,7 @@ export function PatientSimulator({
                     <button
                       type="button"
                       onClick={() => setSavedScenarios(savedScenarios.filter((s) => s.id !== scen.id))}
-                      className="text-slate-400 hover:text-rose-600"
+                      className="text-slate-400 hover:text-rose-500"
                       title="Remove scenario"
                     >
                       <Trash2 className="w-3 h-3" />
@@ -454,22 +454,22 @@ export function PatientSimulator({
                   </div>
                   <div className="flex items-center gap-1.5 text-xs">
                     <span className={RISK_BADGE_CLASSES[normalizeTier(scen.response.scenario_tier)]}>
-                      {scen.response.scenario_tier}
+                      {scen.response.scenario_tier} Risk
                     </span>
                     <span
-                      className={`font-mono text-[11px] font-bold ${
+                      className={`text-[11px] font-mono font-bold ${
                         scen.response.delta_risk_pp < 0
-                          ? "text-green-700"
+                          ? "text-emerald-600 dark:text-emerald-400"
                           : scen.response.delta_risk_pp > 0
-                          ? "text-rose-700"
-                          : "text-slate-500"
+                          ? "text-rose-600 dark:text-rose-400"
+                          : "text-[var(--text-secondary)]"
                       }`}
                     >
-                      {scen.response.delta_risk_pp > 0 ? "+" : ""}
-                      {scen.response.delta_risk_pp.toFixed(1)} pp
+                      ({scen.response.delta_risk_pp > 0 ? "+" : ""}
+                      {scen.response.delta_risk_pp.toFixed(2)} pp)
                     </span>
                   </div>
-                  <div className="text-[10px] text-[var(--text-muted)] font-mono border-t pt-2 leading-relaxed">
+                  <div className="text-[10px] text-[var(--text-muted)] font-mono border-t border-[var(--border-hairline)] pt-1.5 leading-tight">
                     {scen.leversSummary}
                   </div>
                 </div>
@@ -495,7 +495,7 @@ export function PatientSimulator({
               </div>
 
               {/* Systolic BP */}
-              <div className={`p-2 rounded border transition-colors ${sbpVal !== baseSbp ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
+              <div className={`p-2 rounded border transition-colors ${sbpVal !== baseSbp ? "border-[var(--accent-teal-border)] bg-teal-50/30 dark:bg-teal-950/30" : "border-[var(--border-hairline)] bg-[var(--bg-surface)]"}`}>
                 <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                   <label htmlFor="sbp-input" className="font-medium text-[var(--text-primary)]">
                     Systolic Blood Pressure
@@ -511,7 +511,7 @@ export function PatientSimulator({
                       max={220}
                       value={sbpVal}
                       onChange={(e) => setSbpVal(Number(e.target.value))}
-                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold text-right border rounded bg-white"
+                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold text-right border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                     />
                     <span className="text-xs text-[var(--text-muted)]">mmHg</span>
                     {sbpVal !== baseSbp && (
@@ -538,7 +538,7 @@ export function PatientSimulator({
               </div>
 
               {/* Diastolic BP */}
-              <div className={`p-2 rounded border transition-colors ${dbpVal !== baseDbp ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
+              <div className={`p-2 rounded border transition-colors ${dbpVal !== baseDbp ? "border-[var(--accent-teal-border)] bg-teal-50/30 dark:bg-teal-950/30" : "border-[var(--border-hairline)] bg-[var(--bg-surface)]"}`}>
                 <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                   <label htmlFor="dbp-input" className="font-medium text-[var(--text-primary)]">
                     Diastolic Blood Pressure
@@ -554,7 +554,7 @@ export function PatientSimulator({
                       max={140}
                       value={dbpVal}
                       onChange={(e) => setDbpVal(Number(e.target.value))}
-                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold text-right border rounded bg-white"
+                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold text-right border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                     />
                     <span className="text-xs text-[var(--text-muted)]">mmHg</span>
                     {dbpVal !== baseDbp && (
@@ -581,7 +581,7 @@ export function PatientSimulator({
               </div>
 
               {/* Heart Rate */}
-              <div className={`p-2 rounded border transition-colors ${hrVal !== baseHr ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
+              <div className={`p-2 rounded border transition-colors ${hrVal !== baseHr ? "border-[var(--accent-teal-border)] bg-teal-50/30 dark:bg-teal-950/30" : "border-[var(--border-hairline)] bg-[var(--bg-surface)]"}`}>
                 <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                   <label htmlFor="hr-input" className="font-medium text-[var(--text-primary)]">
                     Resting Heart Rate
@@ -597,7 +597,7 @@ export function PatientSimulator({
                       max={160}
                       value={hrVal}
                       onChange={(e) => setHrVal(Number(e.target.value))}
-                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold text-right border rounded bg-white"
+                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold text-right border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                     />
                     <span className="text-xs text-[var(--text-muted)]">bpm</span>
                     {hrVal !== baseHr && (
@@ -636,7 +636,7 @@ export function PatientSimulator({
               </div>
 
               {/* Weight */}
-              <div className={`p-2 rounded border transition-colors ${weightVal !== baseWeight ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
+              <div className={`p-2 rounded border transition-colors ${weightVal !== baseWeight ? "border-[var(--accent-teal-border)] bg-teal-50/30 dark:bg-teal-950/30" : "border-[var(--border-hairline)] bg-[var(--bg-surface)]"}`}>
                 <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                   <label htmlFor="wt-input" className="font-medium text-[var(--text-primary)]">
                     Body Weight (kg)
@@ -653,7 +653,7 @@ export function PatientSimulator({
                       max={180}
                       value={weightVal}
                       onChange={(e) => setWeightVal(Number(e.target.value))}
-                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold text-right border rounded bg-white"
+                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold text-right border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                     />
                     <span className="text-xs text-[var(--text-muted)]">kg</span>
                     {weightVal !== baseWeight && (
@@ -681,7 +681,7 @@ export function PatientSimulator({
               {/* Glucose & HbA1c side-by-side */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Glucose */}
-                <div className={`p-2 rounded border transition-colors ${glucoseVal !== baseGlucose ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
+                <div className={`p-2 rounded border transition-colors ${glucoseVal !== baseGlucose ? "border-[var(--accent-teal-border)] bg-teal-50/30 dark:bg-teal-950/30" : "border-[var(--border-hairline)] bg-[var(--bg-surface)]"}`}>
                   <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                     <label htmlFor="gl-input" className="font-medium text-[var(--text-primary)]">
                       Fasting Glucose
@@ -697,7 +697,7 @@ export function PatientSimulator({
                         max={350}
                         value={glucoseVal}
                         onChange={(e) => setGlucoseVal(Number(e.target.value))}
-                        className="w-14 px-1.5 py-0.5 text-xs font-mono font-bold text-right border rounded bg-white"
+                        className="w-14 px-1.5 py-0.5 text-xs font-mono font-bold text-right border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                       />
                       <span className="text-xs text-[var(--text-muted)]">mg/dL</span>
                       {glucoseVal !== baseGlucose && (
@@ -724,7 +724,7 @@ export function PatientSimulator({
                 </div>
 
                 {/* HbA1c */}
-                <div className={`p-2 rounded border transition-colors ${hba1cVal !== baseHba1c ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
+                <div className={`p-2 rounded border transition-colors ${hba1cVal !== baseHba1c ? "border-[var(--accent-teal-border)] bg-teal-50/30 dark:bg-teal-950/30" : "border-[var(--border-hairline)] bg-[var(--bg-surface)]"}`}>
                   <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                     <label htmlFor="a1c-input" className="font-medium text-[var(--text-primary)]">
                       HbA1c
@@ -741,7 +741,7 @@ export function PatientSimulator({
                         max={15.0}
                         value={hba1cVal}
                         onChange={(e) => setHba1cVal(Number(e.target.value))}
-                        className="w-14 px-1.5 py-0.5 text-xs font-mono font-bold text-right border rounded bg-white"
+                        className="w-14 px-1.5 py-0.5 text-xs font-mono font-bold text-right border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                       />
                       <span className="text-xs text-[var(--text-muted)]">%</span>
                       {hba1cVal !== baseHba1c && (
@@ -777,7 +777,7 @@ export function PatientSimulator({
                   <span>Trajectory Trend & Clinical Profile</span>
                 </div>
                 {/* Trend selector */}
-                <div className="flex items-center gap-1 bg-white p-0.5 border rounded">
+                <div className="flex items-center gap-1 bg-[var(--bg-surface)] p-0.5 border border-[var(--border-hairline)] rounded">
                   {(["improving", "stable", "worsening"] as const).map((t) => (
                     <button
                       key={t}
@@ -786,7 +786,7 @@ export function PatientSimulator({
                       className={`px-2 py-0.5 text-[10px] font-mono capitalize rounded transition-colors ${
                         trend === t
                           ? "bg-[var(--accent-teal)] text-white font-bold"
-                          : "text-[var(--text-secondary)] hover:bg-gray-100"
+                          : "text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"
                       }`}
                     >
                       {t}
@@ -797,7 +797,7 @@ export function PatientSimulator({
 
               {/* Conditions & Medications Toggles */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <label className="flex items-center gap-2 p-1.5 bg-white rounded border border-[var(--border-hairline)] cursor-pointer">
+                <label className="flex items-center gap-2 p-1.5 bg-[var(--bg-surface)] rounded border border-[var(--border-hairline)] cursor-pointer text-[var(--text-primary)]">
                   <input
                     type="checkbox"
                     checked={conditions.htn_history === 1}
@@ -806,7 +806,7 @@ export function PatientSimulator({
                   />
                   <span>Hypertension History</span>
                 </label>
-                <label className="flex items-center gap-2 p-1.5 bg-white rounded border border-[var(--border-hairline)] cursor-pointer">
+                <label className="flex items-center gap-2 p-1.5 bg-[var(--bg-surface)] rounded border border-[var(--border-hairline)] cursor-pointer text-[var(--text-primary)]">
                   <input
                     type="checkbox"
                     checked={conditions.diabetes_history === 1}
@@ -815,7 +815,7 @@ export function PatientSimulator({
                   />
                   <span>Type 2 Diabetes History</span>
                 </label>
-                <label className="flex items-center gap-2 p-1.5 bg-white rounded border border-[var(--border-hairline)] cursor-pointer">
+                <label className="flex items-center gap-2 p-1.5 bg-[var(--bg-surface)] rounded border border-[var(--border-hairline)] cursor-pointer text-[var(--text-primary)]">
                   <input
                     type="checkbox"
                     checked={medications.antihypertensive_med_history === 1}
@@ -826,7 +826,7 @@ export function PatientSimulator({
                   />
                   <span>Antihypertensive Rx Adherent</span>
                 </label>
-                <label className="flex items-center gap-2 p-1.5 bg-white rounded border border-[var(--border-hairline)] cursor-pointer">
+                <label className="flex items-center gap-2 p-1.5 bg-[var(--bg-surface)] rounded border border-[var(--border-hairline)] cursor-pointer text-[var(--text-primary)]">
                   <input
                     type="checkbox"
                     checked={medications.statin_lipid_med_history === 1}
@@ -841,7 +841,7 @@ export function PatientSimulator({
             </div>
 
             {/* GROUP 4: ADVANCED SEARCHABLE FEATURE TABLE */}
-            <div className="border border-[var(--border-hairline)] rounded bg-white">
+            <div className="border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)]">
               <button
                 type="button"
                 onClick={() => setShowAdvanced(!showAdvanced)}
@@ -862,12 +862,12 @@ export function PatientSimulator({
                       placeholder="Search remaining 132 features (e.g., encounters, recency)..."
                       value={advancedSearch}
                       onChange={(e) => setAdvancedSearch(e.target.value)}
-                      className="w-full pl-8 pr-3 py-1.5 text-xs border rounded bg-[var(--bg-subtle)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
+                      className="w-full pl-8 pr-3 py-1.5 text-xs border border-[var(--border-hairline)] rounded bg-[var(--bg-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                     />
                     <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   </div>
 
-                  <div className="max-h-60 overflow-y-auto overflow-x-auto responsive-table-container border rounded text-xs">
+                  <div className="max-h-60 overflow-y-auto overflow-x-auto responsive-table-container border border-[var(--border-hairline)] rounded text-xs">
                     <table className="w-full min-w-[500px] text-left">
                       <thead className="bg-[var(--bg-subtle)] sticky top-0 text-[10px] text-[var(--text-muted)] uppercase font-mono">
                         <tr>
@@ -895,8 +895,8 @@ export function PatientSimulator({
                           return (
                             <tr
                               key={item.name}
-                              className={`hover:bg-slate-50 transition-colors ${
-                                isEdited ? "bg-teal-50/60 font-medium" : ""
+                              className={`hover:bg-[var(--bg-subtle)] transition-colors ${
+                                isEdited ? "bg-teal-50/60 dark:bg-teal-950/40 font-medium" : ""
                               }`}
                             >
                               <td className="p-2">
@@ -921,7 +921,7 @@ export function PatientSimulator({
                                       [item.name]: Number(e.target.value),
                                     })
                                   }
-                                  className={`w-20 px-1.5 py-0.5 text-xs font-mono text-right border rounded bg-white ${
+                                  className={`w-20 px-1.5 py-0.5 text-xs font-mono text-right border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)] text-[var(--text-primary)] ${
                                     isEdited
                                       ? "border-[var(--accent-teal)] font-bold text-[var(--accent-teal)]"
                                       : ""
@@ -970,7 +970,7 @@ export function PatientSimulator({
                     type="button"
                     onClick={handleSaveScenario}
                     disabled={savedScenarios.length >= 3}
-                    className="flex items-center gap-1 text-[11px] px-2 py-0.5 bg-white border border-[var(--border-hairline)] rounded hover:bg-gray-100 text-[var(--text-primary)] disabled:opacity-50"
+                    className="flex items-center gap-1 text-[11px] px-2 py-0.5 bg-[var(--bg-surface)] border border-[var(--border-hairline)] rounded hover:bg-[var(--bg-subtle)] text-[var(--text-primary)] disabled:opacity-50"
                   >
                     <Save className="w-3 h-3 text-[var(--accent-teal)]" />
                     <span>Save ({savedScenarios.length}/3)</span>
@@ -979,7 +979,7 @@ export function PatientSimulator({
 
                 <div className="grid grid-cols-2 gap-3">
                   {/* Baseline Card */}
-                  <div className="p-3 bg-white rounded border border-[var(--border-hairline)] space-y-1">
+                  <div className="p-3 bg-[var(--bg-surface)] rounded border border-[var(--border-hairline)] space-y-1">
                     <span className="text-[10px] text-[var(--text-muted)] uppercase font-mono">Baseline</span>
                     <div className="font-mono text-xl font-bold text-[var(--text-primary)]">
                       {(simulation.baseline_risk * 100).toFixed(1)}%
@@ -993,7 +993,7 @@ export function PatientSimulator({
                   </div>
 
                   {/* Scenario Card */}
-                  <div className="p-3 bg-white rounded border border-[var(--accent-teal-border)] space-y-1 shadow-2xs">
+                  <div className="p-3 bg-[var(--bg-surface)] rounded border border-[var(--accent-teal-border)] space-y-1 shadow-2xs">
                     <span className="text-[10px] text-[var(--accent-teal)] uppercase font-mono font-bold">
                       Simulated
                     </span>
@@ -1010,15 +1010,15 @@ export function PatientSimulator({
                 </div>
 
                 {/* Delta Display */}
-                <div className="flex items-center justify-between p-2.5 bg-white rounded border border-[var(--border-hairline)] text-xs font-mono">
+                <div className="flex items-center justify-between p-2.5 bg-[var(--bg-surface)] rounded border border-[var(--border-hairline)] text-xs font-mono">
                   <span className="text-[var(--text-secondary)]">Absolute Shift:</span>
                   <span
                     className={`font-bold text-sm ${
                       simulation.delta_risk_pp < 0
-                        ? "text-green-700"
+                        ? "text-emerald-600 dark:text-emerald-400"
                         : simulation.delta_risk_pp > 0
-                        ? "text-rose-700"
-                        : "text-slate-600"
+                        ? "text-rose-600 dark:text-rose-400"
+                        : "text-[var(--text-secondary)]"
                     }`}
                   >
                     {simulation.delta_risk_pp > 0 ? "+" : ""}
@@ -1028,8 +1028,8 @@ export function PatientSimulator({
 
                 {/* WARNINGS / LOW SENSITIVITY NOTICES */}
                 {simulation.is_out_of_range && (
-                  <div className="p-2.5 bg-rose-50 border border-rose-200 rounded text-rose-800 text-xs flex items-start gap-2">
-                    <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
+                  <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded text-rose-800 dark:text-rose-200 text-xs flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
                     <div className="space-y-0.5">
                       <strong className="font-bold">OUT_OF_RANGE Warning:</strong>
                       <div className="text-[11px] leading-relaxed">
@@ -1040,8 +1040,8 @@ export function PatientSimulator({
                 )}
 
                 {simulation.is_low_sensitivity && (
-                  <div className="p-2.5 bg-amber-50 border border-amber-200 rounded text-amber-800 text-xs flex items-start gap-2">
-                    <Info className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
+                  <div className="p-2.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 rounded text-amber-800 dark:text-amber-200 text-xs flex items-start gap-2">
+                    <Info className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
                     <div>
                       <strong className="font-bold">LOW_SENSITIVITY Notice:</strong>
                       <div className="text-[11px] leading-relaxed">
@@ -1053,7 +1053,7 @@ export function PatientSimulator({
 
                 {/* WHAT DROVE THE CHANGE: SHAP DIFF BAR CHART */}
                 {simulation.shap_diff && simulation.shap_diff.length > 0 && (
-                  <div className="p-3 bg-white rounded border border-[var(--border-hairline)] space-y-2">
+                  <div className="p-3 bg-[var(--bg-surface)] rounded border border-[var(--border-hairline)] space-y-2">
                     <div className="flex items-center justify-between text-xs font-bold text-[var(--text-primary)]">
                       <span>What Drove the Change (SHAP Impact Shift)</span>
                       <span className="text-[10px] text-[var(--text-muted)] font-normal">Attribution Δ</span>
@@ -1063,26 +1063,26 @@ export function PatientSimulator({
                       {simulation.shap_diff.slice(0, 5).map((item) => (
                         <div key={item.feature} className="text-[11px] space-y-0.5">
                           <div className="flex justify-between">
-                            <span className="text-[var(--text-secondary)] truncate max-w-[200px]">
+                            <span className="text-[var(--text-primary)] truncate max-w-[200px]">
                               {item.human_name}
                             </span>
                             <span
                               className={`font-mono font-bold ${
                                 item.attribution_diff < 0
-                                  ? "text-green-700"
+                                  ? "text-emerald-600 dark:text-emerald-400"
                                   : item.attribution_diff > 0
-                                  ? "text-rose-700"
-                                  : "text-slate-400"
+                                  ? "text-rose-600 dark:text-rose-400"
+                                  : "text-[var(--text-faint)]"
                               }`}
                             >
                               {item.attribution_diff > 0 ? "+" : ""}
                               {item.attribution_diff.toFixed(4)}
                             </span>
                           </div>
-                          <div className="h-1 bg-slate-100 rounded-full overflow-hidden flex">
+                          <div className="h-1 bg-[var(--bg-subtle)] rounded-full overflow-hidden flex">
                             {item.attribution_diff < 0 ? (
                               <div
-                                className="h-full bg-green-500 rounded-full"
+                                className="h-full bg-emerald-500 rounded-full"
                                 style={{ width: `${Math.min(100, Math.abs(item.attribution_diff) * 200)}%` }}
                               />
                             ) : (
@@ -1100,7 +1100,7 @@ export function PatientSimulator({
 
                 {/* FULL LIST OF FEATURES SHIFTED */}
                 {simulation.features_changed.length > 0 && (
-                  <div className="p-2.5 bg-white rounded border border-[var(--border-hairline)] space-y-1.5">
+                  <div className="p-2.5 bg-[var(--bg-surface)] rounded border border-[var(--border-hairline)] space-y-1.5">
                     <div className="flex justify-between items-center text-[11px] text-[var(--text-secondary)] font-medium">
                       <span>Correlated Features Shifted ({simulation.features_changed.length}):</span>
                     </div>
@@ -1108,7 +1108,7 @@ export function PatientSimulator({
                       {simulation.features_changed.map((col) => (
                         <span
                           key={col}
-                          className="px-1.5 py-0.5 text-[9px] font-mono bg-teal-50 text-[var(--accent-teal)] border border-teal-200 rounded"
+                          className="px-1.5 py-0.5 text-[9px] font-mono bg-[var(--accent-teal-subtle)] text-[var(--accent-teal)] border border-[var(--accent-teal-border)] rounded"
                         >
                           {col}
                         </span>
@@ -1121,7 +1121,7 @@ export function PatientSimulator({
 
             {/* SENSITIVITY CURVES WITH CURRENT VALUE MARKED */}
             {sensitivity && activeCurve && (
-              <div className="p-3.5 bg-white rounded border border-[var(--border-hairline)] space-y-2">
+              <div className="p-3.5 bg-[var(--bg-surface)] rounded border border-[var(--border-hairline)] space-y-2">
                 <div className="flex flex-wrap items-center justify-between gap-1.5">
                   <span className="text-xs font-bold text-[var(--text-primary)]">
                     Model Sensitivity Response Curve
@@ -1133,10 +1133,10 @@ export function PatientSimulator({
                         key={k}
                         type="button"
                         onClick={() => setActiveCurveVar(k)}
-                        className={`px-1.5 py-0.5 rounded uppercase ${
+                        className={`px-1.5 py-0.5 rounded uppercase transition-colors ${
                           activeCurveVar === k
                             ? "bg-[var(--accent-teal)] text-white font-bold"
-                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                            : "bg-[var(--bg-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-panel)]"
                         }`}
                       >
                         {k}
@@ -1147,7 +1147,7 @@ export function PatientSimulator({
 
                 <p className="text-[10px] text-[var(--text-muted)] leading-tight">
                   Visualizes step thresholds of the underlying XGBoost trees for{" "}
-                  <strong>{activeCurve.display_name}</strong>. Current value marked with green dot.
+                  <strong className="text-[var(--text-primary)]">{activeCurve.display_name}</strong>. Current value marked with green dot.
                 </p>
 
                 {/* SVG Curve Chart */}
@@ -1197,7 +1197,7 @@ export function PatientSimulator({
                   <span>
                     Min: {activeCurve.points[0]?.value} {activeCurve.unit}
                   </span>
-                  <span className="text-emerald-700 font-bold">
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">
                     Current: {activeCurve.current_value} {activeCurve.unit}
                   </span>
                   <span>
@@ -1208,7 +1208,7 @@ export function PatientSimulator({
             )}
 
             {/* MANDATORY CAUTION BOX */}
-            <div className="p-3 bg-amber-50/70 border border-amber-200 rounded text-[11px] text-amber-900 leading-relaxed">
+            <div className="p-3 bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 rounded text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed">
               <strong>Clinical Model Notice:</strong> Shows how this model&rsquo;s score reacts to the changed inputs on synthetic data. It does not predict the effect of a real treatment, and covers hypertension progression only.
             </div>
           </div>

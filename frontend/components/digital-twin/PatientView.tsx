@@ -60,7 +60,7 @@ export function PatientView({ patient, activeRisk }: PatientViewProps) {
           <button
             type="button"
             onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded hover:bg-gray-100 text-[var(--text-secondary)] transition-colors no-print"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded hover:bg-[var(--bg-panel)] text-[var(--text-secondary)] transition-colors no-print"
           >
             <Printer className="w-4 h-4" />
             <span>{t.printReport}</span>
@@ -68,11 +68,11 @@ export function PatientView({ patient, activeRisk }: PatientViewProps) {
         </div>
 
         {/* Big Plain-Language Trajectory Callout */}
-        <div className="p-4 rounded bg-teal-50/60 border border-teal-200/80">
-          <p className="text-base sm:text-lg text-teal-950 font-serif leading-relaxed">
+        <div className="p-4 rounded bg-teal-50/60 dark:bg-teal-950/40 border border-teal-200/80 dark:border-teal-800">
+          <p className="text-base sm:text-lg text-teal-950 dark:text-teal-100 font-serif leading-relaxed">
             &ldquo;{summaryStatement}&rdquo;
           </p>
-          <div className="text-xs text-teal-800 mt-2 font-sans">
+          <div className="text-xs text-teal-800 dark:text-teal-300 mt-2 font-sans">
             As of your latest recorded health check on <strong>{patient.as_of_date || "recent visit"}</strong>.
           </div>
         </div>
@@ -92,15 +92,15 @@ export function PatientView({ patient, activeRisk }: PatientViewProps) {
           </div>
           <div className="text-xs">
             {sbp >= 140 || dbp >= 90 ? (
-              <span className="inline-block px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-medium">
+              <span className="inline-block px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200 font-medium">
                 Elevated Blood Pressure
               </span>
             ) : sbp >= 130 ? (
-              <span className="inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-medium">
+              <span className="inline-block px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 font-medium">
                 Borderline Blood Pressure
               </span>
             ) : (
-              <span className="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-medium">
+              <span className="inline-block px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 font-medium">
                 In Target Range
               </span>
             )}

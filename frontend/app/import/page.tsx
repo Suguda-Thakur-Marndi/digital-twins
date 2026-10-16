@@ -422,25 +422,25 @@ export default function ImportPage() {
 
                 {/* Mapping Counts */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                  <div className="p-2 border rounded bg-white">
+                  <div className="p-2 border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)]">
                     <span className="text-lg font-bold font-mono text-[var(--accent-teal)]">
                       {fhirReport.observations_mapped}
                     </span>
                     <span className="text-[10px] text-[var(--text-muted)] block">Observations</span>
                   </div>
-                  <div className="p-2 border rounded bg-white">
+                  <div className="p-2 border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)]">
                     <span className="text-lg font-bold font-mono text-[var(--accent-teal)]">
                       {fhirReport.conditions_mapped}
                     </span>
                     <span className="text-[10px] text-[var(--text-muted)] block">Conditions</span>
                   </div>
-                  <div className="p-2 border rounded bg-white">
+                  <div className="p-2 border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)]">
                     <span className="text-lg font-bold font-mono text-[var(--accent-teal)]">
                       {fhirReport.medications_mapped}
                     </span>
                     <span className="text-[10px] text-[var(--text-muted)] block">Medications</span>
                   </div>
-                  <div className="p-2 border rounded bg-white">
+                  <div className="p-2 border border-[var(--border-hairline)] rounded bg-[var(--bg-surface)]">
                     <span className="text-lg font-bold font-mono text-[var(--text-primary)]">
                       {fhirReport.features_populated}
                     </span>
@@ -450,7 +450,7 @@ export default function ImportPage() {
 
                 {/* Validation Warnings */}
                 {fhirReport.validation_errors.length > 0 && (
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded space-y-1 text-xs text-amber-900">
+                  <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 rounded space-y-1 text-xs text-amber-900 dark:text-amber-200">
                     <strong className="font-bold">Schema Notice:</strong>
                     <ul className="list-disc pl-4 text-[11px] space-y-0.5">
                       {fhirReport.validation_errors.map((err, idx) => (
@@ -510,8 +510,8 @@ export default function ImportPage() {
                 )}
               </div>
             ) : (
-              <div className="p-8 text-center text-xs text-[var(--text-muted)] bg-white rounded border border-dashed border-[var(--border-hairline)] space-y-2">
-                <Database className="w-8 h-8 text-slate-300 mx-auto" />
+              <div className="p-8 text-center text-xs text-[var(--text-muted)] bg-[var(--bg-surface)] rounded border border-dashed border-[var(--border-hairline)] space-y-2">
+                <Database className="w-8 h-8 text-[var(--text-muted)] mx-auto" />
                 <p>Paste or load an ABDM FHIR Bundle on the left and click &ldquo;Validate & Map Record&rdquo;.</p>
                 <p className="text-[11px] text-[var(--text-faint)]">
                   The system will inspect Patient, Observation, Condition, and MedicationStatement resources and map them into the 132 model features.
@@ -527,7 +527,7 @@ export default function ImportPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Direct Bluetooth Form */}
           <div className="lg:col-span-6 space-y-4">
-            <div className="clinical-card p-4 bg-white border-[var(--border-hairline)] space-y-4">
+            <div className="clinical-card p-4 bg-[var(--bg-surface)] border-[var(--border-hairline)] space-y-4">
               <div className="flex items-center gap-2 border-b border-[var(--border-hairline)] pb-3">
                 <Bluetooth className="w-4 h-4 text-blue-600" />
                 <div>
@@ -549,7 +549,7 @@ export default function ImportPage() {
                     type="text"
                     value={devicePatientId}
                     onChange={(e) => setDevicePatientId(e.target.value)}
-                    className="w-full px-2.5 py-1.5 border rounded font-mono text-xs bg-white"
+                    className="w-full px-2.5 py-1.5 border border-[var(--border-hairline)] rounded font-mono text-xs bg-[var(--bg-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                   />
                 </div>
 
@@ -564,7 +564,7 @@ export default function ImportPage() {
                       max={220}
                       value={deviceSbp}
                       onChange={(e) => setDeviceSbp(Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 border rounded font-mono text-xs bg-white font-bold"
+                      className="w-full px-2.5 py-1.5 border border-[var(--border-hairline)] rounded font-mono text-xs bg-[var(--bg-subtle)] text-[var(--text-primary)] font-bold focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                     />
                   </div>
                   <div>
@@ -577,7 +577,7 @@ export default function ImportPage() {
                       max={140}
                       value={deviceDbp}
                       onChange={(e) => setDeviceDbp(Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 border rounded font-mono text-xs bg-white font-bold"
+                      className="w-full px-2.5 py-1.5 border border-[var(--border-hairline)] rounded font-mono text-xs bg-[var(--bg-subtle)] text-[var(--text-primary)] font-bold focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                     />
                   </div>
                 </div>
@@ -593,7 +593,7 @@ export default function ImportPage() {
                       max={180}
                       value={deviceHr}
                       onChange={(e) => setDeviceHr(Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 border rounded font-mono text-xs bg-white"
+                      className="w-full px-2.5 py-1.5 border border-[var(--border-hairline)] rounded font-mono text-xs bg-[var(--bg-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                     />
                   </div>
                   <div>
@@ -606,7 +606,7 @@ export default function ImportPage() {
                       max={100}
                       value={deviceSpo2}
                       onChange={(e) => setDeviceSpo2(Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 border rounded font-mono text-xs bg-white"
+                      className="w-full px-2.5 py-1.5 border border-[var(--border-hairline)] rounded font-mono text-xs bg-[var(--bg-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                     />
                   </div>
                 </div>
@@ -619,7 +619,7 @@ export default function ImportPage() {
                     type="text"
                     value={deviceModel}
                     onChange={(e) => setDeviceModel(e.target.value)}
-                    className="w-full px-2.5 py-1.5 border rounded font-mono text-xs bg-[var(--bg-subtle)]"
+                    className="w-full px-2.5 py-1.5 border border-[var(--border-hairline)] rounded font-mono text-xs bg-[var(--bg-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
                   />
                 </div>
 
@@ -702,7 +702,7 @@ export default function ImportPage() {
             </div>
 
             {/* Quick Link to Twin */}
-            <div className="p-4 bg-white border border-[var(--border-hairline)] rounded flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 bg-[var(--bg-surface)] border border-[var(--border-hairline)] rounded flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h4 className="text-xs font-semibold text-[var(--text-primary)]">
                   Verify Ingested Telemetry on Twin Dashboard
