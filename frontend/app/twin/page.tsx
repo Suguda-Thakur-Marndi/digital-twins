@@ -481,7 +481,7 @@ function TwinDashboardContent() {
             </span>
           </div>
           <span className="text-[10px] font-mono text-amber-800 dark:text-amber-300">
-            Synthea Synthetic EHR · Non-diagnostic
+            Prototype only · Non-diagnostic
           </span>
         </div>
       )}
@@ -651,7 +651,7 @@ function TwinDashboardContent() {
           </div>
           <div className="text-right text-[10px] font-mono">
             <div>Report Date: {new Date().toLocaleDateString()}</div>
-            <div>Cohort Source: Synthea EHR (SYNTHETIC)</div>
+            <div>Prototype Decision Support Profile</div>
           </div>
         </div>
 
@@ -717,8 +717,8 @@ function TwinDashboardContent() {
         <div className="border border-gray-400 p-2.5 text-[10px] text-gray-700 leading-tight space-y-1">
           <strong>Clinical Model Governance &amp; Disclaimers:</strong>
           <p>
-            This clinical decision support record is generated from synthetic EHR data (Synthea) for research demonstration at the Happiest Health Summit 2026. 
-            The underlying XGBoost model is not certified as a medical device, is not validated on Indian cohorts, and does not provide formal diagnosis or prescriptive treatment orders.
+            This clinical decision support summary is an exploratory prototype for 365-day hypertension trajectory risk estimation. 
+            The underlying model is not certified as a medical device and is not validated for clinical diagnosis or prescription decisions.
           </p>
         </div>
       </div>

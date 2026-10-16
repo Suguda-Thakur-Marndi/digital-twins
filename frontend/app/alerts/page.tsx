@@ -107,7 +107,7 @@ export default function AlertsPage() {
             </span>
           </div>
           <span className="text-[11px] text-[var(--text-muted)] font-mono">
-            Evaluating Synthea synthetic EHR cohort
+            Cohort trajectory evaluation (Prototype)
           </span>
         </div>
 
@@ -407,10 +407,7 @@ export default function AlertsPage() {
       <div className="p-3 bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded text-xs text-[var(--text-muted)] flex items-start gap-2">
         <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1" />
         <p className="leading-relaxed">
-          <strong>Clinical Surveillance Caveat:</strong> Lead time calculations are computed retrospectively
-          over synthetic Synthea EHR encounters. The model is an observational research prototype. In clinical
-          practice, lead time enables targeted anti-hypertensive titration, lifestyle counselling, and closer
-          ambulatory BP monitoring prior to acute cardiovascular decompensation.
+          <strong>Surveillance Notice:</strong> Lead-time measurements indicate the days between an initial threshold breach and a subsequent decompensation encounter in the historical record. This is an exploratory prototype demonstrating trajectory monitoring and is not validated for autonomous clinical intervention.
         </p>
       </div>
     </div>

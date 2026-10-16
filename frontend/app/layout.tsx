@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   authors: [{ name: "TwinCare Clinical Engineering" }],
   openGraph: {
     title: "TwinCare · Pramana Clinical Twin (Hypertension)",
-    description: "Longitudinal digital twin research prototype based on Synthea synthetic EHR data.",
+    description: "Longitudinal hypertension digital twin prototype for 365-day trajectory exploration, SHAP explainability, and what-if simulations.",
   },
 };
 
@@ -95,7 +95,7 @@ export default function RootLayout({
               <span className="text-white/90 hidden sm:inline">Theme: Digital Twin in Healthcare</span>
             </div>
             <div className="text-white/85 text-[11px] font-mono">
-              Synthetic EHR Cohort (N=1,335) · Research Prototype
+              Longitudinal Hypertension Twin · 365-Day Horizon
             </div>
           </div>
 
@@ -113,7 +113,7 @@ export default function RootLayout({
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                 <p className="font-medium text-[var(--text-secondary)]">
-                  Research prototype on synthetic EHR data. Not a medical device. Not for diagnosis or treatment decisions.
+                  Prototype only. Not validated for clinical decisions. Dataset provenance: Synthea EHR.
                 </p>
               </div>
               <div className="flex items-center gap-4 text-[11px] font-mono text-[var(--text-muted)]">

@@ -92,7 +92,7 @@ export default function PopulationPage() {
               Cohort Analysis
             </span>
             <span className="text-[10px] font-mono bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 px-2 py-0.5 rounded-full font-bold">
-              Synthea Synthetic EHR (N=1,335)
+              Cohort N=1,335 · Synthea Provenance
             </span>
           </div>
           <h1 className="text-2xl font-editorial font-bold text-[var(--text-primary)]">
@@ -119,7 +119,7 @@ export default function PopulationPage() {
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
           <span>
-            <strong>Synthea Synthetic EHR Demonstration:</strong> Scores reflect Platt-calibrated XGBoost probabilities, not epidemiological prevalence or diagnostic advice.
+            <strong>Prototype Demonstration:</strong> Scores reflect Platt-calibrated XGBoost probabilities, not epidemiological prevalence or diagnostic advice.
           </span>
         </div>
         <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 shrink-0 hidden sm:inline">
@@ -292,7 +292,7 @@ export default function PopulationPage() {
                 Cohort Roster ({filteredPatients.length})
               </h3>
               <p className="text-[11px] text-[var(--text-muted)]">
-                Synthetic profiles ranked by decompensation risk
+                Profiles ranked by 365-day decompensation risk
               </p>
             </div>
             <span className="text-[10px] text-[var(--text-muted)] font-mono">

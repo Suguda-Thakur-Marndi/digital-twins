@@ -59,7 +59,7 @@ interface FormState {
 }
 
 const INITIAL_FORM: FormState = {
-  alias: "Synthetic Patient Case",
+  alias: "Patient Profile",
   age: 56,
   gender: "Female",
   race: "other",
@@ -221,7 +221,7 @@ export default function RegisterPatientPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.consent_confirmed) {
-      setGlobalError("Please confirm the synthetic test data and privacy acknowledgment checkbox.");
+      setGlobalError("Please confirm the prototype test data and privacy acknowledgment checkbox.");
       return;
     }
     if (!validateStep1() || !validateStep2()) {
@@ -234,8 +234,8 @@ export default function RegisterPatientPage() {
     setFieldErrors({});
 
     const payload: PatientRegisterRequest = {
-      display_name: form.alias.trim() || "Synthetic Demo Profile",
-      alias: form.alias.trim() || "Synthetic Demo Profile",
+      display_name: form.alias.trim() || "Demo Profile",
+      alias: form.alias.trim() || "Demo Profile",
       age: Number(form.age),
       gender: form.gender,
       race: form.race,
@@ -302,14 +302,14 @@ export default function RegisterPatientPage() {
                 Patient Intake
               </span>
               <span className="text-[10px] font-mono bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 px-2 py-0.5 rounded-full font-bold">
-                Synthetic Intake
+                Onboarding Wizard
               </span>
             </div>
             <h1 className="font-editorial text-2xl font-bold text-[var(--text-primary)] tracking-tight mt-1">
               Register New Patient Twin
             </h1>
             <p className="text-xs text-[var(--text-muted)] max-w-xl mt-0.5 leading-relaxed">
-              Synthesize a clinical profile from baseline vitals and labs. Computes 132 features, Platt-calibrated risk, and signed SHAP drivers.
+              Generate a patient digital twin from baseline vitals and labs. Computes 132 longitudinal features, calibrated risk estimate, and signed SHAP drivers.
             </p>
           </div>
 
@@ -427,7 +427,7 @@ export default function RegisterPatientPage() {
               {/* Alias / Identifier */}
               <div className="space-y-1">
                 <label className="font-medium text-[var(--text-secondary)]">
-                  Synthetic Alias / Case Name <span className="text-red-500">*</span>
+                  Case Alias / Profile Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -437,7 +437,7 @@ export default function RegisterPatientPage() {
                   className="w-full px-3 py-2 bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded text-xs focus:ring-1 focus:ring-[var(--accent-teal)] focus:outline-none"
                 />
                 <span className="text-[10px] text-[var(--text-muted)] block">
-                  Synthetic identifier only. Do not input real names.
+                  Identifier alias only. Do not input real personal names or Aadhaar.
                 </span>
               </div>
 
@@ -861,7 +861,7 @@ export default function RegisterPatientPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
               <div className="p-3 bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded space-y-1">
                 <span className="text-[10px] font-mono uppercase text-[var(--text-muted)]">Demographics</span>
-                <p className="font-semibold text-[var(--text-primary)]">{form.alias || "Synthetic Case"}</p>
+                <p className="font-semibold text-[var(--text-primary)]">{form.alias || "Demo Case"}</p>
                 <p className="text-[var(--text-secondary)] font-mono text-[11px]">
                   {form.age} years · {form.gender}
                 </p>
@@ -938,10 +938,10 @@ export default function RegisterPatientPage() {
                 />
                 <div className="text-xs space-y-0.5">
                   <span className="font-semibold text-[var(--text-primary)] block">
-                    Research Prototype & Synthetic Confirmation Statement
+                    Research Prototype Confirmation Statement
                   </span>
                   <span className="text-[var(--text-muted)] leading-relaxed block">
-                    I confirm this record consists of synthetic or simulated research coordinates and does not represent real personally identifiable health data.
+                    I confirm this record is entered for prototype exploration and does not represent real personally identifiable health data.
                     I acknowledge that risk outputs reflect algorithmic estimation, not certified clinical diagnoses or treatment directives.
                   </span>
                 </div>

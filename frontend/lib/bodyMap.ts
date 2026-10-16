@@ -50,9 +50,9 @@ export const BODY_REGIONS: BodyRegionConfig[] = [
       },
       {
         key: "riskScore",
-        label: "Calibrated 10-Yr Risk",
+        label: "365-Day Risk Estimate",
         unit: "%",
-        normalRange: "< 10.0% (Low Risk)",
+        normalRange: "< 15.0% (Low Risk)",
         description: "Platt-calibrated 365-day hypertension decompensation risk.",
       },
       {

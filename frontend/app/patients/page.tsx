@@ -329,7 +329,7 @@ export default function PatientDirectoryPage() {
                             </span>
                           ) : (
                             <span className="text-[9px] font-mono uppercase bg-stone-100 text-stone-600 border border-stone-200 px-1 py-0.2 rounded">
-                              Synthetic Demo
+                              Cohort Profile
                             </span>
                           )}
                         </div>
@@ -438,7 +438,7 @@ export default function PatientDirectoryPage() {
             </div>
 
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-              Are you sure you want to permanently remove synthetic record{" "}
+              Are you sure you want to permanently remove record{" "}
               <strong className="font-mono text-[var(--text-primary)]">{patientToDelete.display_id}</strong> (
               {patientToDelete.name})?
             </p>

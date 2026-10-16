@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeProvider";
@@ -18,6 +18,9 @@ import {
   X,
   ArrowRight,
   Database,
+  FileText,
+  Award,
+  ChevronDown,
 } from "lucide-react";
 
 interface NavItem {
@@ -28,21 +31,44 @@ interface NavItem {
   badgeColor?: string;
 }
 
-const NAV_ITEMS: NavItem[] = [
+const PRIMARY_NAV: NavItem[] = [
   { href: "/", label: "Overview", icon: Activity },
   { href: "/twin", label: "Digital Twin", icon: Layers },
   { href: "/patients", label: "Patients", icon: Users },
-  { href: "/population", label: "Population", icon: PieChart },
-  { href: "/performance", label: "Model Metrics", icon: BarChart3 },
-  { href: "/how-it-works", label: "How It Works", icon: BookOpen },
-  { href: "/india", label: "India Context", icon: MapPin },
-  { href: "/audit", label: "Audit & Privacy", icon: ShieldCheck },
   { href: "/alerts", label: "Alerts", icon: Bell, badge: "3", badgeColor: "bg-amber-500" },
+  { href: "/performance", label: "Performance", icon: BarChart3 },
+];
+
+const MORE_NAV: NavItem[] = [
+  { href: "/how-it-works", label: "Methodology", icon: BookOpen },
+  { href: "/model-card", label: "Model Card", icon: FileText },
+  { href: "/population", label: "Population", icon: PieChart },
+  { href: "/audit", label: "Audit & Privacy", icon: ShieldCheck },
+  { href: "/india", label: "India Context", icon: MapPin },
+  { href: "/import", label: "Import Data", icon: Database },
+  { href: "/about", label: "About & Charter", icon: Award },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  // Close "More" dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (moreRef.current && !moreRef.current.contains(event.target as Node)) {
+        setMoreMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const isMoreActive = MORE_NAV.some(
+    (item) => pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+  );
 
   return (
     <>
@@ -70,9 +96,9 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-1 text-xs font-medium">
-            {NAV_ITEMS.map((item) => {
+          {/* Desktop Navigation Links (Clean & Concise) */}
+          <nav className="hidden md:flex items-center gap-1 text-xs font-medium">
+            {PRIMARY_NAV.map((item) => {
               const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
               const Icon = item.icon;
               return (
@@ -95,63 +121,50 @@ export function Navbar() {
                 </Link>
               );
             })}
-          </nav>
 
-          {/* Compact Tablet Navigation (< xl, >= md) */}
-          <nav className="hidden md:flex xl:hidden items-center gap-1 text-xs font-medium">
-            <Link
-              href="/"
-              className={`px-2.5 py-1.5 rounded-lg ${
-                pathname === "/" ? "bg-[rgba(37,99,235,0.12)] text-[var(--color-primary)] font-semibold" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              Overview
-            </Link>
-            <Link
-              href="/twin"
-              className={`px-2.5 py-1.5 rounded-lg ${
-                pathname.startsWith("/twin") ? "bg-[rgba(37,99,235,0.12)] text-[var(--color-primary)] font-semibold" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              Twin
-            </Link>
-            <Link
-              href="/patients"
-              className={`px-2.5 py-1.5 rounded-lg ${
-                pathname.startsWith("/patients") ? "bg-[rgba(37,99,235,0.12)] text-[var(--color-primary)] font-semibold" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              Patients
-            </Link>
-            <Link
-              href="/population"
-              className={`px-2.5 py-1.5 rounded-lg ${
-                pathname.startsWith("/population") ? "bg-[rgba(37,99,235,0.12)] text-[var(--color-primary)] font-semibold" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              Population
-            </Link>
-            <Link
-              href="/performance"
-              className={`px-2.5 py-1.5 rounded-lg ${
-                pathname.startsWith("/performance") ? "bg-[rgba(37,99,235,0.12)] text-[var(--color-primary)] font-semibold" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              Metrics
-            </Link>
-            <Link
-              href="/audit"
-              className={`px-2.5 py-1.5 rounded-lg ${
-                pathname.startsWith("/audit") ? "bg-[rgba(37,99,235,0.12)] text-[var(--color-primary)] font-semibold" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              Audit
-            </Link>
+            {/* "More" Dropdown Menu */}
+            <div className="relative" ref={moreRef}>
+              <button
+                type="button"
+                onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+                className={`px-3 py-1.5 rounded-xl transition-all duration-180 flex items-center gap-1.5 cursor-pointer ${
+                  isMoreActive
+                    ? "bg-[rgba(37,99,235,0.12)] dark:bg-[rgba(96,165,250,0.16)] text-[var(--color-primary)] font-semibold border border-[rgba(37,99,235,0.25)] dark:border-[rgba(96,165,250,0.3)]"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.4)] dark:hover:bg-[rgba(255,255,255,0.05)] border border-transparent"
+                }`}
+              >
+                <span>More</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${moreMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {moreMenuOpen && (
+                <div className="absolute right-0 mt-2 w-52 glass-modal p-1.5 shadow-xl rounded-xl border border-[var(--glass-border)] z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                  {MORE_NAV.map((subItem) => {
+                    const isSubActive = pathname === subItem.href || pathname.startsWith(subItem.href);
+                    const SubIcon = subItem.icon;
+                    return (
+                      <Link
+                        key={subItem.href}
+                        href={subItem.href}
+                        onClick={() => setMoreMenuOpen(false)}
+                        className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-2.5 transition-all ${
+                          isSubActive
+                            ? "bg-[rgba(37,99,235,0.12)] text-[var(--color-primary)] font-semibold"
+                            : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)]"
+                        }`}
+                      >
+                        <SubIcon className="w-3.5 h-3.5 opacity-80" />
+                        <span>{subItem.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Right Action Controls */}
           <div className="flex items-center gap-2">
-            {/* Dark / Light Theme Toggle Switcher */}
             <ThemeToggle />
 
             {/* Quick Patient CTA */}
@@ -180,7 +193,10 @@ export function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden px-4 pt-2 pb-4 glass-card mx-3 my-2 border border-[var(--glass-border)] animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="flex flex-col gap-1 text-sm font-medium pt-1">
-              {NAV_ITEMS.map((item) => {
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] px-3 pt-1">
+                Main
+              </span>
+              {PRIMARY_NAV.map((item) => {
                 const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
                 const Icon = item.icon;
                 return (
@@ -206,6 +222,30 @@ export function Navbar() {
                   </Link>
                 );
               })}
+
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] px-3 pt-2 border-t border-[var(--glass-border)] mt-1">
+                More Resources
+              </span>
+              {MORE_NAV.map((item) => {
+                const isActive = pathname === item.href || pathname.startsWith(item.href);
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-3 py-2 rounded-xl flex items-center gap-2.5 text-xs transition-colors ${
+                      isActive
+                        ? "bg-[rgba(37,99,235,0.15)] text-[var(--color-primary)] font-semibold"
+                        : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)]"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 opacity-80" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+
               <div className="pt-3 mt-2 border-t border-[var(--glass-border)] flex items-center justify-end">
                 <Link
                   href="/twin?patient=PT-101"
