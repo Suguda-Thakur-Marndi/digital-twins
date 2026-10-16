@@ -99,27 +99,39 @@ export default function PerformancePage() {
       {perf && (
         <>
           {/* ── CRITICAL THRESHOLD DISCLOSURE (Requirement 6) ────────────────── */}
-          <div className="p-4 bg-rose-50/90 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800/60 rounded-xl text-xs space-y-2">
-            <div className="flex items-center gap-2 font-bold text-rose-950 dark:text-rose-200">
+          <div className="p-4 sm:p-5 bg-rose-50/90 dark:bg-rose-950/30 border border-rose-300 dark:border-rose-600/40 rounded-2xl text-xs space-y-3 shadow-sm">
+            <div className="flex items-center gap-2 font-bold text-rose-950 dark:text-rose-100 text-sm">
               <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
               <span>Static Threshold Failure Analysis: 0% Recall on Held-Out Test Data</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px] text-rose-900 dark:text-rose-300 pt-1">
-              <div className="p-2 rounded bg-white/60 dark:bg-slate-900/40 border border-rose-200 dark:border-rose-900">
-                <span className="text-[10px] text-rose-600 dark:text-rose-400 block">Static Cutoff</span>
-                <strong>{perf.validation_threshold.toFixed(4)}</strong>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 font-mono pt-1">
+              <div className="p-2.5 rounded-lg bg-white/90 dark:bg-slate-900/80 border border-rose-200 dark:border-rose-700/50 space-y-0.5">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-rose-700 dark:text-rose-300 font-semibold block">
+                  Static Cutoff
+                </span>
+                <strong className="text-sm font-mono text-[var(--text-primary)] font-bold block">
+                  {perf.validation_threshold.toFixed(4)}
+                </strong>
               </div>
-              <div className="p-2 rounded bg-white/60 dark:bg-slate-900/40 border border-rose-200 dark:border-rose-900">
-                <span className="text-[10px] text-rose-600 dark:text-rose-400 block">True Positives</span>
-                <strong>0 of 14 Events (0.0% Recall)</strong>
+              <div className="p-2.5 rounded-lg bg-white/90 dark:bg-slate-900/80 border border-rose-200 dark:border-rose-700/50 space-y-0.5">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-rose-700 dark:text-rose-300 font-semibold block">
+                  True Positives
+                </span>
+                <strong className="text-sm font-mono text-rose-600 dark:text-rose-400 font-bold block">
+                  0 of 14 Events (0.0% Recall)
+                </strong>
               </div>
-              <div className="p-2 rounded bg-white/60 dark:bg-slate-900/40 border border-rose-200 dark:border-rose-900">
-                <span className="text-[10px] text-rose-600 dark:text-rose-400 block">Operational Fix</span>
-                <strong>Alert-Budget Percentile Policy</strong>
+              <div className="p-2.5 rounded-lg bg-white/90 dark:bg-slate-900/80 border border-rose-200 dark:border-rose-700/50 space-y-0.5">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-rose-700 dark:text-rose-300 font-semibold block">
+                  Operational Fix
+                </span>
+                <strong className="text-sm font-mono text-emerald-600 dark:text-emerald-400 font-bold block">
+                  Alert-Budget Percentile Policy
+                </strong>
               </div>
             </div>
-            <p className="text-[11px] text-rose-800 dark:text-rose-300 leading-snug">
-              While test <strong>ROC-AUC is 0.8069</strong> (ranking ability), test <strong>PR-AUC is 0.0644</strong> against an empirical base rate of only <strong>1.46%</strong> (14 events in 964 patients). Static binary cutoffs fail in low-prevalence clinical settings; an alert-budget operating policy is clinically mandatory.
+            <p className="text-xs text-rose-950 dark:text-rose-100/90 leading-relaxed pt-0.5 font-sans">
+              While test <strong className="text-rose-950 dark:text-white font-bold">ROC-AUC is 0.8069</strong> (ranking ability), test <strong className="text-rose-950 dark:text-white font-bold">PR-AUC is 0.0644</strong> against an empirical base rate of only <strong className="text-rose-950 dark:text-white font-bold">1.46%</strong> (14 events in 964 patients). Static binary cutoffs fail in low-prevalence clinical settings; an alert-budget operating policy is clinically mandatory.
             </p>
           </div>
 
@@ -315,25 +327,25 @@ export default function PerformancePage() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center font-mono">
-              <div className="p-3 rounded-xl border bg-rose-500/10 border-rose-500/30">
-                <span className="text-[10px] text-rose-600 dark:text-rose-400 uppercase block font-sans">True Positives</span>
-                <span className="text-2xl font-bold text-rose-600 dark:text-rose-400">{perf.threshold_tp}</span>
-                <span className="text-[9px] text-rose-500 block font-sans mt-0.5">0% of 14 flagged</span>
+              <div className="p-3 rounded-xl border bg-rose-500/10 dark:bg-rose-950/40 border-rose-500/30 dark:border-rose-700/50">
+                <span className="text-[10px] text-rose-700 dark:text-rose-300 uppercase block font-sans font-semibold">True Positives</span>
+                <span className="text-2xl font-bold text-rose-600 dark:text-rose-200">{perf.threshold_tp}</span>
+                <span className="text-[9px] text-rose-600 dark:text-rose-300/80 block font-sans mt-0.5 font-medium">0% of 14 flagged</span>
               </div>
-              <div className="p-3 rounded-xl border bg-slate-500/10 border-slate-500/30">
-                <span className="text-[10px] text-[var(--text-muted)] uppercase block font-sans">False Positives</span>
+              <div className="p-3 rounded-xl border bg-slate-500/10 dark:bg-slate-900/40 border-slate-500/30 dark:border-slate-700/50">
+                <span className="text-[10px] text-[var(--text-muted)] uppercase block font-sans font-semibold">False Positives</span>
                 <span className="text-2xl font-bold text-[var(--text-primary)]">{perf.threshold_fp}</span>
-                <span className="text-[9px] text-[var(--text-muted)] block font-sans mt-0.5">No false alarms</span>
+                <span className="text-[9px] text-[var(--text-muted)] block font-sans mt-0.5 font-medium">No false alarms</span>
               </div>
-              <div className="p-3 rounded-xl border bg-rose-500/10 border-rose-500/30">
-                <span className="text-[10px] text-rose-600 dark:text-rose-400 uppercase block font-sans">False Negatives</span>
-                <span className="text-2xl font-bold text-rose-600 dark:text-rose-400">{perf.threshold_fn}</span>
-                <span className="text-[9px] text-rose-500 block font-sans mt-0.5">All 14 events missed</span>
+              <div className="p-3 rounded-xl border bg-rose-500/10 dark:bg-rose-950/40 border-rose-500/30 dark:border-rose-700/50">
+                <span className="text-[10px] text-rose-700 dark:text-rose-300 uppercase block font-sans font-semibold">False Negatives</span>
+                <span className="text-2xl font-bold text-rose-600 dark:text-rose-200">{perf.threshold_fn}</span>
+                <span className="text-[9px] text-rose-600 dark:text-rose-300/80 block font-sans mt-0.5 font-medium">All 14 events missed</span>
               </div>
-              <div className="p-3 rounded-xl border bg-emerald-500/10 border-emerald-500/30">
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase block font-sans">True Negatives</span>
-                <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{perf.threshold_tn}</span>
-                <span className="text-[9px] text-emerald-600 block font-sans mt-0.5">100% negative retained</span>
+              <div className="p-3 rounded-xl border bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-700/50">
+                <span className="text-[10px] text-emerald-700 dark:text-emerald-300 uppercase block font-sans font-semibold">True Negatives</span>
+                <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-300">{perf.threshold_tn}</span>
+                <span className="text-[9px] text-emerald-700 dark:text-emerald-300/80 block font-sans mt-0.5 font-medium">100% negative retained</span>
               </div>
             </div>
           </div>
