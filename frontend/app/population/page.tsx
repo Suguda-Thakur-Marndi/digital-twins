@@ -131,7 +131,7 @@ export default function PopulationPage() {
       {error && (
         <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 text-rose-800 dark:text-rose-200 text-xs">
           {error.includes("fetch") || error.includes("Failed")
-            ? "Population service unavailable. Please check that the FastAPI backend is running on port 8000."
+            ? "Population service unavailable. Please check that the FastAPI backend is running and reachable."
             : error}
         </div>
       )}

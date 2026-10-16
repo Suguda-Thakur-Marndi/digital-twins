@@ -4,7 +4,12 @@
  * Strictly typed interfaces mirroring the backend Pydantic models.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const rawApiBase =
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  "http://localhost:8000";
+
+export const API_BASE = rawApiBase.trim().replace(/\/+$/, "");
 
 export class ApiError extends Error {
   public fieldErrors?: Record<string, string>;
@@ -16,7 +21,8 @@ export class ApiError extends Error {
 }
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const url = `${API_BASE}${path}`;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const url = `${API_BASE}${normalizedPath}`;
   try {
     const res = await fetch(url, {
       headers: {

@@ -26,17 +26,25 @@ dist/
 *.tsbuildinfo
 next-env.d.ts.bak
 
-# Local Environment & Secrets
+# Local Environment & Secrets (Never commit credentials)
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 
 # Audit Logs & Dynamic Runtime Data
 backend/data/
+data/
+*.log
 backend/inference_audit.jsonl
 inference_audit.jsonl
+
+# Raw Clinical Datasets (Prevent accidental PII/dataset commits)
+*.csv
+*.tsv
+*.parquet
+*.vcf
+*.dcm
+*.tar.gz
 
 # OS & Editor Files
 .DS_Store

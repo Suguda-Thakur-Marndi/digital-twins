@@ -1,4 +1,12 @@
 {
+  "name": "twincare-root",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev",
+    "start": "npm --prefix frontend run start",
+    "lint": "npm --prefix frontend run lint"
+  },
   "dependencies": {
     "localtunnel": "^2.0.2"
   }

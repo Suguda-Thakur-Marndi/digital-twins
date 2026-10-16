@@ -54,14 +54,18 @@ async def lifespan(app: FastAPI):
 
     # Determine artifacts directory
     env_dir = os.getenv("ARTIFACTS_DIR")
-    if env_dir:
+    if env_dir and Path(env_dir).exists():
         artifacts_dir = Path(env_dir)
-    elif Path("artifacts").exists():
-        artifacts_dir = Path("artifacts")
-    elif Path("backend/artifacts").exists():
-        artifacts_dir = Path("backend/artifacts")
     else:
-        artifacts_dir = Path(__file__).resolve().parent.parent / "artifacts"
+        candidate = Path(__file__).resolve().parent.parent / "artifacts"
+        if candidate.exists():
+            artifacts_dir = candidate
+        elif Path("backend/artifacts").exists():
+            artifacts_dir = Path("backend/artifacts")
+        elif Path("artifacts").exists():
+            artifacts_dir = Path("artifacts")
+        else:
+            artifacts_dir = candidate
 
     _audit_svc = AuditService()
     _wearable_svc = WearableService()
@@ -82,7 +86,7 @@ async def lifespan(app: FastAPI):
         raise RuntimeError(err_msg)
 
     try:
-        logger.info("Loading ModelService...")
+        logger.info("Loading ModelService from %s...", artifacts_dir.resolve())
         _model_svc = ModelService(artifacts_dir)
         logger.info(
             "ModelService ready: %d features, schema fingerprint=%s",
@@ -126,13 +130,30 @@ app = FastAPI(
 
 # ── CORS Middleware ───────────────────────────────────────────────────────────
 raw_allowed_origins = os.getenv("ALLOWED_ORIGINS") or os.getenv("CORS_ORIGINS")
-ALLOWED_ORIGINS = (raw_allowed_origins or "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001").split(",")
+is_production = os.getenv("ENVIRONMENT", "").lower() in ("production", "prod") or bool(os.getenv("RENDER"))
+
+if raw_allowed_origins:
+    parsed_origins = [o.strip() for o in raw_allowed_origins.split(",") if o.strip()]
+else:
+    parsed_origins = ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3001"]
+
+# Security Rule: In production, NEVER allow wildcard "*" origin
+if is_production:
+    if "*" in parsed_origins:
+        logger.warning("SECURITY WARNING: Wildcard '*' origin rejected in production. Reverting to explicit configured origins.")
+        parsed_origins = [o for o in parsed_origins if o != "*"]
+    if not parsed_origins:
+        logger.error("SECURITY ALERT: No valid CORS origins configured in production! Set ALLOWED_ORIGINS to your Vercel frontend URL.")
+
+ALLOWED_ORIGINS = parsed_origins
+ALLOWED_ORIGIN_REGEX = os.getenv("ALLOWED_ORIGIN_REGEX") or (r"^https:\/\/.*\.vercel\.app$" if is_production else None)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=ALLOWED_ORIGIN_REGEX,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
 )
 
@@ -917,3 +938,13 @@ async def global_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content={"detail": "Internal server error. Check backend logs for trace."},
     )
+
+
+# ── Server Entrypoint (Render & Local Execution) ──────────────────────────────
+if __name__ == "__main__":
+    import uvicorn
+
+    port = int(os.getenv("PORT", 8000))
+    host = os.getenv("HOST", "0.0.0.0")
+    logger.info("Starting TwinCare FastAPI uvicorn server on %s:%d (env: %s)", host, port, os.getenv("ENVIRONMENT", "development"))
+    uvicorn.run("app.main:app", host=host, port=port, reload=False)

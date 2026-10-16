@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 from collections import deque
 from pathlib import Path
 from threading import Lock
@@ -25,12 +26,23 @@ class AuditService:
     """Thread-safe inference audit logger with cryptographic hash-chain persistence."""
 
     def __init__(self, log_path: Optional[Path] = None):
-        if log_path is None:
-            self._log_path = Path("backend/inference_audit.jsonl")
-            if not self._log_path.parent.exists():
-                self._log_path = Path("inference_audit.jsonl")
-        else:
+        if log_path is not None:
             self._log_path = Path(log_path)
+        else:
+            env_log_path = os.getenv("AUDIT_LOG_PATH")
+            env_data_dir = os.getenv("DATA_DIR") or os.getenv("PERSISTENT_DATA_DIR")
+            if env_log_path:
+                self._log_path = Path(env_log_path)
+            elif env_data_dir:
+                self._log_path = Path(env_data_dir) / "inference_audit.jsonl"
+            else:
+                candidate = Path(__file__).resolve().parent.parent.parent / "inference_audit.jsonl"
+                if candidate.parent.exists():
+                    self._log_path = candidate
+                elif Path("backend/inference_audit.jsonl").parent.exists():
+                    self._log_path = Path("backend/inference_audit.jsonl")
+                else:
+                    self._log_path = Path("inference_audit.jsonl")
 
         self._log_path.parent.mkdir(parents=True, exist_ok=True)
         self._log: deque[Dict[str, Any]] = deque(maxlen=MAX_LOG_ENTRIES)

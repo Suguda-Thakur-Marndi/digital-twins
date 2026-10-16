@@ -841,9 +841,9 @@ export default function OverviewPage() {
         </div>
         <div className="flex items-center gap-2 font-mono text-[11px] shrink-0">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>FastAPI 8000 Active</span>
+          <span>FastAPI Engine Active</span>
           <span>·</span>
-          <span>Next.js 3000 Connected</span>
+          <span>Next.js Connected</span>
         </div>
       </footer>
     </div>

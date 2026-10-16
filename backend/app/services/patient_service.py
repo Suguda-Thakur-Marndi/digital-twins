@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import uuid
 from datetime import datetime, date
 from pathlib import Path
@@ -93,17 +94,26 @@ class PatientService:
         self._demo_patients: List[Dict[str, Any]] = [_clean_patient_record(p) for p in raw_patients]
         logger.info("Loaded %d demo patients from demo_patients.json", len(self._demo_patients))
 
-        # Setup local persistence for registered patients under backend/data/
-        self._data_dir = self._artifacts_dir.parent / "data"
-        if not self._data_dir.exists():
-            # If artifacts_dir is not inside backend/, check cwd
-            alt_data = Path("backend/data")
-            if alt_data.parent.exists():
-                self._data_dir = alt_data
-            else:
-                self._data_dir = Path("data")
+        # Setup persistence for registered patients
+        env_reg_path = os.getenv("REGISTERED_PATIENTS_PATH")
+        env_data_dir = os.getenv("DATA_DIR") or os.getenv("PERSISTENT_DATA_DIR")
+        if env_reg_path:
+            self._registered_file = Path(env_reg_path)
+            self._data_dir = self._registered_file.parent
+        elif env_data_dir:
+            self._data_dir = Path(env_data_dir)
+            self._registered_file = self._data_dir / "registered_patients.json"
+        else:
+            self._data_dir = self._artifacts_dir.parent / "data"
+            if not self._data_dir.exists():
+                alt_data = Path("backend/data")
+                if alt_data.parent.exists():
+                    self._data_dir = alt_data
+                else:
+                    self._data_dir = Path("data")
+            self._registered_file = self._data_dir / "registered_patients.json"
+
         self._data_dir.mkdir(parents=True, exist_ok=True)
-        self._registered_file = self._data_dir / "registered_patients.json"
 
         self._registered_patients: List[Dict[str, Any]] = []
         if self._registered_file.exists():
