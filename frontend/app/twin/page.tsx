@@ -544,7 +544,7 @@ function TwinDashboardContent() {
               </div>
 
               {twinView === "core" ? (
-                <div className="h-[520px] sm:h-[580px] lg:h-[640px] w-full relative rounded-2xl overflow-hidden bg-slate-900/10 dark:bg-slate-950/40 border border-[var(--glass-border)] shadow-inner">
+                <div className="h-[460px] sm:h-[560px] lg:h-[640px] w-full relative rounded-2xl overflow-hidden bg-slate-900/10 dark:bg-slate-950/40 border border-[var(--glass-border)] shadow-inner">
                   <DigitalTwinViz
                     riskTier={activeRisk.risk_tier}
                     sbp={activeVitals.sbp}
@@ -725,8 +725,8 @@ function TwinDashboardContent() {
 
       {/* ── ADD READING MODAL DIALOG ────────────────────────────────────────── */}
       {showAddReadingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-2xs p-4">
-          <div className="bg-[var(--bg-surface-strong)] border border-[var(--glass-border)] rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-2xs p-3 sm:p-4">
+          <div className="bg-[var(--bg-surface-strong)] border border-[var(--glass-border)] rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2 text-[var(--accent-teal)]">
                 <HeartPulse className="w-5 h-5" />
@@ -853,19 +853,19 @@ function TwinDashboardContent() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--border-hairline)]">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-3 border-t border-[var(--border-hairline)]">
                 <button
                   type="button"
                   onClick={() => setShowAddReadingModal(false)}
                   disabled={readingSubmitting}
-                  className="px-3.5 py-1.5 text-xs text-[var(--text-secondary)] bg-[var(--bg-subtle)] hover:bg-stone-200 border border-[var(--border-hairline)] rounded"
+                  className="px-3.5 py-2 text-xs text-[var(--text-secondary)] bg-[var(--bg-subtle)] hover:bg-stone-200 border border-[var(--border-hairline)] rounded-xl min-h-[40px]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={readingSubmitting}
-                  className="px-4 py-1.5 text-xs font-semibold text-white bg-[var(--accent-teal)] hover:bg-[var(--accent-teal-hover)] rounded transition-colors shadow-2xs"
+                  className="px-4 py-2 text-xs font-semibold text-white bg-[var(--accent-teal)] hover:bg-[var(--accent-teal-hover)] rounded-xl transition-colors shadow-2xs min-h-[40px]"
                 >
                   {readingSubmitting ? "Updating Twin…" : "Save & Update Twin"}
                 </button>

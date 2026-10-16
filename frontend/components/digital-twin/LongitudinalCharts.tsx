@@ -114,7 +114,7 @@ export function LongitudinalCharts({
           <div className="h-68 w-full">
             <ResponsiveContainer width="100%" height="100%">
               {activeTab === "bp" ? (
-                <LineChart data={chartData} margin={{ top: 12, right: 16, left: -20, bottom: 4 }}>
+                <LineChart data={chartData} margin={{ top: 12, right: 12, left: -8, bottom: 4 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
                   <XAxis
                     dataKey="date"
@@ -190,7 +190,7 @@ export function LongitudinalCharts({
                   />
                 </LineChart>
               ) : (
-                <LineChart data={chartData} margin={{ top: 12, right: 16, left: -20, bottom: 4 }}>
+                <LineChart data={chartData} margin={{ top: 12, right: 12, left: -8, bottom: 4 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
                   <XAxis
                     dataKey="date"
@@ -249,8 +249,8 @@ export function LongitudinalCharts({
             </ResponsiveContainer>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between text-xs text-[var(--text-muted)] font-mono px-2 pt-1 border-t border-[var(--border-hairline)]">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--text-muted)] font-mono px-2 pt-1 border-t border-[var(--border-hairline)]">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               {activeTab === "bp" ? (
                 <>
                   <span className="flex items-center gap-1.5">
@@ -280,8 +280,8 @@ export function LongitudinalCharts({
         </div>
       ) : (
         /* Accessible Table Fallback */
-        <div className="overflow-x-auto rounded-xl border border-[var(--glass-border)]">
-          <table className="w-full text-xs font-mono text-left">
+        <div className="overflow-x-auto responsive-table-container rounded-xl border border-[var(--glass-border)]">
+          <table className="w-full min-w-[560px] text-xs font-mono text-left">
             <thead className="bg-[var(--bg-subtle)] text-[var(--text-secondary)] border-b border-[var(--glass-border)]">
               <tr>
                 <th className="p-2.5">Date</th>

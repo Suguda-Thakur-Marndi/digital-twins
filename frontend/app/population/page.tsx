@@ -115,14 +115,14 @@ export default function PopulationPage() {
       </div>
 
       {/* Disclaimers banner */}
-      <div className="p-3 rounded-xl glass-card bg-amber-500/10 border border-amber-500/25 text-xs text-amber-900 dark:text-amber-200 flex items-center justify-between gap-3">
+      <div className="p-3 rounded-xl glass-card bg-amber-500/10 border border-amber-500/25 text-xs text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
           <span>
             <strong>Prototype Demonstration:</strong> Scores reflect Platt-calibrated XGBoost probabilities, not epidemiological prevalence or diagnostic advice.
           </span>
         </div>
-        <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 shrink-0 hidden sm:inline">
+        <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 shrink-0 self-end sm:self-auto">
           Research Prototype
         </span>
       </div>
@@ -138,15 +138,15 @@ export default function PopulationPage() {
 
       {/* Filters Card */}
       <div className="clinical-card p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex flex-wrap items-center gap-3">
-          <div>
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="flex-1 min-w-[120px] sm:flex-initial">
             <label className="block text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">
               Age Band
             </label>
             <select
               value={selectedAge}
               onChange={(e) => setSelectedAge(e.target.value)}
-              className="px-2.5 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
+              className="w-full sm:w-auto px-2.5 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)] min-h-[38px]"
             >
               <option value="">All Ages</option>
               <option value="18-40">18 - 40 years</option>
@@ -155,14 +155,14 @@ export default function PopulationPage() {
             </select>
           </div>
 
-          <div>
+          <div className="flex-1 min-w-[110px] sm:flex-initial">
             <label className="block text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">
               Gender
             </label>
             <select
               value={selectedGender}
               onChange={(e) => setSelectedGender(e.target.value)}
-              className="px-2.5 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
+              className="w-full sm:w-auto px-2.5 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)] min-h-[38px]"
             >
               <option value="">All Genders</option>
               <option value="male">Male</option>
@@ -170,14 +170,14 @@ export default function PopulationPage() {
             </select>
           </div>
 
-          <div>
+          <div className="flex-1 min-w-[110px] sm:flex-initial">
             <label className="block text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">
               Risk Tier
             </label>
             <select
               value={selectedTier}
               onChange={(e) => setSelectedTier(e.target.value)}
-              className="px-2.5 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
+              className="w-full sm:w-auto px-2.5 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)] min-h-[38px]"
             >
               <option value="">All Tiers</option>
               <option value="HIGH">High Risk</option>
@@ -192,20 +192,20 @@ export default function PopulationPage() {
             Search Patient ID
           </label>
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-[var(--text-muted)] absolute left-2.5 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-[var(--text-muted)] absolute left-2.5 top-3" />
             <input
               type="text"
               placeholder="Search ID, gender..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
+              className="w-full sm:w-auto pl-8 pr-3 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)] min-h-[38px]"
             />
           </div>
         </div>
       </div>
 
       {/* Summary Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <div className="clinical-card p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs">
           <div className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">
             Cohort Sample
@@ -250,13 +250,13 @@ export default function PopulationPage() {
       {/* Chart + Table Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
         {/* Chart */}
-        <div className="clinical-card p-5 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs">
+        <div className="clinical-card p-4 sm:p-5 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs">
           <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">
             Risk Tier Breakdown
           </h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -8, bottom: 0 }}>
                 <XAxis
                   dataKey="name"
                   stroke="var(--text-secondary)"
@@ -290,8 +290,8 @@ export default function PopulationPage() {
         </div>
 
         {/* Patient Roster Table */}
-        <div className="clinical-card p-5 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs flex flex-col">
-          <div className="flex items-center justify-between mb-4">
+        <div className="clinical-card p-4 sm:p-5 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs flex flex-col">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
             <div>
               <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                 Cohort Roster ({filteredPatients.length})
@@ -305,8 +305,8 @@ export default function PopulationPage() {
             </span>
           </div>
 
-          <div className="overflow-x-auto flex-1 max-h-[380px] overflow-y-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto responsive-table-container flex-1 max-h-[380px] overflow-y-auto">
+            <table className="w-full min-w-[540px] text-left text-xs">
               <thead>
                 <tr className="border-b border-[var(--border-hairline)] text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider bg-[var(--bg-subtle)]">
                   <th className="py-2.5 px-3">Patient ID</th>

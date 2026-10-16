@@ -204,7 +204,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
             <span className="text-[10px] font-mono text-blue-600">Simulates real-time IoT ingestion</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-xs">
             <div>
               <label htmlFor="wb-sbp" className="text-[10px] text-[var(--text-muted)] block">Home SBP</label>
               <input
@@ -245,7 +245,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
                 className="w-full px-2 py-1 text-xs border rounded bg-white font-mono"
               />
             </div>
-            <div>
+            <div className="col-span-2 sm:col-span-1">
               <label htmlFor="wb-steps" className="text-[10px] text-[var(--text-muted)] block">Steps</label>
               <input
                 id="wb-steps"
@@ -262,7 +262,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
               type="button"
               onClick={() => handleSendReading()}
               disabled={sending}
-              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium bg-[var(--accent-teal)] text-white rounded hover:bg-[var(--accent-teal-hover)] transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[var(--accent-teal)] text-white rounded hover:bg-[var(--accent-teal-hover)] transition-colors disabled:opacity-50 min-h-[36px]"
             >
               <Send className="w-3 h-3" />
               <span>{sending ? "Sending…" : "Ingest Reading Now"}</span>
@@ -287,7 +287,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
       )}
 
       {/* 7-DAY SUMMARY FEATURES WITH VARIABILITY */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-4 gap-2.5">
         <div className="p-2.5 bg-[var(--bg-subtle)] rounded border border-[var(--border-hairline)]">
           <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)]">
             <span className="flex items-center gap-1">
@@ -359,11 +359,11 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
 
       {/* Telemetry Chart: Daily HR and Home SBP */}
       <div className="space-y-1">
-        <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--text-muted)]">
           <span className="font-medium text-[var(--text-secondary)]">
             Continuous Home Telemetry Stream ({data.days_count} Readings)
           </span>
-          <div className="flex items-center gap-3 font-mono text-[11px]">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[11px]">
             <span className="flex items-center gap-1 text-[var(--accent-teal)]">
               <span className="w-2.5 h-0.5 bg-[var(--accent-teal)]" />
               Home SBP (Mean)
@@ -377,7 +377,7 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
 
         <div className="h-44 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 8, right: 12, left: -24, bottom: 0 }}>
+            <LineChart data={chartData} margin={{ top: 8, right: 12, left: -8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
               <XAxis
                 dataKey="date"

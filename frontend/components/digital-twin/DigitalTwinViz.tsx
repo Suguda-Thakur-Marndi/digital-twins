@@ -670,30 +670,30 @@ export default function DigitalTwinViz({
       style={height ? { height } : undefined}
     >
       {/* -- Top-Left: Risk Signal Badge & Interactive Hint -- */}
-      <div className="absolute top-3 left-3 z-10 pointer-events-none flex flex-col gap-1.5">
+      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10 pointer-events-none flex flex-col gap-1 sm:gap-1.5 max-w-[55%] sm:max-w-none">
         {riskTier && (
           <div
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full border shadow-2xs backdrop-blur-md transition-all duration-200"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full border shadow-2xs backdrop-blur-md transition-all duration-200"
             style={{
               color: riskColor,
               borderColor: `${riskColor}50`,
               background: `${riskColor}15`,
             }}
           >
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: riskColor }} />
-            <span className="text-[11px] font-semibold tracking-tight">
-              {shapeCue.symbol} {tier} · 365d Complication Signal
+            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: riskColor }} />
+            <span className="text-[10px] sm:text-[11px] font-semibold tracking-tight truncate">
+              {shapeCue.symbol} {tier} <span className="hidden sm:inline">· 365d Complication Signal</span>
             </span>
           </div>
         )}
 
-        <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--bg-surface)]/80 backdrop-blur-md border border-[var(--glass-border)] shadow-xs w-fit">
+        <div className="hidden min-[400px]:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--bg-surface)]/80 backdrop-blur-md border border-[var(--glass-border)] shadow-xs w-fit">
           <span
             className={`w-1.5 h-1.5 rounded-full ${
               activeHotspot || isPinned ? "bg-emerald-400 animate-ping" : "bg-sky-400"
             }`}
           />
-          <span className="text-[9px] font-mono text-[var(--text-muted)]">
+          <span className="text-[9px] font-mono text-[var(--text-muted)] truncate max-w-[200px] sm:max-w-none">
             {isPinned
               ? "Vitals Pinned · Visible"
               : activeHotspot
@@ -706,12 +706,12 @@ export default function DigitalTwinViz({
       </div>
 
       {/* -- Top-Right: Interaction Controls & Avatar Switcher -- */}
-      <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+      <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10 flex items-center gap-1.5 sm:gap-2">
         {/* Pin Vitals Toggle Button */}
         <button
           type="button"
           onClick={handleTogglePinAll}
-          className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-semibold transition cursor-pointer border backdrop-blur-md shadow-xs flex items-center gap-1.5 ${
+          className={`px-2 sm:px-2.5 py-1 rounded-lg text-[9px] sm:text-[10px] font-mono font-semibold transition cursor-pointer border backdrop-blur-md shadow-xs flex items-center gap-1 sm:gap-1.5 ${
             isPinned
               ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/50"
               : "bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--glass-border)] hover:text-[var(--text-primary)]"
@@ -719,7 +719,7 @@ export default function DigitalTwinViz({
           title={isPinned ? "Unpin vitals markers" : "Pin all vitals markers visible"}
         >
           <Pin className={`w-3 h-3 ${isPinned ? "rotate-45 text-cyan-400" : ""}`} />
-          <span>{isPinned ? "Pinned" : "Pin Vitals"}</span>
+          <span className="hidden min-[380px]:inline">{isPinned ? "Pinned" : "Pin Vitals"}</span>
         </button>
 
         {/* Avatar Gender Toggle */}
@@ -727,7 +727,7 @@ export default function DigitalTwinViz({
           <button
             type="button"
             onClick={() => setSelectedGender("male")}
-            className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition cursor-pointer ${
+            className={`px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold transition cursor-pointer ${
               selectedGender === "male"
                 ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] shadow-2xs"
                 : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
@@ -739,7 +739,7 @@ export default function DigitalTwinViz({
           <button
             type="button"
             onClick={() => setSelectedGender("female")}
-            className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition cursor-pointer ${
+            className={`px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold transition cursor-pointer ${
               selectedGender === "female"
                 ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] shadow-2xs"
                 : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
@@ -756,13 +756,13 @@ export default function DigitalTwinViz({
       </div>
 
       {/* -- Bottom Docked Compact Vitals Telemetry Bar (Ultra-slim, never blocks legs) -- */}
-      <div className="absolute bottom-2.5 inset-x-2.5 sm:inset-x-6 z-20 pointer-events-auto">
-        <div className="p-1 sm:p-1.5 rounded-xl bg-slate-950/80 dark:bg-slate-950/90 backdrop-blur-md border border-white/10 shadow-lg grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+      <div className="absolute bottom-2 inset-x-2 sm:bottom-2.5 sm:inset-x-6 z-20 pointer-events-auto">
+        <div className="p-1 sm:p-1.5 rounded-xl bg-slate-950/80 dark:bg-slate-950/90 backdrop-blur-md border border-white/10 shadow-lg grid grid-cols-2 sm:grid-cols-4 gap-1 sm:gap-1.5">
           {/* 1. Heartbeat */}
           <button
             type="button"
             onClick={() => handleTogglePinHotspot("heart")}
-            className={`flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left min-h-[40px] ${
               activeHotspot === "heart"
                 ? "border-rose-500/60 bg-rose-500/10"
                 : "border-white/5 hover:border-rose-500/30"
@@ -770,11 +770,11 @@ export default function DigitalTwinViz({
           >
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/40 shrink-0" />
             <div className="flex flex-col min-w-0 leading-tight">
-              <span className="text-[8px] font-mono uppercase text-slate-400">Heart Rate</span>
-              <span className="text-xs font-mono font-bold text-white flex items-center gap-1">
+              <span className="text-[7.5px] sm:text-[8px] font-mono uppercase text-slate-400 truncate">Heart Rate</span>
+              <span className="text-[11px] sm:text-xs font-mono font-bold text-white flex items-center gap-1">
                 {currentHr} <span className="text-[8px] text-slate-400 font-normal">bpm</span>
                 <span
-                  className="w-1.5 h-1.5 rounded-full ml-auto"
+                  className="w-1.5 h-1.5 rounded-full ml-auto shrink-0"
                   style={{ backgroundColor: hrStatus.color }}
                 />
               </span>
@@ -785,7 +785,7 @@ export default function DigitalTwinViz({
           <button
             type="button"
             onClick={() => handleTogglePinHotspot("bp")}
-            className={`flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left min-h-[40px] ${
               activeHotspot === "bp"
                 ? "border-cyan-500/60 bg-cyan-500/10"
                 : "border-white/5 hover:border-cyan-500/30"
@@ -793,11 +793,11 @@ export default function DigitalTwinViz({
           >
             <Activity className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
             <div className="flex flex-col min-w-0 leading-tight">
-              <span className="text-[8px] font-mono uppercase text-slate-400">Blood Pressure</span>
-              <span className="text-xs font-mono font-bold text-white flex items-center gap-1">
-                {currentSbp}/{currentDbp}
+              <span className="text-[7.5px] sm:text-[8px] font-mono uppercase text-slate-400 truncate">Blood Pressure</span>
+              <span className="text-[11px] sm:text-xs font-mono font-bold text-white flex items-center justify-between gap-1">
+                <span>{currentSbp}/{currentDbp}</span>
                 <span
-                  className="text-[7.5px] font-mono px-1 rounded ml-auto"
+                  className="text-[7px] sm:text-[7.5px] font-mono px-1 rounded truncate max-w-[62px] sm:max-w-none text-right shrink-0"
                   style={{ color: bpStatus.color, backgroundColor: `${bpStatus.color}20` }}
                 >
                   {bpStatus.label}
@@ -810,7 +810,7 @@ export default function DigitalTwinViz({
           <button
             type="button"
             onClick={() => handleTogglePinHotspot("pp")}
-            className={`flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left min-h-[40px] ${
               activeHotspot === "pp"
                 ? "border-amber-400/60 bg-amber-400/10"
                 : "border-white/5 hover:border-amber-400/30"
@@ -818,11 +818,11 @@ export default function DigitalTwinViz({
           >
             <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <div className="flex flex-col min-w-0 leading-tight">
-              <span className="text-[8px] font-mono uppercase text-slate-400">Pulse Pressure</span>
-              <span className="text-xs font-mono font-bold text-white flex items-center gap-1">
-                {currentPulsePressure} <span className="text-[8px] text-slate-400 font-normal">mmHg</span>
+              <span className="text-[7.5px] sm:text-[8px] font-mono uppercase text-slate-400 truncate">Pulse Pressure</span>
+              <span className="text-[11px] sm:text-xs font-mono font-bold text-white flex items-center justify-between gap-1">
+                <span>{currentPulsePressure} <span className="text-[8px] text-slate-400 font-normal">mmHg</span></span>
                 <span
-                  className="text-[7.5px] font-mono px-1 rounded ml-auto"
+                  className="text-[7px] sm:text-[7.5px] font-mono px-1 rounded truncate max-w-[62px] sm:max-w-none text-right shrink-0"
                   style={{ color: ppStatus.color, backgroundColor: `${ppStatus.color}20` }}
                 >
                   {ppStatus.label}
@@ -835,7 +835,7 @@ export default function DigitalTwinViz({
           <button
             type="button"
             onClick={() => handleTogglePinHotspot("bmi")}
-            className={`flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-lg bg-white/5 border transition cursor-pointer text-left min-h-[40px] ${
               activeHotspot === "bmi"
                 ? "border-amber-500/60 bg-amber-500/10"
                 : "border-white/5 hover:border-amber-500/30"
@@ -843,11 +843,11 @@ export default function DigitalTwinViz({
           >
             <Scale className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <div className="flex flex-col min-w-0 leading-tight">
-              <span className="text-[8px] font-mono uppercase text-slate-400">BMI</span>
-              <span className="text-xs font-mono font-bold text-white flex items-center gap-1">
-                {currentBmi.toFixed(1)} <span className="text-[8px] text-slate-400 font-normal">kg/m²</span>
+              <span className="text-[7.5px] sm:text-[8px] font-mono uppercase text-slate-400 truncate">BMI</span>
+              <span className="text-[11px] sm:text-xs font-mono font-bold text-white flex items-center justify-between gap-1">
+                <span>{currentBmi.toFixed(1)} <span className="text-[8px] text-slate-400 font-normal">kg/m²</span></span>
                 <span
-                  className="text-[7.5px] font-mono px-1 rounded ml-auto"
+                  className="text-[7px] sm:text-[7.5px] font-mono px-1 rounded truncate max-w-[62px] sm:max-w-none text-right shrink-0"
                   style={{ color: bmiStatus.color, backgroundColor: `${bmiStatus.color}20` }}
                 >
                   {bmiStatus.label}

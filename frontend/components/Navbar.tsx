@@ -55,15 +55,25 @@ export function Navbar() {
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
 
-  // Close "More" dropdown on click outside
+  // Close "More" dropdown on click outside and handle Escape key for accessibility
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (moreRef.current && !moreRef.current.contains(event.target as Node)) {
         setMoreMenuOpen(false);
       }
     }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMoreMenuOpen(false);
+        setMobileMenuOpen(false);
+      }
+    }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   const isMoreActive = MORE_NAV.some(
@@ -73,19 +83,19 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 glass-navbar transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center text-white font-serif font-bold text-lg shadow-md group-hover:scale-105 transition-transform duration-200">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <Link href="/" className="flex items-center gap-2 sm:gap-2.5 group">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center text-white font-serif font-bold text-base sm:text-lg shadow-md group-hover:scale-105 transition-transform duration-200">
                 Ψ
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-editorial text-xl font-bold tracking-tight text-[var(--text-primary)] group-hover:text-[var(--color-primary)] transition-colors">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="font-editorial text-lg sm:text-xl font-bold tracking-tight text-[var(--text-primary)] group-hover:text-[var(--color-primary)] transition-colors">
                     TwinCare
                   </span>
-                  <span className="text-[10px] font-mono tracking-wider uppercase text-[var(--color-primary)] bg-[rgba(37,99,235,0.08)] dark:bg-[rgba(96,165,250,0.12)] border border-[rgba(37,99,235,0.2)] dark:border-[rgba(96,165,250,0.25)] px-2 py-0.5 rounded-full font-semibold">
+                  <span className="hidden min-[380px]:inline-block text-[9px] sm:text-[10px] font-mono tracking-wider uppercase text-[var(--color-primary)] bg-[rgba(37,99,235,0.08)] dark:bg-[rgba(96,165,250,0.12)] border border-[rgba(37,99,235,0.2)] dark:border-[rgba(96,165,250,0.25)] px-1.5 sm:px-2 py-0.5 rounded-full font-semibold">
                     Pramana Twin
                   </span>
                 </div>
@@ -97,7 +107,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation Links (Clean & Concise) */}
-          <nav className="hidden md:flex items-center gap-1 text-xs font-medium">
+          <nav className="hidden md:flex items-center gap-1 text-xs font-medium" aria-label="Desktop Navigation">
             {PRIMARY_NAV.map((item) => {
               const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
               const Icon = item.icon;
@@ -116,6 +126,7 @@ export function Navbar() {
                   {item.badge && (
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${item.badgeColor || "bg-blue-500"} animate-pulse`}
+                      aria-label={`${item.badge} notifications`}
                     />
                   )}
                 </Link>
@@ -127,6 +138,8 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+                aria-expanded={moreMenuOpen}
+                aria-haspopup="true"
                 className={`px-3 py-1.5 rounded-xl transition-all duration-180 flex items-center gap-1.5 cursor-pointer ${
                   isMoreActive
                     ? "bg-[rgba(37,99,235,0.12)] dark:bg-[rgba(96,165,250,0.16)] text-[var(--color-primary)] font-semibold border border-[rgba(37,99,235,0.25)] dark:border-[rgba(96,165,250,0.3)]"
@@ -164,7 +177,7 @@ export function Navbar() {
           </nav>
 
           {/* Right Action Controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <ThemeToggle />
 
             {/* Quick Patient CTA */}
@@ -181,8 +194,10 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl border border-[var(--glass-border)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)] transition-colors"
+              className="md:hidden p-2 rounded-xl border border-[var(--glass-border)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)] transition-colors focus-visible:outline-2 focus-visible:outline-[var(--color-primary)]"
               aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-nav-drawer"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -191,7 +206,10 @@ export function Navbar() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden px-4 pt-2 pb-4 glass-card mx-3 my-2 border border-[var(--glass-border)] animate-in fade-in slide-in-from-top-2 duration-200">
+          <div
+            id="mobile-nav-drawer"
+            className="md:hidden px-3 sm:px-4 pt-2 pb-4 glass-card mx-2 sm:mx-3 my-2 border border-[var(--glass-border)] shadow-xl animate-in fade-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-5rem)] overflow-y-auto"
+          >
             <div className="flex flex-col gap-1 text-sm font-medium pt-1">
               <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] px-3 pt-1">
                 Main
@@ -204,7 +222,7 @@ export function Navbar() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
+                    className={`px-3 py-2 rounded-xl flex items-center justify-between transition-colors min-h-[44px] ${
                       isActive
                         ? "bg-[rgba(37,99,235,0.15)] text-[var(--color-primary)] font-semibold border border-[rgba(37,99,235,0.2)]"
                         : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)]"
@@ -234,7 +252,7 @@ export function Navbar() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`px-3 py-2 rounded-xl flex items-center gap-2.5 text-xs transition-colors ${
+                    className={`px-3 py-2 rounded-xl flex items-center gap-2.5 text-xs transition-colors min-h-[40px] ${
                       isActive
                         ? "bg-[rgba(37,99,235,0.15)] text-[var(--color-primary)] font-semibold"
                         : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)]"
@@ -250,7 +268,7 @@ export function Navbar() {
                 <Link
                   href="/twin?patient=PT-101"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-1.5 rounded-xl text-xs font-semibold glass-btn-primary"
+                  className="px-3 py-2 rounded-xl text-xs font-semibold glass-btn-primary min-h-[40px] flex items-center"
                 >
                   PT-101 Twin →
                 </Link>

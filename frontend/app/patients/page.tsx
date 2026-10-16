@@ -247,8 +247,8 @@ export default function PatientDirectoryPage() {
 
       {/* Directory Table */}
       <div className="clinical-card bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto responsive-table-container">
+          <table className="w-full min-w-[760px] text-left text-xs">
             <thead className="bg-[var(--bg-subtle)] border-b border-[var(--border-hairline)] text-[var(--text-muted)] font-mono uppercase tracking-wider text-[11px]">
               <tr>
                 <th
@@ -419,11 +419,11 @@ export default function PatientDirectoryPage() {
 
       {/* Delete Confirmation Modal */}
       {patientToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-2xs p-4">
-          <div className="bg-[var(--bg-surface-strong)] border border-[var(--glass-border)] rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-2xs p-3 sm:p-4">
+          <div className="bg-[var(--bg-surface-strong)] border border-[var(--glass-border)] rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2 text-red-600">
-                <AlertTriangle className="w-5 h-5" />
+                <AlertTriangle className="w-5 h-5 shrink-0" />
                 <h3 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
                   Delete Registered Patient Record
                 </h3>
@@ -431,7 +431,8 @@ export default function PatientDirectoryPage() {
               <button
                 type="button"
                 onClick={() => setPatientToDelete(null)}
-                className="text-stone-400 hover:text-stone-600 p-1"
+                className="text-stone-400 hover:text-stone-600 p-1 rounded-lg"
+                aria-label="Close delete dialog"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -452,12 +453,12 @@ export default function PatientDirectoryPage() {
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setPatientToDelete(null)}
                 disabled={deleting}
-                className="px-3.5 py-1.5 text-xs text-[var(--text-secondary)] bg-[var(--bg-subtle)] hover:bg-stone-200 border border-[var(--border-hairline)] rounded"
+                className="px-3.5 py-2 text-xs text-[var(--text-secondary)] bg-[var(--bg-subtle)] hover:bg-stone-200 border border-[var(--border-hairline)] rounded-xl min-h-[40px]"
               >
                 Cancel
               </button>
@@ -465,7 +466,7 @@ export default function PatientDirectoryPage() {
                 type="button"
                 onClick={handleDeleteConfirm}
                 disabled={deleting}
-                className="px-4 py-1.5 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded transition-colors"
+                className="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-2xs min-h-[40px]"
               >
                 {deleting ? "Deleting…" : "Confirm Deletion"}
               </button>

@@ -117,13 +117,13 @@ export default function AlertsPage() {
             <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">
               Lookback Surveillance Window (Snapshots):
             </label>
-            <div className="flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
               {[2, 3, 4, 5, 6].map((w) => (
                 <button
                   key={w}
                   type="button"
                   onClick={() => setWindowSnapshots(w)}
-                  className={`px-3 py-1 text-xs font-mono font-medium rounded transition-colors ${
+                  className={`px-3 py-1.5 text-xs font-mono font-medium rounded transition-colors min-h-[36px] min-w-[44px] cursor-pointer ${
                     windowSnapshots === w
                       ? "bg-[var(--accent-teal)] text-white shadow-2xs"
                       : "bg-[var(--bg-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-hairline)]"
@@ -143,11 +143,11 @@ export default function AlertsPage() {
             <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">
               Alert Trigger Threshold (Calibrated Risk):
             </label>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => setThreshold(0.05)}
-                className={`px-3 py-1 text-xs font-mono font-medium rounded transition-colors ${
+                className={`px-3 py-1.5 text-xs font-mono font-medium rounded transition-colors min-h-[36px] cursor-pointer ${
                   threshold === 0.05
                     ? "bg-amber-600 text-white shadow-2xs"
                     : "bg-[var(--bg-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-hairline)]"
@@ -158,7 +158,7 @@ export default function AlertsPage() {
               <button
                 type="button"
                 onClick={() => setThreshold(0.1)}
-                className={`px-3 py-1 text-xs font-mono font-medium rounded transition-colors ${
+                className={`px-3 py-1.5 text-xs font-mono font-medium rounded transition-colors min-h-[36px] cursor-pointer ${
                   threshold === 0.1
                     ? "bg-rose-600 text-white shadow-2xs"
                     : "bg-[var(--bg-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-hairline)]"
@@ -173,7 +173,7 @@ export default function AlertsPage() {
           </div>
 
           {/* Clinical Rationale Note */}
-          <div className="bg-[var(--bg-subtle)] p-2.5 rounded border border-[var(--border-hairline)] text-[11px] text-[var(--text-muted)] flex items-start gap-2">
+          <div className="bg-[var(--bg-subtle)] p-2.5 rounded border border-[var(--border-hairline)] text-[11px] text-[var(--text-muted)] flex items-start gap-2 sm:col-span-2 lg:col-span-1">
             <Info className="w-3.5 h-3.5 text-[var(--accent-teal)] shrink-0 mt-0.5" />
             <p>
               Lead time measures days between the first snapshot breaching the alert threshold and the
@@ -184,7 +184,7 @@ export default function AlertsPage() {
       </div>
 
       {/* Surveillance Summary KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 min-[420px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="clinical-card p-3.5 bg-white/95 dark:bg-slate-900/90 shadow-sm border-[var(--border-hairline)] space-y-1">
           <div className="flex items-center justify-between text-[var(--text-muted)]">
             <span className="text-[11px] uppercase font-semibold">Flagged Patients</span>
@@ -266,8 +266,8 @@ export default function AlertsPage() {
             No patients currently exceed the escalation threshold over the chosen window.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
+          <div className="overflow-x-auto responsive-table-container">
+            <table className="w-full min-w-[720px] text-xs text-left">
               <thead className="bg-[var(--bg-subtle)] border-b border-[var(--border-hairline)] text-[var(--text-muted)] uppercase font-mono text-[10px]">
                 <tr>
                   <th className="py-2.5 px-3">Patient</th>

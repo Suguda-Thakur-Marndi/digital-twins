@@ -109,7 +109,7 @@ export default function IndiaPage() {
 
         <Link
           href="/import"
-          className="glass-btn-primary inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold shrink-0"
+          className="glass-btn-primary inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 min-h-[38px]"
         >
           <span>Explore ABDM Ingestion</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -117,22 +117,22 @@ export default function IndiaPage() {
       </div>
 
       {/* ── POPULATION LIMITATION DISCLOSURE ───────────────────────────────── */}
-      <div className="p-3.5 rounded-xl glass-card bg-amber-500/10 border border-amber-500/25 text-xs text-amber-900 dark:text-amber-200 flex items-center justify-between gap-3">
+      <div className="p-3.5 rounded-xl glass-card bg-amber-500/10 border border-amber-500/25 text-xs text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
         <div className="flex items-center gap-2">
           <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
           <span>
             <strong>Population Calibration Disclosure:</strong> Model trained on synthetic Synthea EHR. Not validated on Indian populations; not for clinical diagnosis or prescription in India today.
           </span>
         </div>
-        <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 shrink-0 hidden sm:inline">
+        <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 shrink-0 self-end sm:self-auto">
           Research Prototype
         </span>
       </div>
 
       {/* ── SOURCED EPIDEMIOLOGY METRICS ──────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-4 gap-3">
         {STATS.map((item, idx) => (
-          <div key={idx} className="p-4 rounded-xl glass-card border border-[var(--glass-border)] space-y-1">
+          <div key={idx} className="p-3.5 sm:p-4 rounded-xl glass-card border border-[var(--glass-border)] space-y-1">
             <span className="text-xl sm:text-2xl font-bold font-mono text-[var(--text-primary)] block">
               {item.value}
             </span>

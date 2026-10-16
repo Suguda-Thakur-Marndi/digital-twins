@@ -703,8 +703,8 @@ export default function BodyTwinViz({
 
         {/* ── Active Hotspot Detail Card Overlay ────────────────────────── */}
         {activeRegion && (
-          <div className="absolute bottom-10 left-3 right-3 sm:right-auto sm:left-4 sm:max-w-md z-30 pointer-events-auto">
-            <div className="glass-modal p-4 rounded-2xl border border-[var(--glass-border)] shadow-2xl backdrop-blur-xl space-y-3 bg-[var(--bg-surface-strong)]/95">
+          <div className="absolute bottom-6 sm:bottom-10 left-2.5 right-2.5 sm:right-auto sm:left-4 sm:max-w-md z-30 pointer-events-auto max-h-[75vh] sm:max-h-[85%] overflow-y-auto">
+            <div className="glass-modal p-3.5 sm:p-4 rounded-2xl border border-[var(--glass-border)] shadow-2xl backdrop-blur-xl space-y-3 bg-[var(--bg-surface-strong)]/95">
               {/* Header */}
               <div className="flex items-start justify-between gap-2 border-b border-[var(--border-hairline)] pb-2">
                 <div>
@@ -847,11 +847,11 @@ export default function BodyTwinViz({
       </div>
 
       {/* ── Accessible Alternative Toggle ──────────────────────────────────── */}
-      <div className="flex items-center justify-between pt-1 px-1">
+      <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1 px-1">
         <button
           type="button"
           onClick={() => setShowAccessibleTable((prev) => !prev)}
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-primary)] hover:underline cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-primary)] hover:underline cursor-pointer min-h-[36px]"
         >
           <TableIcon className="w-3.5 h-3.5" />
           <span>
@@ -998,8 +998,8 @@ function AccessibleVitalsTable({
   ];
 
   return (
-    <div className="glass-card p-4 rounded-xl border border-[var(--glass-border)] space-y-2 overflow-x-auto">
-      <div className="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2">
+    <div className="glass-card p-3 sm:p-4 rounded-xl border border-[var(--glass-border)] space-y-2 overflow-x-auto responsive-table-container">
+      <div className="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2 flex-wrap gap-1">
         <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)]">
           Clinical Physiological Telemetry Table
         </h4>
@@ -1008,7 +1008,7 @@ function AccessibleVitalsTable({
         </span>
       </div>
 
-      <table className="w-full text-xs text-left font-mono">
+      <table className="w-full min-w-[620px] text-xs text-left font-mono">
         <thead>
           <tr className="border-b border-[var(--border-hairline)] text-[var(--text-muted)] text-[10px] uppercase">
             <th className="py-1.5 pr-3">Anatomical Region</th>

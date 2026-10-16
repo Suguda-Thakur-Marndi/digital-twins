@@ -294,8 +294,8 @@ export default function RegisterPatientPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Top Banner & Title */}
-      <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-2">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="clinical-card p-4 sm:p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)]">
@@ -305,7 +305,7 @@ export default function RegisterPatientPage() {
                 Onboarding Wizard
               </span>
             </div>
-            <h1 className="font-editorial text-2xl font-bold text-[var(--text-primary)] tracking-tight mt-1">
+            <h1 className="font-editorial text-xl sm:text-2xl font-bold text-[var(--text-primary)] tracking-tight mt-1">
               Register New Patient Twin
             </h1>
             <p className="text-xs text-[var(--text-muted)] max-w-xl mt-0.5 leading-relaxed">
@@ -313,11 +313,11 @@ export default function RegisterPatientPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={saveDraft}
-              className="glass-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl cursor-pointer"
+              className="glass-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl cursor-pointer min-h-[38px]"
             >
               <Save className="w-3.5 h-3.5" />
               <span>Save Draft</span>
@@ -325,7 +325,7 @@ export default function RegisterPatientPage() {
             <button
               type="button"
               onClick={resetForm}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] glass-card border border-[var(--border-subtle)] rounded-xl transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] glass-card border border-[var(--border-subtle)] rounded-xl transition-colors cursor-pointer min-h-[38px]"
               title="Reset form"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -342,28 +342,28 @@ export default function RegisterPatientPage() {
         )}
 
         {/* Regulatory & Privacy Guardrail Banner */}
-        <div className="mt-3 p-3 glass-card bg-amber-500/10 border border-amber-500/25 rounded-xl text-xs text-amber-900 dark:text-amber-200 flex items-center justify-between gap-3">
+        <div className="mt-3 p-3 glass-card bg-amber-500/10 border border-amber-500/25 rounded-xl text-xs text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
           <div className="flex items-center gap-2">
             <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>
               <strong>DPDP Act &amp; Safety Notice:</strong> Synthetic research prototype. Do not enter real citizen PII, Aadhaar numbers, or real clinical identities.
             </span>
           </div>
-          <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 shrink-0 hidden sm:inline">
+          <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 shrink-0 self-end sm:self-auto">
             Zero PHI Policy
           </span>
         </div>
       </div>
 
       {/* Wizard Progress Indicator */}
-      <div className="clinical-card p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs">
-        <div className="grid grid-cols-4 gap-2 text-xs">
+      <div className="clinical-card p-3 sm:p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs">
+        <div className="grid grid-cols-2 min-[640px]:grid-cols-4 gap-2 text-xs">
           {[
-            { step: 1, label: "1. Demographics & Basics", icon: User },
-            { step: 2, label: "2. Vitals & Labs", icon: HeartPulse },
-            { step: 3, label: "3. Meds & History", icon: Pill },
-            { step: 4, label: "4. Review & Register", icon: FileCheck },
-          ].map(({ step, label, icon: Icon }) => {
+            { step: 1, label: "1. Demographics & Basics", short: "1. Basics", icon: User },
+            { step: 2, label: "2. Vitals & Labs", short: "2. Vitals", icon: HeartPulse },
+            { step: 3, label: "3. Meds & History", short: "3. Meds", icon: Pill },
+            { step: 4, label: "4. Review & Register", short: "4. Review", icon: FileCheck },
+          ].map(({ step, label, short, icon: Icon }) => {
             const isActive = currentStep === step;
             const isCompleted = currentStep > step;
             return (
@@ -375,7 +375,7 @@ export default function RegisterPatientPage() {
                   else if (step === 2 && validateStep1()) setCurrentStep(2);
                   else if (step === 3 && validateStep1() && validateStep2()) setCurrentStep(3);
                 }}
-                className={`p-2.5 rounded text-left transition-colors flex items-center gap-2 border ${
+                className={`p-2 sm:p-2.5 rounded text-left transition-colors flex items-center gap-2 border min-h-[44px] ${
                   isActive
                     ? "bg-[var(--accent-teal-subtle)] border-[var(--accent-teal-border)] text-[var(--accent-teal)] font-semibold"
                     : isCompleted
@@ -394,7 +394,8 @@ export default function RegisterPatientPage() {
                 >
                   {isCompleted ? "✓" : step}
                 </div>
-                <span className="truncate">{label}</span>
+                <span className="truncate hidden min-[400px]:inline">{label}</span>
+                <span className="truncate min-[400px]:hidden">{short}</span>
               </button>
             );
           })}
@@ -413,7 +414,7 @@ export default function RegisterPatientPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* STEP 1: BASICS & DEMOGRAPHICS */}
         {currentStep === 1 && (
-          <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-5">
+          <div className="clinical-card p-4 sm:p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-5">
             <div className="border-b border-[var(--border-hairline)] pb-3">
               <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
                 Step 1: Patient Alias & Physical Baseline
@@ -552,7 +553,7 @@ export default function RegisterPatientPage() {
 
         {/* STEP 2: VITALS & LABS */}
         {currentStep === 2 && (
-          <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-5">
+          <div className="clinical-card p-4 sm:p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-5">
             <div className="border-b border-[var(--border-hairline)] pb-3">
               <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
                 Step 2: Vital Signs & Laboratory Measurements
@@ -679,7 +680,7 @@ export default function RegisterPatientPage() {
 
         {/* STEP 3: MEDICATIONS & CLINICAL HISTORY */}
         {currentStep === 3 && (
-          <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-5">
+          <div className="clinical-card p-4 sm:p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-5">
             <div className="border-b border-[var(--border-hairline)] pb-3">
               <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
                 Step 3: Active Medications & Clinical History
@@ -847,7 +848,7 @@ export default function RegisterPatientPage() {
 
         {/* STEP 4: REVIEW & REGISTRATION */}
         {currentStep === 4 && (
-          <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-6">
+          <div className="clinical-card p-4 sm:p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-6">
             <div className="border-b border-[var(--border-hairline)] pb-3">
               <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
                 Step 4: Clinical Review & Twin Creation
@@ -951,13 +952,13 @@ export default function RegisterPatientPage() {
         )}
 
         {/* Wizard Controls */}
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex flex-col-reverse min-[480px]:flex-row min-[480px]:items-center justify-between gap-3 pt-2">
           {currentStep > 1 ? (
             <button
               type="button"
               onClick={handlePrev}
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold bg-[var(--bg-subtle)] text-[var(--text-secondary)] hover:bg-stone-200 border border-[var(--border-hairline)] rounded transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold bg-[var(--bg-subtle)] text-[var(--text-secondary)] hover:bg-stone-200 border border-[var(--border-hairline)] rounded transition-colors min-h-[42px] cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back</span>
@@ -965,7 +966,7 @@ export default function RegisterPatientPage() {
           ) : (
             <Link
               href="/patients"
-              className="text-xs text-[var(--text-muted)] hover:text-stone-700 transition-colors"
+              className="text-xs text-[var(--text-muted)] hover:text-stone-700 transition-colors py-2 text-center min-[480px]:text-left"
             >
               ← Cancel & return to Directory
             </Link>
@@ -975,7 +976,7 @@ export default function RegisterPatientPage() {
             <button
               type="button"
               onClick={handleNext}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold bg-[var(--accent-teal)] text-white hover:bg-[var(--accent-teal-hover)] rounded transition-colors shadow-2xs"
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-semibold bg-[var(--accent-teal)] text-white hover:bg-[var(--accent-teal-hover)] rounded transition-colors shadow-2xs min-h-[42px] cursor-pointer"
             >
               <span>Continue</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -984,10 +985,10 @@ export default function RegisterPatientPage() {
             <button
               type="submit"
               disabled={submitting || !form.consent_confirmed}
-              className={`inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-semibold rounded transition-colors shadow-2xs ${
+              className={`inline-flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-semibold rounded transition-colors shadow-2xs min-h-[44px] ${
                 submitting || !form.consent_confirmed
                   ? "bg-stone-300 text-stone-500 cursor-not-allowed"
-                  : "bg-[var(--accent-teal)] text-white hover:bg-[var(--accent-teal-hover)]"
+                  : "bg-[var(--accent-teal)] text-white hover:bg-[var(--accent-teal-hover)] cursor-pointer"
               }`}
             >
               {submitting ? (

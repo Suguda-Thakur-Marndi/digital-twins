@@ -55,7 +55,7 @@ export default function PerformancePage() {
       {/* ── HEADER ────────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[var(--border-hairline)] pb-5">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5">
             <span className="text-xs font-semibold tracking-wider text-[var(--color-primary)] uppercase">
               Model Performance Audit
             </span>
@@ -77,7 +77,7 @@ export default function PerformancePage() {
 
         <Link
           href="/twin?patient=PT-101"
-          className="glass-btn-primary inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold shrink-0"
+          className="glass-btn-primary inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold shrink-0 min-h-[38px]"
         >
           <span>Open Digital Twin</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -124,7 +124,7 @@ export default function PerformancePage() {
           </div>
 
           {/* ── CORE METRICS GRID (Requirement 4 & 6) ───────────────────────── */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-3.5 rounded-xl glass-card border border-[var(--glass-border)] space-y-1">
               <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase block">
                 ROC-AUC (Discrimination)
@@ -175,7 +175,7 @@ export default function PerformancePage() {
           </div>
 
           {/* ── CALIBRATION RELIABILITY PLOT ──────────────────────────────── */}
-          <div className="glass-card p-5 border border-[var(--glass-border)] space-y-4">
+          <div className="glass-card p-4 sm:p-5 border border-[var(--glass-border)] space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-hairline)] pb-2.5">
               <div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)]">
@@ -194,7 +194,7 @@ export default function PerformancePage() {
               {/* Curve Chart */}
               <div className="lg:col-span-7 h-52 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={calibrationPlotData} margin={{ top: 10, right: 20, left: -20, bottom: 5 }}>
+                  <LineChart data={calibrationPlotData} margin={{ top: 10, right: 10, left: -8, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.2)" vertical={false} />
                     <XAxis dataKey="name" stroke="#9ca3af" fontSize={10} tickLine={false} fontFamily="monospace" />
                     <YAxis domain={[0, 8]} stroke="#9ca3af" fontSize={10} tickLine={false} fontFamily="monospace" unit="%" />
@@ -229,8 +229,8 @@ export default function PerformancePage() {
               </div>
 
               {/* Quantile Bin Table */}
-              <div className="lg:col-span-5 overflow-x-auto text-xs font-mono">
-                <table className="w-full text-left border border-[var(--border-subtle)] rounded-lg">
+              <div className="lg:col-span-5 overflow-x-auto responsive-table-container text-xs font-mono">
+                <table className="w-full min-w-[280px] text-left border border-[var(--border-subtle)] rounded-lg">
                   <thead className="bg-[var(--bg-subtle)] border-b border-[var(--border-subtle)] text-[10px] text-[var(--text-muted)] uppercase">
                     <tr>
                       <th className="p-2">Quantile Bin</th>
@@ -255,7 +255,7 @@ export default function PerformancePage() {
           </div>
 
           {/* ── ALERT-BUDGET OPERATING POLICY TABLE ───────────────────────── */}
-          <div className="glass-card p-5 border border-[var(--glass-border)] space-y-3">
+          <div className="glass-card p-4 sm:p-5 border border-[var(--glass-border)] space-y-3">
             <div className="border-b border-[var(--border-hairline)] pb-2.5">
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                 Alert-Budget Operating Policy (Clinical Screening Capacity)
@@ -265,8 +265,8 @@ export default function PerformancePage() {
               </p>
             </div>
 
-            <div className="overflow-x-auto border border-[var(--border-subtle)] rounded-xl">
-              <table className="w-full text-left text-xs font-mono">
+            <div className="overflow-x-auto responsive-table-container border border-[var(--border-subtle)] rounded-xl">
+              <table className="w-full min-w-[640px] text-left text-xs font-mono">
                 <thead className="bg-[var(--bg-subtle)] border-b border-[var(--border-subtle)] text-[10px] text-[var(--text-muted)] uppercase">
                   <tr>
                     <th className="p-2.5">Policy Tier</th>

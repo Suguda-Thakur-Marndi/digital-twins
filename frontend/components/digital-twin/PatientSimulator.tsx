@@ -410,11 +410,11 @@ export function PatientSimulator({
           </div>
 
           {savedScenarios.length === 0 ? (
-            <div className="p-8 text-center text-xs text-[var(--text-muted)] bg-[var(--bg-subtle)] rounded border border-dashed border-[var(--border-hairline)]">
+            <div className="p-6 sm:p-8 text-center text-xs text-[var(--text-muted)] bg-[var(--bg-subtle)] rounded border border-dashed border-[var(--border-hairline)]">
               No saved scenarios yet. Adjust levers in the simulator and click &ldquo;Save Scenario&rdquo; to compare up to 3 variations side-by-side.
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {/* Baseline column */}
               <div className="p-3 bg-slate-50 border border-slate-200 rounded space-y-2">
                 <span className="text-[10px] font-mono uppercase font-bold text-slate-500">
@@ -496,12 +496,12 @@ export function PatientSimulator({
 
               {/* Systolic BP */}
               <div className={`p-2 rounded border transition-colors ${sbpVal !== baseSbp ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
-                <div className="flex items-center justify-between text-xs mb-1">
+                <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                   <label htmlFor="sbp-input" className="font-medium text-[var(--text-primary)]">
                     Systolic Blood Pressure
                   </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-[var(--text-muted)]">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="text-[10px] text-[var(--text-muted)] font-mono">
                       Orig: {baseSbp} mmHg · Normal &lt; 120
                     </span>
                     <input
@@ -539,12 +539,12 @@ export function PatientSimulator({
 
               {/* Diastolic BP */}
               <div className={`p-2 rounded border transition-colors ${dbpVal !== baseDbp ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
-                <div className="flex items-center justify-between text-xs mb-1">
+                <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                   <label htmlFor="dbp-input" className="font-medium text-[var(--text-primary)]">
                     Diastolic Blood Pressure
                   </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-[var(--text-muted)]">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="text-[10px] text-[var(--text-muted)] font-mono">
                       Orig: {baseDbp} mmHg · Normal &lt; 80
                     </span>
                     <input
@@ -582,12 +582,12 @@ export function PatientSimulator({
 
               {/* Heart Rate */}
               <div className={`p-2 rounded border transition-colors ${hrVal !== baseHr ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
-                <div className="flex items-center justify-between text-xs mb-1">
+                <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                   <label htmlFor="hr-input" className="font-medium text-[var(--text-primary)]">
                     Resting Heart Rate
                   </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-[var(--text-muted)]">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="text-[10px] text-[var(--text-muted)] font-mono">
                       Orig: {baseHr} bpm · Normal: 60–100
                     </span>
                     <input
@@ -625,23 +625,23 @@ export function PatientSimulator({
 
             {/* GROUP 2: BODY COMPOSITION & METABOLIC LABS */}
             <div className="p-3.5 bg-[var(--bg-subtle)] rounded border border-[var(--border-hairline)] space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-1.5">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
                   <Scale className="w-3.5 h-3.5 text-[var(--accent-teal)]" />
                   <span>Anthropometrics & Metabolic Labs</span>
                 </div>
                 <span className="text-[10px] text-[var(--text-muted)] font-mono">
-                  BMI: <strong className="text-[var(--text-primary)]">{currentBmi} kg/m²</strong> (Follows weight) · Normal: 18.5–24.9 · Orig: {baseBmi.toFixed(1)}
+                  BMI: <strong className="text-[var(--text-primary)]">{currentBmi} kg/m²</strong> · Orig: {baseBmi.toFixed(1)}
                 </span>
               </div>
 
               {/* Weight */}
               <div className={`p-2 rounded border transition-colors ${weightVal !== baseWeight ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
-                <div className="flex items-center justify-between text-xs mb-1">
+                <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                   <label htmlFor="wt-input" className="font-medium text-[var(--text-primary)]">
                     Body Weight (kg)
                   </label>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <span className="text-[10px] text-[var(--text-muted)] font-mono">
                       Orig: {baseWeight} kg
                     </span>
@@ -682,11 +682,11 @@ export function PatientSimulator({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Glucose */}
                 <div className={`p-2 rounded border transition-colors ${glucoseVal !== baseGlucose ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
-                  <div className="flex items-center justify-between text-xs mb-1">
+                  <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                     <label htmlFor="gl-input" className="font-medium text-[var(--text-primary)]">
                       Fasting Glucose
                     </label>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
                       <span className="text-[10px] text-[var(--text-muted)] font-mono">
                         Orig: {baseGlucose}
                       </span>
@@ -725,11 +725,11 @@ export function PatientSimulator({
 
                 {/* HbA1c */}
                 <div className={`p-2 rounded border transition-colors ${hba1cVal !== baseHba1c ? "border-[var(--accent-teal-border)] bg-teal-50/30" : "border-transparent bg-white/70"}`}>
-                  <div className="flex items-center justify-between text-xs mb-1">
+                  <div className="flex flex-wrap items-center justify-between gap-1 text-xs mb-1">
                     <label htmlFor="a1c-input" className="font-medium text-[var(--text-primary)]">
                       HbA1c
                     </label>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
                       <span className="text-[10px] text-[var(--text-muted)] font-mono">
                         Orig: {baseHba1c}%
                       </span>
@@ -867,8 +867,8 @@ export function PatientSimulator({
                     <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   </div>
 
-                  <div className="max-h-60 overflow-y-auto border rounded text-xs">
-                    <table className="w-full text-left">
+                  <div className="max-h-60 overflow-y-auto overflow-x-auto responsive-table-container border rounded text-xs">
+                    <table className="w-full min-w-[500px] text-left">
                       <thead className="bg-[var(--bg-subtle)] sticky top-0 text-[10px] text-[var(--text-muted)] uppercase font-mono">
                         <tr>
                           <th className="p-2">Feature Name</th>
@@ -1122,7 +1122,7 @@ export function PatientSimulator({
             {/* SENSITIVITY CURVES WITH CURRENT VALUE MARKED */}
             {sensitivity && activeCurve && (
               <div className="p-3.5 bg-white rounded border border-[var(--border-hairline)] space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-1.5">
                   <span className="text-xs font-bold text-[var(--text-primary)]">
                     Model Sensitivity Response Curve
                   </span>

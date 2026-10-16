@@ -49,7 +49,7 @@ export function SHAPChart({ factors, isLoading = false }: SHAPChartProps) {
             Key Contributing Drivers (SHAP)
           </h4>
         </div>
-        <div className="flex items-center gap-3 text-[11px] font-mono text-[var(--text-muted)]">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] font-mono text-[var(--text-muted)]">
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-2xs" />
             <span>Increases Risk</span>
@@ -76,18 +76,18 @@ export function SHAPChart({ factors, isLoading = false }: SHAPChartProps) {
 
           return (
             <div key={factor.feature + idx} className="space-y-1.5 group">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-medium text-[var(--text-primary)] truncate max-w-[70%] flex items-center gap-1.5">
+              <div className="flex items-center justify-between text-xs gap-2">
+                <span className="font-medium text-[var(--text-primary)] min-w-0 flex items-center gap-1.5">
                   {isIncrease ? (
                     <TrendingUp className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                   ) : (
                     <TrendingDown className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
                   )}
-                  <span title={factor.feature} className="group-hover:text-[var(--color-primary)] transition-colors">
+                  <span title={factor.feature} className="group-hover:text-[var(--color-primary)] transition-colors truncate">
                     {factor.label}
                   </span>
                   {factor.observed_value !== undefined && factor.observed_value !== null && (
-                    <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                    <span className="text-[10px] font-mono text-[var(--text-muted)] shrink-0">
                       ({factor.observed_value})
                     </span>
                   )}

@@ -142,9 +142,9 @@ export default function WhatIfSimulator({
   return (
     <div className="glass-panel p-5 border border-[var(--glass-border)] space-y-4">
       {/* Title */}
-      <div className="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-hairline)] pb-3">
         <div className="flex items-center gap-2">
-          <Sliders className="w-4 h-4 text-[var(--color-primary)]" />
+          <Sliders className="w-4 h-4 text-[var(--color-primary)] shrink-0" />
           <h4 className="text-sm font-semibold text-[var(--text-primary)]">
             Counterfactual What-If Simulator
           </h4>
@@ -177,12 +177,12 @@ export default function WhatIfSimulator({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-2.5 pt-1">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-2.5 pt-1">
         <button
           type="button"
           onClick={runSimulation}
           disabled={loading || (sbpDelta === 0 && weightPct === 0)}
-          className="flex-1 py-2 px-3 rounded-xl text-xs font-semibold glass-btn-primary disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+          className="flex-1 py-2 px-3 rounded-xl text-xs font-semibold glass-btn-primary disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer shadow-xs min-h-[40px]"
         >
           {loading ? (
             <>
@@ -200,7 +200,7 @@ export default function WhatIfSimulator({
           type="button"
           onClick={reset}
           title="Reset sliders"
-          className="px-3.5 py-2 rounded-xl text-xs font-medium glass-btn-secondary flex items-center gap-1.5 cursor-pointer"
+          className="px-3.5 py-2 rounded-xl text-xs font-medium glass-btn-secondary flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px]"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Reset</span>
@@ -216,7 +216,7 @@ export default function WhatIfSimulator({
       {/* Simulation Result Comparison Card */}
       {result && (
         <div className="p-4 rounded-xl glass-card border border-[var(--glass-border)] animate-in fade-in duration-200 space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-1.5">
             <span className="text-[11px] font-semibold text-[var(--text-muted)] uppercase tracking-wider">
               Projected Model Risk Shift
             </span>

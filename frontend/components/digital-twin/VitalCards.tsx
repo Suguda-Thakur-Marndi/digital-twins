@@ -128,17 +128,17 @@ export function VitalCards({ vitals, sparklineSbp = [], asOfDate }: VitalCardsPr
         )}
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
         {/* Blood Pressure Hero Card */}
-        <div className="glass-card p-4 col-span-2 sm:col-span-1 border border-[var(--glass-border)] hover:border-[var(--color-primary)]/40 transition-all">
-          <div className="flex items-start justify-between">
+        <div className="glass-card p-3.5 sm:p-4 min-[440px]:col-span-2 sm:col-span-1 border border-[var(--glass-border)] hover:border-[var(--color-primary)]/40 transition-all">
+          <div className="flex items-start justify-between gap-1 flex-wrap">
             <span className="text-xs font-medium text-[var(--text-secondary)]">Blood Pressure</span>
             <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${bpCat.class}`}>
               {bpCat.label}
             </span>
           </div>
           <div className="mt-2.5 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
+            <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
               {Math.round(sbp)}/{Math.round(dbp)}
             </span>
             <span className="text-xs text-[var(--text-muted)] font-mono">mmHg</span>
@@ -150,8 +150,8 @@ export function VitalCards({ vitals, sparklineSbp = [], asOfDate }: VitalCardsPr
         </div>
 
         {/* Heart Rate Card */}
-        <div className="glass-card p-4 border border-[var(--glass-border)] hover:border-rose-500/40 transition-all">
-          <div className="flex items-start justify-between">
+        <div className="glass-card p-3.5 sm:p-4 border border-[var(--glass-border)] hover:border-rose-500/40 transition-all">
+          <div className="flex items-start justify-between gap-1">
             <span className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1.5">
               <Heart className="w-3.5 h-3.5 text-rose-500" />
               Resting HR
@@ -159,7 +159,7 @@ export function VitalCards({ vitals, sparklineSbp = [], asOfDate }: VitalCardsPr
             <span className="text-[10px] text-[var(--text-muted)] font-mono">Clinical</span>
           </div>
           <div className="mt-2.5 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
+            <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
               {Math.round(hr)}
             </span>
             <span className="text-xs text-[var(--text-muted)] font-mono">bpm</span>
@@ -171,8 +171,8 @@ export function VitalCards({ vitals, sparklineSbp = [], asOfDate }: VitalCardsPr
         </div>
 
         {/* BMI & Weight Card */}
-        <div className="glass-card p-4 border border-[var(--glass-border)] hover:border-cyan-500/40 transition-all">
-          <div className="flex items-start justify-between">
+        <div className="glass-card p-3.5 sm:p-4 border border-[var(--glass-border)] hover:border-cyan-500/40 transition-all">
+          <div className="flex items-start justify-between gap-1 flex-wrap">
             <span className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1.5">
               <Scale className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
               BMI & Weight
@@ -181,12 +181,12 @@ export function VitalCards({ vitals, sparklineSbp = [], asOfDate }: VitalCardsPr
               {bmiCat.label}
             </span>
           </div>
-          <div className="mt-2.5 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
+          <div className="mt-2.5 flex flex-wrap items-baseline gap-1 sm:gap-1.5">
+            <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
               {formatVital(bmi, "", 1)}
             </span>
             <span className="text-xs text-[var(--text-muted)] font-mono">kg/m²</span>
-            <span className="text-xs text-[var(--text-muted)] ml-auto font-mono">
+            <span className="text-xs text-[var(--text-muted)] sm:ml-auto font-mono">
               ({formatVital(weight, "kg", 1)})
             </span>
           </div>
@@ -197,8 +197,8 @@ export function VitalCards({ vitals, sparklineSbp = [], asOfDate }: VitalCardsPr
         </div>
 
         {/* Pulse Pressure Card */}
-        <div className="glass-card p-4 border border-[var(--glass-border)] hover:border-blue-500/40 transition-all">
-          <div className="flex items-start justify-between">
+        <div className="glass-card p-3.5 sm:p-4 border border-[var(--glass-border)] hover:border-blue-500/40 transition-all">
+          <div className="flex items-start justify-between gap-1">
             <span className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1.5">
               <Gauge className="w-3.5 h-3.5 text-[var(--color-primary)]" />
               Pulse Pressure
@@ -206,7 +206,7 @@ export function VitalCards({ vitals, sparklineSbp = [], asOfDate }: VitalCardsPr
             <span className="text-[10px] text-[var(--text-muted)] font-mono">SBP - DBP</span>
           </div>
           <div className="mt-2.5 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
+            <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
               {Math.round(pulsePressure)}
             </span>
             <span className="text-xs text-[var(--text-muted)] font-mono">mmHg</span>
@@ -222,12 +222,12 @@ export function VitalCards({ vitals, sparklineSbp = [], asOfDate }: VitalCardsPr
 
       {/* Metabolic Labs strip (if present) */}
       {(glucose != null || hba1c != null) && (
-        <div className="glass-panel px-4 py-2.5 border border-[var(--glass-border)] flex flex-wrap items-center justify-between text-xs text-[var(--text-secondary)]">
+        <div className="glass-panel px-3 sm:px-4 py-2.5 border border-[var(--glass-border)] flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--text-secondary)]">
           <div className="flex items-center gap-2">
             <Droplet className="w-3.5 h-3.5 text-amber-500" />
             <span className="font-semibold text-[var(--text-primary)]">Metabolic Markers:</span>
           </div>
-          <div className="flex items-center gap-4 font-mono text-[11px]">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 font-mono text-[11px]">
             {glucose != null && (
               <span>
                 Fasting Glucose: <strong className="text-[var(--text-primary)]">{glucose.toFixed(1)} mg/dL</strong>

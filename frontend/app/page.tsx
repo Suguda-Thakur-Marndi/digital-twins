@@ -226,7 +226,7 @@ export default function OverviewPage() {
         </div>
 
         {/* Concise Safety Disclaimer */}
-        <div className="p-2.5 rounded-xl glass-card bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-200 text-xs flex items-center justify-between gap-3">
+        <div className="p-2.5 rounded-xl glass-card bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
           <div className="flex items-center gap-2">
             <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>
@@ -235,7 +235,7 @@ export default function OverviewPage() {
           </div>
           <Link
             href="/model-card"
-            className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 hover:underline shrink-0"
+            className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 hover:underline shrink-0 self-end sm:self-auto"
           >
             Model Card &amp; Limitations →
           </Link>
@@ -381,7 +381,7 @@ export default function OverviewPage() {
           <span className="font-bold text-[var(--text-primary)]">Current Patient Vitals</span>
           <span className="text-[11px] font-mono text-[var(--text-secondary)]">Most Recent Clinical Encounter</span>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 text-center">
           <div className="p-3 rounded-xl bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] shadow-2xs">
             <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--text-secondary)] font-bold">
               <Gauge className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
@@ -426,7 +426,7 @@ export default function OverviewPage() {
             <div className="text-[11px] text-[var(--text-secondary)] font-mono font-medium mt-0.5">kg/m² · 18.5–24.9</div>
           </div>
 
-          <div className="p-3 rounded-xl bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] shadow-2xs col-span-2 sm:col-span-1">
+          <div className="p-3 rounded-xl bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] shadow-2xs col-span-2 sm:col-span-1 lg:col-span-1">
             <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--text-secondary)] font-bold">
               <Scale className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Body Weight</span>
@@ -459,7 +459,7 @@ export default function OverviewPage() {
             </div>
 
             {/* Score Metrics */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-3">
               <div className="p-3 rounded-xl bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] shadow-2xs">
                 <span className="text-xs text-[var(--text-secondary)] font-mono font-bold block">Calibrated Probability</span>
                 <span className="text-3xl font-bold font-mono text-[var(--text-primary)] block mt-1">
@@ -599,7 +599,7 @@ export default function OverviewPage() {
               Observed ambulatory encounters over the 365-day lookback horizon with Stage 2 clinical threshold (140/90 mmHg).
             </p>
           </div>
-          <div className="flex items-center gap-3 text-xs font-mono font-bold">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-mono font-bold">
             <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
               <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
               <span>SBP</span>
@@ -617,7 +617,7 @@ export default function OverviewPage() {
 
         <div className="h-56 w-full pt-2">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartTimeline} margin={{ top: 10, right: 20, left: -20, bottom: 5 }}>
+            <LineChart data={chartTimeline} margin={{ top: 10, right: 10, left: -8, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" vertical={false} />
               <XAxis dataKey="date" stroke="var(--text-secondary)" tick={{ fill: "var(--text-secondary)", fontSize: 11, fontWeight: 600 }} tickLine={false} fontFamily="monospace" />
               <YAxis domain={[40, 180]} stroke="var(--text-secondary)" tick={{ fill: "var(--text-secondary)", fontSize: 11, fontWeight: 600 }} tickLine={false} fontFamily="monospace" unit=" mmHg" />
@@ -656,25 +656,25 @@ export default function OverviewPage() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs">
             <button
               type="button"
               onClick={() => runSimulation(-10, -5)}
-              className="px-2.5 py-1 rounded-lg bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] text-[11px] font-bold text-[var(--text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all shadow-2xs"
+              className="px-2.5 py-1 rounded-lg bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] text-[11px] font-bold text-[var(--text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all shadow-2xs min-h-[34px] sm:min-h-0"
             >
               -10 SBP / -5% Wt
             </button>
             <button
               type="button"
               onClick={() => runSimulation(-15, 0)}
-              className="px-2.5 py-1 rounded-lg bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] text-[11px] font-bold text-[var(--text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all shadow-2xs"
+              className="px-2.5 py-1 rounded-lg bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] text-[11px] font-bold text-[var(--text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all shadow-2xs min-h-[34px] sm:min-h-0"
             >
               -15 SBP Only
             </button>
             <button
               type="button"
               onClick={() => runSimulation(0, 0)}
-              className="p-1 rounded-lg bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] text-[11px] font-bold text-[var(--text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all shadow-2xs"
+              className="p-1.5 rounded-lg bg-[var(--bg-surface-strong)] border border-[var(--border-subtle)] text-[11px] font-bold text-[var(--text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all shadow-2xs min-h-[34px] min-w-[34px] flex items-center justify-center sm:min-h-0 sm:min-w-0"
               title="Reset Levers"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -742,7 +742,7 @@ export default function OverviewPage() {
               {simLoading && <span className="text-[11px] font-mono text-[var(--color-primary)] font-bold animate-pulse">Recalculating…</span>}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-center">
+            <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-3 text-center">
               <div className="p-3 rounded-xl bg-[var(--bg-subtle)] border border-[var(--border-subtle)]">
                 <span className="text-xs text-[var(--text-secondary)] font-mono font-bold block">Baseline Risk</span>
                 <span className="text-2xl font-bold font-mono text-[var(--text-primary)] block mt-1">

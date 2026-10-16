@@ -118,70 +118,72 @@ export function RiskReplay({
 
       {/* Snapshot Stepper Track */}
       <div className="space-y-3">
-        <div className="relative pt-5 pb-2">
-          {/* Timeline connecting line */}
-          <div className="absolute top-8 left-4 right-4 h-0.5 bg-slate-300 dark:bg-slate-700/60 -z-0" />
+        <div className="relative pt-5 pb-2 overflow-x-auto responsive-table-container">
+          <div className="min-w-[480px] sm:min-w-0 relative">
+            {/* Timeline connecting line */}
+            <div className="absolute top-8 left-4 right-4 h-0.5 bg-slate-300 dark:bg-slate-700/60 -z-0" />
 
-          {/* Stepper nodes */}
-          <div className="flex items-center justify-between relative z-10 px-2">
-            {snapshots.map((snap, idx) => {
-              const isSelected = idx === currentSnapshotIndex;
-              const isPast = idx < currentSnapshotIndex;
-              const isAlertCrossed = idx === firstAlertIdx;
-              const isDecompEvent = !!snap.stage_2_decompensation;
+            {/* Stepper nodes */}
+            <div className="flex items-center justify-between relative z-10 px-2">
+              {snapshots.map((snap, idx) => {
+                const isSelected = idx === currentSnapshotIndex;
+                const isPast = idx < currentSnapshotIndex;
+                const isAlertCrossed = idx === firstAlertIdx;
+                const isDecompEvent = !!snap.stage_2_decompensation;
 
-              return (
-                <button
-                  key={snap.snapshot_id || idx}
-                  type="button"
-                  onClick={() => {
-                    setIsPlaying(false);
-                    onSelectSnapshot(idx);
-                  }}
-                  className={`group relative flex flex-col items-center focus:outline-none transition-transform cursor-pointer ${
-                    isSelected ? "scale-110" : "hover:scale-105"
-                  }`}
-                >
-                  {/* Alert / Event Marker Badge above node */}
-                  {isDecompEvent ? (
-                    <span className="absolute -top-5 text-[9px] font-sans font-bold bg-rose-600 text-white px-1.5 py-0.5 rounded-full shadow-xs whitespace-nowrap animate-bounce">
-                      Event 🚨
-                    </span>
-                  ) : isAlertCrossed ? (
-                    <span className="absolute -top-5 text-[9px] font-sans font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shadow-xs whitespace-nowrap">
-                      Alert ⚠️
-                    </span>
-                  ) : null}
-
-                  {/* Node Circle */}
-                  <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition-all font-mono text-xs font-bold ${
-                      isDecompEvent
-                        ? "bg-rose-600 text-white border-rose-700 shadow-md ring-2 ring-rose-400/40"
-                        : isAlertCrossed
-                        ? "bg-amber-500 text-white border-amber-600 shadow-md ring-2 ring-amber-400/40"
-                        : isSelected
-                        ? "bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white border-white dark:border-slate-800 shadow-lg ring-4 ring-blue-500/30"
-                        : isPast
-                        ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] border-[var(--color-primary)] shadow-2xs"
-                        : "bg-[var(--bg-subtle)] text-[var(--text-muted)] border-[var(--border-strong)]"
+                return (
+                  <button
+                    key={snap.snapshot_id || idx}
+                    type="button"
+                    onClick={() => {
+                      setIsPlaying(false);
+                      onSelectSnapshot(idx);
+                    }}
+                    className={`group relative flex flex-col items-center focus:outline-none transition-transform cursor-pointer min-w-[50px] ${
+                      isSelected ? "scale-110" : "hover:scale-105"
                     }`}
                   >
-                    {idx + 1}
-                  </div>
+                    {/* Alert / Event Marker Badge above node */}
+                    {isDecompEvent ? (
+                      <span className="absolute -top-5 text-[9px] font-sans font-bold bg-rose-600 text-white px-1.5 py-0.5 rounded-full shadow-xs whitespace-nowrap animate-bounce">
+                        Event 🚨
+                      </span>
+                    ) : isAlertCrossed ? (
+                      <span className="absolute -top-5 text-[9px] font-sans font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shadow-xs whitespace-nowrap">
+                        Alert ⚠️
+                      </span>
+                    ) : null}
 
-                  {/* Date and BP label */}
-                  <div className="mt-1.5 text-center font-mono">
-                    <span className="block text-[10px] text-[var(--text-muted)]">
-                      {snap.date.slice(0, 7)}
-                    </span>
-                    <span className="block text-[11px] font-semibold text-[var(--text-primary)]">
-                      {(snap.calibrated_risk * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
+                    {/* Node Circle */}
+                    <div
+                      className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition-all font-mono text-xs font-bold ${
+                        isDecompEvent
+                          ? "bg-rose-600 text-white border-rose-700 shadow-md ring-2 ring-rose-400/40"
+                          : isAlertCrossed
+                          ? "bg-amber-500 text-white border-amber-600 shadow-md ring-2 ring-amber-400/40"
+                          : isSelected
+                          ? "bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white border-white dark:border-slate-800 shadow-lg ring-4 ring-blue-500/30"
+                          : isPast
+                          ? "bg-[var(--bg-surface-strong)] text-[var(--color-primary)] border-[var(--color-primary)] shadow-2xs"
+                          : "bg-[var(--bg-subtle)] text-[var(--text-muted)] border-[var(--border-strong)]"
+                      }`}
+                    >
+                      {idx + 1}
+                    </div>
+
+                    {/* Date and BP label */}
+                    <div className="mt-1.5 text-center font-mono">
+                      <span className="block text-[10px] text-[var(--text-muted)]">
+                        {snap.date.slice(0, 7)}
+                      </span>
+                      <span className="block text-[11px] font-semibold text-[var(--text-primary)]">
+                        {(snap.calibrated_risk * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -224,7 +226,7 @@ export function RiskReplay({
           </div>
         </div>
       ) : eventIdx !== -1 ? (
-        <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-800 dark:text-rose-200 flex items-center justify-between gap-2 backdrop-blur-md">
+        <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-800 dark:text-rose-200 flex flex-wrap items-center justify-between gap-2 backdrop-blur-md">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
             <span>Documented Stage 2 Decompensation on <strong>{snapshots[eventIdx].date}</strong>.</span>
@@ -234,7 +236,7 @@ export function RiskReplay({
           </span>
         </div>
       ) : firstAlertIdx !== -1 ? (
-        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-800 dark:text-amber-200 flex items-center justify-between gap-2 backdrop-blur-md">
+        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-800 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2 backdrop-blur-md">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-amber-500 shrink-0" />
             <span>Risk first breached threshold (≥5.0%) on <strong>{snapshots[firstAlertIdx].date}</strong>. Patient in surveillance window.</span>

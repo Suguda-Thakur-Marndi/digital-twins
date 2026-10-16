@@ -41,14 +41,14 @@ export function ConsentModal() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="glass-modal max-w-lg w-full p-6 shadow-2xl border border-[var(--glass-border)] rounded-2xl space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="glass-modal max-w-lg w-full p-4 sm:p-6 shadow-2xl border border-[var(--glass-border)] rounded-2xl space-y-4 max-h-[92vh] overflow-y-auto">
         <div className="flex items-center gap-2.5 border-b border-[var(--border-hairline)] pb-3">
-          <div className="w-9 h-9 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center">
-            <ShieldCheck className="w-5 h-5" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center">
+            <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
               <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-primary)] font-bold">
                 Governance Charter
               </span>
@@ -56,7 +56,7 @@ export function ConsentModal() {
                 DPDP Act Aligned
               </span>
             </div>
-            <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
+            <h2 className="font-editorial text-base sm:text-lg font-bold text-[var(--text-primary)] leading-tight">
               Pramana Clinical Digital Twin (TwinCare)
             </h2>
           </div>
@@ -81,11 +81,11 @@ export function ConsentModal() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[var(--border-hairline)]">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-[var(--border-hairline)]">
           <button
             type="button"
             onClick={handleClearSession}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-[var(--text-muted)] hover:text-rose-500 rounded-lg transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs text-[var(--text-muted)] hover:text-rose-500 rounded-lg transition-colors cursor-pointer min-h-[40px]"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>Clear Session</span>
@@ -94,7 +94,7 @@ export function ConsentModal() {
           <button
             type="button"
             onClick={handleAccept}
-            className="glass-btn-primary px-4 py-2 text-xs font-semibold cursor-pointer"
+            className="glass-btn-primary px-4 py-2 text-xs font-semibold cursor-pointer min-h-[40px] flex items-center justify-center text-center"
           >
             I Understand &amp; Enter Dashboard
           </button>

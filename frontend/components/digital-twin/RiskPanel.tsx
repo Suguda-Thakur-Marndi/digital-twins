@@ -50,7 +50,7 @@ export function RiskPanel({
   return (
     <div className="glass-panel p-5 border border-[var(--glass-border)] space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-hairline)] pb-3">
         <div>
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-primary)]">
             Model Risk Panel · 365-Day Horizon
@@ -69,14 +69,14 @@ export function RiskPanel({
         {/* Calibrated Risk Hero */}
         <div className="sm:col-span-2 p-3.5 glass-card border border-[var(--glass-border)] flex flex-col justify-between">
           <div>
-            <div className="flex items-baseline justify-between">
+            <div className="flex items-baseline justify-between flex-wrap gap-1">
               <span className="text-xs font-semibold text-[var(--text-secondary)]">Calibrated 1-Year Probability</span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/10 text-[var(--color-primary)] border border-blue-500/20">
                 Platt Scaled
               </span>
             </div>
-            <div className="mt-1.5 flex items-baseline gap-2">
-              <span className="text-3xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
+            <div className="mt-1.5 flex flex-wrap items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[var(--text-primary)] tabular-nums">
                 {calibratedPct}%
               </span>
               <span className="text-xs text-[var(--text-muted)] font-mono">
@@ -93,7 +93,7 @@ export function RiskPanel({
         <div className="p-3.5 glass-card border border-[var(--glass-border)] flex flex-col justify-between">
           <div>
             <span className="text-xs font-semibold text-[var(--text-secondary)] block">Uncalibrated Score</span>
-            <div className="mt-1.5 text-2xl font-bold font-mono text-[var(--text-secondary)] tabular-nums">
+            <div className="mt-1.5 text-xl sm:text-2xl font-bold font-mono text-[var(--text-secondary)] tabular-nums">
               {rawScore}
             </div>
           </div>
@@ -105,7 +105,7 @@ export function RiskPanel({
 
       {/* Cohort Distribution Visual */}
       <div className="space-y-1.5 pt-1">
-        <div className="flex items-center justify-between text-xs text-[var(--text-muted)] font-mono">
+        <div className="flex items-center justify-between text-xs text-[var(--text-muted)] font-mono flex-wrap gap-1">
           <span>Cohort Distribution (N=1,335)</span>
           <span className="text-[var(--text-primary)] font-semibold">
             {percentileInCohort.toFixed(0)}th Percentile
@@ -137,9 +137,9 @@ export function RiskPanel({
           <div className="absolute inset-y-0 left-[40%] right-0 bg-rose-500/20" />
         </div>
 
-        <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] font-mono">
+        <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] font-mono flex-wrap gap-1">
           <span>0%</span>
-          <span className="text-blue-500">Base Rate: 1.46%</span>
+          <span className="text-blue-500">Base: 1.46%</span>
           <span className="text-rose-500">Alert: {(alertThreshold * 100).toFixed(0)}%</span>
           <span>100%</span>
         </div>
