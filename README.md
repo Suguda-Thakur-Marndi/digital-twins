@@ -5,14 +5,16 @@
 > *Theme: Digital Twin in Healthcare*
 
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI%200.111-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
-[![Next.js 16](https://img.shields.io/badge/Frontend-Next.js%2016-black?style=flat&logo=next.js)](https://nextjs.org)
+[![Next.js 16](https://img.shields.io/badge/Frontend-Next.js%2016%20(React%2019)-black?style=flat&logo=next.js)](https://nextjs.org)
 [![Three.js](https://img.shields.io/badge/3D%20Spatial%20Twin-Three.js%20%2F%20R3F-049EF4?style=flat&logo=threedotjs)](https://threejs.org)
 [![XGBoost](https://img.shields.io/badge/ML-XGBoost%20Pipeline-EB5424?style=flat&logo=xgboost)](https://xgboost.readthedocs.io)
 [![Python 3.13+](https://img.shields.io/badge/Python-3.13%2B-blue?style=flat&logo=python)](https://python.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0%2B-3178C6?style=flat&logo=typescript)](https://typescriptlang.org)
-[![Tests Passing](https://img.shields.io/badge/Tests-26%2F26%20Passed%20(100%25)-brightgreen?style=flat)](backend/tests/test_api.py)
+[![TypeScript 5+](https://img.shields.io/badge/TypeScript-5.0%2B-3178C6?style=flat&logo=typescript)](https://typescriptlang.org)
+[![Tests Passing](https://img.shields.io/badge/Tests-28%2F28%20Passed%20(100%25)-brightgreen?style=flat)](backend/tests/test_api.py)
 [![Model Card](https://img.shields.io/badge/Model%20Card-Transparency%20Sheet-teal?style=flat)](frontend/app/model-card/page.tsx)
 [![Audit](https://img.shields.io/badge/Audit-SHA--256%20Hash%20Chained-purple?style=flat)](frontend/app/audit/page.tsx)
+[![DPDP Act](https://img.shields.io/badge/Privacy-DPDP%20Act%202023%20Aligned-emerald?style=flat)](frontend/app/audit/page.tsx)
+[![UI/UX](https://img.shields.io/badge/UI%2FUX-Visual%20Clinical%20Dashboard-blueviolet?style=flat)](frontend/app/page.tsx)
 
 ---
 
@@ -24,22 +26,24 @@
 5. [Complete Application Guide: Pages & Features](#5-complete-application-guide-pages--features)
    - [5.1 Dashboard Overview (`/`)](#51-dashboard-overview-)
    - [5.2 The Core Digital Twin (`/twin`)](#52-the-core-digital-twin-twin)
-     - [3D Spatial Physiological Core](#3d-spatial-physiological-core)
+     - [Dual 3D Visualization System (Abstract Core vs. Anatomical Avatar)](#dual-3d-visualization-system-abstract-core-vs-anatomical-avatar)
+     - [Interactive Target Organ Hotspots (Brain, Heart, Kidneys, Arteries)](#interactive-target-organ-hotspots-brain-heart-kidneys-arteries)
      - [Platt-Calibrated Risk Gauge with 95% CI](#platt-calibrated-risk-gauge-with-95-ci)
      - [Signed SHAP Clinical Drivers](#signed-shap-clinical-drivers)
-     - [Longitudinal Risk Replay Scrubber & Lead Time](#longitudinal-risk-replay-scrubber--lead-time)
+     - [Longitudinal Risk Replay Scrubber & Lead Time Days](#longitudinal-risk-replay-scrubber--lead-time-days)
      - [Full Patient Simulator (What-If Lab) with Correlated Levers](#full-patient-simulator-what-if-lab-with-correlated-levers)
+     - [Live What-If Scenario Projection to 3D Organ Hotspots](#live-what-if-scenario-projection-to-3d-organ-hotspots)
      - [Simulated Live Wearable Telemetry & SSE Streaming](#simulated-live-wearable-telemetry--sse-streaming)
      - [Multilingual Clinician vs. Patient View Toggle](#multilingual-clinician-vs-patient-view-toggle)
      - [Add Reading Modal & Instant Recalculation](#add-reading-modal--instant-recalculation)
      - [One-Page Clinical Summary PDF Export](#one-page-clinical-summary-pdf-export)
-   - [5.3 Cohort Directory (`/patients`)](#53-cohort-directory-patients)
+   - [5.3 Cohort Directory (`/patients`) & Deep Linking (`/patients/[id]`)](#53-cohort-directory-patients--deep-linking-patientsid)
    - [5.4 Surveillance & Early Warning Alerts (`/alerts`)](#54-surveillance--early-warning-alerts-alerts)
    - [5.5 Population Risk Analytics (`/population`)](#55-population-risk-analytics-population)
-   - [5.6 ABDM FHIR & Device Ingestion (`/import`)](#56-abdm-fhir--device-ingestion-import)
+   - [5.6 ABDM FHIR & Peripheral Ingestion (`/import`)](#56-abdm-fhir--peripheral-ingestion-import)
    - [5.7 Honest Metrics & Model Evaluation (`/performance`)](#57-honest-metrics--model-evaluation-performance)
    - [5.8 Tamper-Evident Cryptographic Audit Log (`/audit`)](#58-tamper-evident-cryptographic-audit-log-audit)
-   - [5.9 India Clinical Context (`/india`)](#59-india-clinical-context-india)
+   - [5.9 India Clinical Context & ICMR-INDIAB (`/india`)](#59-india-clinical-context--icmr-indiab-india)
    - [5.10 Mathematical Formulations & Methodology (`/how-it-works`)](#510-mathematical-formulations--methodology-how-it-works)
    - [5.11 AI Model Card & Algorithmic Transparency (`/model-card`)](#511-ai-model-card--algorithmic-transparency-model-card)
    - [5.12 Patient Registration & Custom Onboarding Wizard (`/register`)](#512-patient-registration--custom-onboarding-wizard-register)
@@ -50,7 +54,7 @@
    - [6.3 Risk Tiers & Clinical Management Protocol](#63-risk-tiers--clinical-management-protocol)
    - [6.4 Interpreting SHAP Clinical Drivers](#64-interpreting-shap-clinical-drivers)
    - [6.5 Hemodynamic Telemetry: Pulse Pressure, Rolling Means & Slopes](#65-hemodynamic-telemetry-pulse-pressure-rolling-means--slopes)
-   - [6.6 3D Physiological Core Visual Feedback](#66-3d-physiological-core-visual-feedback)
+   - [6.6 3D Spatial Physiological & Anatomical Feedback](#66-3d-spatial-physiological--anatomical-feedback)
    - [6.7 Lead Time Days & Trajectory Drift](#67-lead-time-days--trajectory-drift)
    - [6.8 Correlated Levers & Distribution Guardrails](#68-correlated-levers--distribution-guardrails)
    - [6.9 Out-of-Office Telemetry Safety Rules](#69-out-of-office-telemetry-safety-rules)
@@ -73,10 +77,11 @@ In India, **over 220 million adults** suffer from hypertension ([ICMR-INDIAB Lan
 2. **Forecasts 365-Day Acute Decompensation**: Predicts whether a patient will experience blood pressure decompensation (progression to Stage 2 hypertension: $\ge 140$ mmHg systolic / $\ge 90$ mmHg diastolic, or an acute hypertensive event) within the subsequent 12 months.
 3. **Calibrates Risks with Empirical Confidence**: Uses fitted Platt scaling logistic calibrators to transform raw machine learning logits into calibrated probabilities accompanied by **95% confidence intervals**, preventing clinical overconfidence.
 4. **Explains Every Prediction (SHAP Explainability)**: Leverages TreeExplainer SHAP values to attribute patient-specific risk to tangible clinical drivers (e.g. rising systolic trend, high pulse pressure, missed medication) with positive/negative signed attribution.
-5. **Provides a Full Patient Simulator (What-If Lab)**: Allows clinicians to test interventions (e.g. "What if the patient lowers SBP by 10 mmHg and loses 5% weight?") using a correlated lever map (`lever_map.json`) so related features (means, min, max, pulse pressure, BMI) shift together realistically.
-6. **Integrates Simulated Live Telemetry**: Connects with Bluetooth oscillometric BP monitors and pulse oximeters, applying 7-day rolling statistics and clinical alert rules in real time via Server-Sent Events (SSE).
-7. **Empowers Patients Across Languages**: Features a dedicated, jargon-free **Patient View** translated into **English, Hindi (हिंदी), and Kannada (ಕನ್ನಡ)** with recommended non-diagnostic questions for their physician.
-8. **Ensures Cryptographic Accountability**: Records every model prediction and manual intervention into an append-only, SHA-256 hash-chained audit log that can be verified for tampering at any time.
+5. **Provides Dual 3D Spatial Visualization**: Toggle seamlessly between an **Abstract Hemodynamic Telemetry Core** (pulse-synced Three.js lattice) and a **Photorealistic 3D Rigged Human Avatar** (`BodyTwinViz`) with interactive target organ hotspots (Brain, Heart, Kidneys, Arteries) responding dynamically to patient sex and BMI.
+6. **Provides a Full Patient Simulator (What-If Lab)**: Allows clinicians to test interventions (e.g. "What if the patient lowers SBP by 15 mmHg and loses 5% weight?") using a correlated lever map (`lever_map.json`) so related features (means, min, max, pulse pressure, BMI) shift together realistically. Adjustments immediately project onto 3D organ stress glows in real time.
+7. **Integrates Simulated Live Telemetry**: Connects with Bluetooth oscillometric BP monitors and pulse oximeters, applying 7-day rolling statistics and clinical alert rules in real time via Server-Sent Events (SSE).
+8. **Empowers Patients Across Languages**: Features a dedicated, jargon-free **Patient View** translated into **English, Hindi (हिंदी), and Kannada (ಕನ್ನಡ)** with recommended non-diagnostic questions for their physician.
+9. **Ensures Cryptographic Accountability & Governance**: Records every model prediction and manual intervention into an append-only, SHA-256 hash-chained audit log that can be verified for tampering at any time, built with DPDP Act 2023 consent mechanisms and session privacy controls.
 
 ---
 
@@ -149,7 +154,7 @@ flowchart TD
    $$\hat{P}(Y=1) = \frac{1}{1 + \exp(-(A \cdot \text{logit} + B))}$$
    *(where $A = 0.4393$, $B = -2.2073$)*
 5. **SHAP Factor Attribution**: The tree structure is evaluated by `SHAPService` to extract the top positive (risk-increasing) and negative (protective) clinical drivers.
-6. **Real-Time Visualization & Rendering**: The frontend updates the interactive 3D vascular model, risk gauges, trajectory sparklines, and cryptographic audit trail.
+6. **Real-Time Visualization & Rendering**: The frontend updates the interactive 3D vascular model or 3D rigged avatar, risk gauges, trajectory sparklines, and cryptographic audit trail.
 
 ---
 
@@ -157,13 +162,16 @@ flowchart TD
 
 - **Backend Framework**: [FastAPI 0.111+](https://fastapi.tiangolo.com) (Python 3.13 / 3.14 compatible, asynchronous endpoints, Uvicorn ASGI server).
 - **Frontend Framework**: [Next.js 16](https://nextjs.org) (React 19, TypeScript 5.0+, App Router, Turbopack support).
-- **3D Spatial Visualization**: [Three.js](https://threejs.org) & [@react-three/fiber](https://docs.pmnd.rs/react-three-fiber) with custom GLSL pulsating vascular shaders.
+- **UI/UX Architecture**: Visual-first clinical intelligence dashboard with high-density metric cards, visual SVG pipeline flowcharts, compact vital tiles, micro-sparklines, and glassmorphic styling.
+- **3D Spatial Visualization**: [Three.js](https://threejs.org) & [@react-three/fiber](https://docs.pmnd.rs/react-three-fiber) with dual rendering modes:
+  - *Abstract Hemodynamic Core*: Pulse-synchronized procedural lattice with stress shader glow.
+  - *Anatomical 3D Avatar (`BodyTwinViz`)*: Rigged Ready Player Me GLTF human anatomy (`/models/human-male.glb`, `/models/human-female.glb`) with interactive target organ hotspots (Brain, Heart, Kidneys, Arteries).
 - **Machine Learning & Pipeline**: [scikit-learn](https://scikit-learn.org) `Pipeline` and `ColumnTransformer`, [XGBoost](https://xgboost.readthedocs.io) gradient-boosted tree ensemble.
 - **Explainability**: [SHAP](https://shap.readthedocs.io) (TreeExplainer with signed additive risk attributions).
-- **Probability Calibration**: Logistic Platt scaling (`platt_calibrator.joblib`) with 95% Wilson confidence intervals.
-- **Cryptographic Security**: SHA-256 hash-chained immutable audit ledger (`inference_audit.jsonl`).
-- **Styling & UI**: Vanilla CSS Design System with CSS variables, Glassmorphism, and Tailwind CSS utilities.
-- **Testing**: [pytest](https://pytest.org) with 26 comprehensive automated integration tests.
+- **Probability Calibration**: Logistic Platt scaling (`platt_calibrator.joblib`) with 95% empirical confidence intervals.
+- **Cryptographic Security & Governance**: SHA-256 hash-chained immutable audit ledger (`inference_audit.jsonl`), DPDP Act 2023 consent modal, and session privacy management.
+- **Theming**: System / Dark / Light theme provider with persistent CSS variables and glassmorphic palette.
+- **Testing**: [pytest](https://pytest.org) with 28 automated integration and system invariant tests (100% pass rate).
 
 ---
 
@@ -209,19 +217,27 @@ npm run dev
 ```bash
 python -m pytest backend/tests/test_api.py -v
 ```
-*Expected Result: 26/26 tests passed (100%).*
+*Expected Result: 28/28 tests passed (100%).*
+
+### Step 4: Verify Frontend Production Build
+```bash
+cd frontend
+npm run build
+```
+*Expected Result: All 16 routes compiled statically/dynamically with 0 TypeScript errors.*
 
 ---
 
 ## 5. Complete Application Guide: Pages & Features
 
-The web platform consists of **13 dedicated clinical routes**, each addressing a specific dimension of cardiovascular twin intelligence:
+The web platform consists of **14 dedicated clinical routes**, each addressing a specific dimension of cardiovascular twin intelligence:
 
 | Route | Page Name | Primary Clinical Function |
 | :--- | :--- | :--- |
-| `/` | **Dashboard Overview** | Executive summary, Summit theme alignment, quick action launchpad. |
-| `/twin` | **The Core Digital Twin** | 3D vascular model, calibrated risk gauge, SHAP drivers, risk replay, patient simulator, telemetry, and multilingual patient view. |
-| `/patients` | **Cohort Directory** | Searchable directory table of 50+ patients with risk tiers and BP sparklines. |
+| `/` | **Dashboard Overview** | Executive summary, Summit theme alignment, quick action launchpad, KPI strip, visual flowchart. |
+| `/twin` | **The Core Digital Twin** | Dual 3D visualizers (Abstract Core vs. Anatomical Avatar), target organ hotspots, calibrated risk gauge, SHAP drivers, risk replay, patient simulator, telemetry, and multilingual patient view. |
+| `/patients` | **Cohort Directory** | Searchable directory table of 50+ patients with risk tiers, demographic filters, and BP sparklines. |
+| `/patients/[id]` | **Dynamic Patient Redirect** | Direct permalink route mapping patient ID parameters into `/twin?patient=[id]` with clean deep linking. |
 | `/alerts` | **Surveillance & Early Warning** | Trajectory drift monitoring, lookback window slider, risk-rise detection, lead time days callout. |
 | `/population` | **Population Analytics** | Cohort-wide risk histograms, demographic distributions, health system resource planning. |
 | `/import` | **ABDM FHIR & CSV Import** | Ingestion of ABDM FHIR R4 bundles and peripheral Bluetooth device telemetry logs. |
@@ -238,10 +254,15 @@ The web platform consists of **13 dedicated clinical routes**, each addressing a
 ### 5.1 Dashboard Overview (`/`)
 - **Route**: `http://localhost:3000/`
 - **What it displays**:
-  - Executive introduction to the Pramana Digital Twin platform.
-  - Contextual framing for the Happiest Health India Summit 2026.
-  - High-level architecture cards breaking down Ingestion, ML Pipeline, What-If Simulation, and Audit Trail.
-  - Quick action buttons: **"Launch Digital Twin"**, **"Browse Cohort"**, and **"Surveillance & Alerts"**.
+  - **Quick Patient Selector**: Instantly switch between sample profiles (`PT-101`, `PT-102`, `PT-103`) or navigate directly to custom registered twins.
+  - **Compact Vitals Panel**: Displays latest **SBP**, **DBP**, **Heart Rate**, **BMI**, and **Weight** with clinical reference indicators.
+  - **3D Spatial Visualizer**: Abstract Three.js telemetry visualization with cardiac pulse-syncing and stress-gradient mapping.
+  - **Model Score & 365-Day Horizon**: Direct comparison of empirical **Calibrated Probability** (Platt-scaled) vs. uncalibrated raw logit score, supported by a 3-tier risk bar (Low `<15%`, Moderate `15–40%`, High `≥40%`).
+  - **Top TreeSHAP Drivers**: Immediate display of signed clinical feature impacts (e.g. accelerating SBP slope, high pulse pressure).
+  - **Audited Performance Metrics Strip**: 6 high-level KPI cards (1,335 Cohort Size, 132 Feature Space, 365d Horizon, 0.8069 ROC-AUC, 0.0644 PR-AUC, 14/964 Test Positives).
+  - **Visual Architecture Flowchart**: Visual 5-step diagram (`EHR Data → Patient State → XGBoost Model → Risk Estimate → SHAP Explanation`).
+  - **Core Module Links & Honest Disclosures**: Direct access to Digital Twin Lab, Cohort, Performance, and India Context alongside clear clinical limitations.
+  - **Complete Navigation Directory**: Integrated footer linking all 14 application routes.
 
 ---
 
@@ -249,14 +270,27 @@ The web platform consists of **13 dedicated clinical routes**, each addressing a
 - **Route**: `http://localhost:3000/twin` (or with patient query: `http://localhost:3000/twin?patient=PT-101`)
 - **Core Components & Capabilities**:
 
-#### 3D Spatial Physiological Core
-- Interactive real-time 3D model of the human vascular and cardiac system built using Three.js and React Three Fiber.
-- **Heartbeat Synchronization**: The pulsing frequency dynamically syncs with the patient's resting heart rate (bpm).
-- **Stress Shader Color Mapping**:
-  - 🔵 **Cyan / Blue Core**: Low decompensation risk (<15%), optimal hemodynamics.
-  - 🟡 **Golden / Amber Core**: Moderate risk (15%–35%), borderline arterial strain.
-  - 🔴 **Pulsing Crimson Core**: High risk ($\ge 35\%$), severe arterial stiffness and decompensation hazard.
-- **Controls**: Click and drag to rotate in 3D; scroll mouse wheel to zoom.
+#### Dual 3D Visualization System (Abstract Core vs. Anatomical Avatar)
+Toggle seamlessly between two 3D clinical perspective modes via the top toggle buttons:
+- **Mode A — 3D Spatial Physiological Core (Abstract Lattice)**:
+  - Interactive Three.js / React Three Fiber geometric lattice representing systemic cardiovascular dynamics.
+  - **Heartbeat Synchronization**: Pulsing frequency dynamically matches the patient's resting heart rate (bpm).
+  - **Stress Shader Color Mapping**:
+    - 🔵 **Cyan / Blue Core**: Low decompensation risk (<15%), optimal hemodynamics.
+    - 🟡 **Golden / Amber Core**: Moderate risk (15%–35%), borderline arterial strain.
+    - 🔴 **Pulsing Crimson Core**: High risk ($\ge 35\%$), severe arterial stiffness.
+- **Mode B — 3D Anatomical Human Avatar (`BodyTwinViz`)**:
+  - Full-body anatomical human avatar using authentic Ready Player Me `.glb` models (`/models/human-male.glb`, `/models/human-female.glb`).
+  - Automatically loads the appropriate male/female mesh based on patient demographics and scales body proportions with BMI.
+  - Fallback procedural silhouette ensures zero downtime on low-power devices.
+
+#### Interactive Target Organ Hotspots (Brain, Heart, Kidneys, Arteries)
+When viewing the Anatomical 3D Avatar, click on glowing target organ hotspots to inspect specific microvascular and macrovascular risks:
+- 🧠 **Brain**: Cerebrovascular accident (CVA), stroke risk, transient ischemic attack (TIA), and microvascular white-matter changes.
+- 🫀 **Heart**: Left Ventricular Hypertrophy (LVH), coronary artery disease, heart failure with preserved ejection fraction (HFpEF), and pulse-synchronized contractility.
+- 🫘 **Kidneys**: Hypertensive nephrosclerosis, glomerular filtration rate (eGFR) impairment, and microalbuminuria.
+- 🩸 **Systemic Vasculature / Arteries**: Arterial wall stiffness, elevated pulse pressure, and vascular resistance.
+- **Telemetry Drawer**: Clicking any hotspot opens an in-depth clinical telemetry drawer with micro-sparklines, historical trends, and guideline-recommended diagnostic evaluations.
 
 #### Platt-Calibrated Risk Gauge with 95% CI
 - Visualizes 1-year cardiovascular decompensation risk as a calibrated percentage.
@@ -268,7 +302,7 @@ The web platform consists of **13 dedicated clinical routes**, each addressing a
 - **Red (+) Bars**: Factors that push risk upward (e.g. `+0.14 Systolic BP (365d Mean)`, `+0.09 Systolic Slope (Accelerating)`).
 - **Green (-) Bars**: Protective factors that lower risk (e.g. `-0.08 Fasting Glucose (Controlled)`, `-0.05 Stable Heart Rate`).
 
-#### Longitudinal Risk Replay Scrubber & Lead Time
+#### Longitudinal Risk Replay Scrubber & Lead Time Days
 - Positioned below the vitals cards, providing historical playback across the past 365 days.
 - **Play Button (▶)**: Automatically animates through the patient's historical snapshots.
 - **Timeline Slider**: Scrub back and forth to inspect past readings, risk scores, and vitals.
@@ -286,6 +320,10 @@ The web platform consists of **13 dedicated clinical routes**, each addressing a
   - `LOW_SENSITIVITY`: Alerts when adjustments fall within flat tree plateaus.
 - **Clinical Intervention Presets**: One-click application of evidence-based trials (*Improve BP Control*, *Weight Loss (-5%)*, *Worsening Diabetes*, *Missed Medication*, *Dietary Salt Reduction*).
 - **Multi-Scenario Comparison**: Save up to 3 distinct scenario runs for side-by-side clinical evaluation.
+
+#### Live What-If Scenario Projection to 3D Organ Hotspots
+- As levers are adjusted in the Patient Simulator, the scenario changes dynamically link to the 3D Anatomical Human Avatar.
+- Target organ hotspots dynamically shift their glow colors (e.g. switching from crimson to amber or cyan as BP and glycemic control improve) in real time without page reload.
 
 #### Simulated Live Wearable Telemetry & SSE Streaming
 - Located in the **"Live Telemetry"** tab.
@@ -312,7 +350,7 @@ The web platform consists of **13 dedicated clinical routes**, each addressing a
 
 ---
 
-### 5.3 Cohort Directory (`/patients`)
+### 5.3 Cohort Directory (`/patients`) & Deep Linking (`/patients/[id]`)
 - **Route**: `http://localhost:3000/patients`
 - **What it displays**: Interactive table of all 50 synthetic cohort patients plus any registered patients.
 - **Interactive Features**:
@@ -322,6 +360,7 @@ The web platform consists of **13 dedicated clinical routes**, each addressing a
   - **Interactive Sparklines**: Hover over the systolic BP sparkline to view historical reading trends.
   - **Action Button**: Click **"Open Twin"** to load the patient's full digital twin state.
   - **Patient Registration**: Direct link to `/register` to synthesize custom patient digital twins.
+- **Deep Linking Permalinks (`/patients/[id]`)**: Navigating to `http://localhost:3000/patients/PT-101` automatically resolves and redirects into the full twin workspace at `http://localhost:3000/twin?patient=PT-101`.
 
 ---
 
@@ -344,7 +383,7 @@ The web platform consists of **13 dedicated clinical routes**, each addressing a
 
 ---
 
-### 5.6 ABDM FHIR & Device Ingestion (`/import`)
+### 5.6 ABDM FHIR & Peripheral Ingestion (`/import`)
 - **Route**: `http://localhost:3000/import`
 - **What it displays**: Dual ingestion pathways for interoperability with Indian health infrastructure:
   - **ABDM FHIR R4 Bundle Import**: Paste ABDM-compliant JSON bundles containing `Patient`, `Observation` (LOINC `8480-6` Systolic, `8462-4` Diastolic, `8867-4` Heart Rate), `Condition`, and `MedicationStatement` resources. The service validates structure, maps features, computes data completeness, and registers the twin.
@@ -355,40 +394,40 @@ The web platform consists of **13 dedicated clinical routes**, each addressing a
 ### 5.7 Honest Metrics & Model Evaluation (`/performance`)
 - **Route**: `http://localhost:3000/performance`
 - **What it displays**: Radical honesty in healthcare AI:
+  - **Static Threshold Failure Alert Banner**: Prominently discloses that the static cutoff of `0.7562` flagged 0/14 test positives (0% recall), demonstrating why clinical deployment mandates alert-budget percentile policies.
   - **Held-Out Test Set Performance**: Evaluated on 964 held-out patients with 14 true positive events (1.457% base rate).
-  - **Test ROC-AUC**: `0.8069` [95% CI: 0.691, 0.908].
-  - **Test PR-AUC**: `0.0644` (representing a 4.4x statistical enrichment over the 0.0146 baseline).
-  - **Platt Reliability Curve**: Compares uncalibrated raw scores against Platt-calibrated empirical probabilities across quantile bins.
-  - **Static Threshold Failure Analysis**: Explains why an arbitrary theoretical cutoff (`0.7562`) flagged 0/14 test positives (0% recall).
+  - **4 KPI Metric Cards with 95% Bootstrap CIs**: ROC-AUC `0.8069` [0.691, 0.908], PR-AUC `0.0644` (4.4x baseline enrichment), Brier Score `0.0138`, and Platt Log-Loss `0.0712`.
+  - **Platt Reliability Curve**: Visualizes uncalibrated raw scores against Platt-calibrated empirical probabilities across quantile bins with confidence intervals.
   - **Alert-Budget Operational Policy Table**: Recommends operational surveillance budgets (Top 5%, 10%, 20%) achieving 28.6%–64.3% sensitivity.
 
 ---
 
 ### 5.8 Tamper-Evident Cryptographic Audit Log (`/audit`)
 - **Route**: `http://localhost:3000/audit`
-- **What it displays**: Append-only, cryptographic SHA-256 hash-chain logging every model inference, what-if simulation, and manual vitals modification.
-- **Interactive Verification**:
-  - Block inspector showing block index, timestamp, model version, schema fingerprint, input hash, calibrated risk, and chained cryptographic hashes.
-  - Click **"Verify Log Integrity"** to execute a cryptographic walk from the genesis block (`0000...0000`) through the entire ledger, verifying that zero entries have been tampered with.
+- **What it displays**: Append-only, cryptographic SHA-256 hash-chain logging every model inference, what-if simulation, and manual vitals modification:
+  - **DPDP Act 2023 6-Pillar Compliance Grid**: Synthesizes statutory obligations into 6 clear cards (Data Minimization, Purpose Limitation, Cryptographic Integrity, Target Leakage Isolation, Schema Locking, Security Safeguards).
+  - **Cryptographic Verification Badge**: Live status indicator displaying ledger entry count, genesis link, and tamper-evident state.
+  - **Interactive Block Inspector**: Table view showing block index, timestamp, model version, schema fingerprint (`a4ddaedbdbc8bb07`), input hash, calibrated risk, and chained cryptographic hashes.
+  - **One-Click Walk Verification**: Click **"Verify Log Integrity"** to execute a cryptographic walk from genesis (`0000...0000`) through the entire ledger.
 
 ---
 
-### 5.9 India Clinical Context (`/india`)
+### 5.9 India Clinical Context & ICMR-INDIAB (`/india`)
 - **Route**: `http://localhost:3000/india`
 - **What it displays**: Epidemiological framing and alignment with the Indian healthcare ecosystem:
-  - **ICMR-INDIAB Lancet 2023 Study**: Contextualizes India's 220 million hypertensive citizens and <15% control rate.
-  - **Indian Guidelines on Hypertension (IGH-IV / ICMR)**: References the 140/90 mmHg clinical treatment threshold.
-  - **Ayushman Bharat Digital Mission (ABDM)**: Explains the integration architecture for Ayushman Bharat Health Accounts (ABHA) and Ayushman Arogya Mandirs (AAMs).
+  - **4 Sourced Epidemiology Metric Tiles**: 220M hypertensive adults, <15% control rate, 33% urban / 25% rural prevalence, and 57% stroke / 24% CAD mortality attribution (ICMR-INDIAB & Lancet).
+  - **5 Strategic Pillar Cards**: Primary Health Center (PHC) triage, Bluetooth telemetry, ABDM FHIR standards, ASHA worker support, and prospective clinical validation.
+  - **Indian Guidelines on Hypertension (IGH-IV / ICMR) Table**: Comprehensive diagnostic comparison of blood pressure stages, clinical actions, and digital twin surveillance bands.
+  - **Ayushman Bharat Digital Mission (ABDM)**: Explains integration architecture for ABHA IDs and Ayushman Arogya Mandirs (AAMs).
 
 ---
 
 ### 5.10 Mathematical Formulations & Methodology (`/how-it-works`)
 - **Route**: `http://localhost:3000/how-it-works`
 - **What it displays**: Full engineering and mathematical documentation:
-  - 132-feature extraction pipeline breakdown.
-  - Platt scaling logistic calibration equations.
-  - Game-theoretic TreeExplainer SHAP formula derivations.
-  - Correlated counterfactual simulation formulas and lever covariance rules.
+  - **5-Stage Visual Architecture Flowchart**: End-to-end data transformation from raw EHR inputs to Platt-calibrated TreeSHAP explanations.
+  - **Compact Methodology Cards**: Equations and specifications for the 132-feature extraction pipeline, Platt sigmoid calibration, and TreeExplainer game-theoretic attributions.
+  - **4-Phase Implementation Progress Timeline**: Milestone roadmap from Synthea baseline extraction to multi-center clinical trials.
 
 ---
 
@@ -496,13 +535,21 @@ The SHAP (SHapley Additive exPlanations) factors translate complex multi-tree de
 
 ---
 
-### 6.6 3D Physiological Core Visual Feedback
-The Three.js visualizer represents the patient's cardiovascular system:
-- **Pulsing Speed**: Dynamically synchronizes with the patient's resting heart rate (bpm).
-- **Core Illumination**:
-  - **Cyan / Blue Core**: Stable hemodynamics, Low Risk tier.
-  - **Golden / Amber Core**: Borderline hypertension, Moderate Risk tier.
-  - **Pulsing Crimson Core**: High arterial stress, High Risk tier, or active Stage 2 decompensation.
+### 6.6 3D Spatial Physiological & Anatomical Feedback
+The dual 3D visualizers present complementary clinical views:
+- **Abstract Core View**:
+  - **Pulsing Speed**: Dynamically synchronizes with the patient's resting heart rate (bpm).
+  - **Core Illumination**:
+    - **Cyan / Blue Core**: Stable hemodynamics, Low Risk tier.
+    - **Golden / Amber Core**: Borderline hypertension, Moderate Risk tier.
+    - **Pulsing Crimson Core**: High arterial stress, High Risk tier, or active Stage 2 decompensation.
+- **Anatomical Body View (`BodyTwinViz`)**:
+  - Rigged male/female mesh adapting to patient sex and BMI.
+  - Interactive target organ stress glows:
+    - **Brain**: Flashes amber/crimson when SBP variability and systolic slopes threaten cerebrovascular integrity.
+    - **Heart**: Pulses with resting HR; turns crimson when pulse pressure and 365-day mean SBP indicate severe left ventricular strain.
+    - **Kidneys**: Highlights microvascular renal risk driven by comorbid diabetes, high pulse pressure, and declining renal clearance.
+    - **Vascular System**: Illuminates systemic vascular resistance and arterial stiffness.
 
 ---
 
@@ -551,9 +598,9 @@ Every record in `/audit` contains:
 | `GET` | `/api/v1/health` | Backend status, model version (`1.0.0`), and schema fingerprint (`a4ddaedbdbc8bb07`). |
 | `GET` | `/api/v1/model/info` | Complete model specification, 95% CIs, limitations, and Platt calibration parameters. |
 | `GET` | `/api/v1/model/performance` | Calibration reliability curves and alert-budget policy tables across held-out test cohort. |
-| `GET` | `/api/v1/patients` | Dense paginated cohort directory table with vitals sparklines and risk tiers. |
+| `GET` | `/api/v1/patients` | Dense paginated cohort directory table with vitals sparklines and risk tiers (`limit` query param). |
 | `GET` | `/api/v1/patients/{id}` | Full patient digital twin state: demographics, vitals, timelines, conditions, and medications. |
-| `POST` | `/api/v1/patients/register` | Register a new synthetic patient with baseline vitals, derive 132 features, and sign in audit log. |
+| `POST` | `/api/v1/patients/register` | Register a new synthetic patient with baseline vitals, derive 132 features, validate ranges, and sign in audit log. |
 | `POST` | `/api/v1/patients/{id}/readings` | Ingest a new blood pressure reading, recalculate calibrated risk, and append snapshot. |
 | `DELETE`| `/api/v1/patients/{id}` | Delete a registered patient record (demo patients protected against deletion). |
 | `POST` | `/api/v1/predict` | Run model inference: returns raw score, calibrated risk, 95% CI, and SHAP factors. |
@@ -561,14 +608,16 @@ Every record in `/audit` contains:
 | `POST` | `/api/v1/simulate` | Full patient simulator shifting correlated features via `lever_map.json` and computing SHAP delta. |
 | `GET` | `/api/v1/patients/{id}/sensitivity` | Multi-point sensitivity step-function curves across primary vitals for a specific patient. |
 | `GET` | `/api/v1/patients/{id}/timeline-risk` | Historical snapshots with risk scores and vitals for risk-over-time replay scrubber. |
-| `GET` | `/api/v1/alerts` | Surveillance engine filtering patients with rising risk trajectories and lead time calculations. |
+| `GET` | `/api/v1/alerts` | Surveillance engine filtering patients with rising risk trajectories and lead time calculations (`window`, `threshold`). |
 | `GET` | `/api/v1/explain/global` | Global longitudinal feature importances across the training cohort. |
 | `POST` | `/api/v1/simulate/wearable` | Deterministic simulated wearable stream (resting HR, steps, home BP, sleep, SpO2). |
 | `POST` | `/api/v1/stream/reading` | Ingest live telemetry reading and broadcast via Server-Sent Events (SSE). |
 | `GET` | `/api/v1/stream/{patient_id}` | Live SSE telemetry stream connection. |
-| `POST` | `/api/v1/patients/import-fhir` | Ingest ABDM FHIR R4 Bundle JSON with mapping report and validation. |
-| `GET` | `/api/v1/audit` | Retrieve append-only inference audit log entries. |
-| `GET` | `/api/v1/audit/verify` | Cryptographic SHA-256 hash-chain integrity verification. |
+| `POST` | `/api/v1/patients/import-fhir` | Ingest ABDM FHIR R4 Bundle JSON with mapping report and automatic registration. |
+| `POST` | `/api/v1/import/fhir` | Parse and map ABDM FHIR R4 Bundle JSON without mandatory registration. |
+| `GET` | `/api/v1/audit` | Retrieve append-only inference audit log entries (`limit` query param). |
+| `GET` / `POST` | `/api/v1/audit/verify` | Cryptographic SHA-256 hash-chain integrity verification walk. |
+| `GET` | `/api/population` | Cohort-wide demographic and risk distributions for population-level health planning. |
 
 ---
 
@@ -580,15 +629,17 @@ The model operates on a rolling 365-day observation window to predict decompensa
 - **Test Set**: 964 patients with **14 true positive events** (base rate = **1.457%**).
 - **Test ROC-AUC**: **0.8069** [95% CI: 0.691, 0.908].
 - **Test PR-AUC**: **0.0644** (representing a **4.4x statistical enrichment** over the 0.0146 baseline).
+- **Brier Score**: **0.0138** (indicating strong calibration sharpness).
+- **Platt Scaling Logistic Loss**: **0.0712**.
 
 ### Alert-Budget Operational Policy Table (N = 964 Test Patients)
 Because an arbitrary theoretical cutoff of `0.7562` captured zero test positives (0% recall), health system deployments should adopt an **Alert-Budget Operating Policy**:
 
-| Surveillance Policy | Alert Cutoff | True Positives | False Positives | Precision (PPV) [95% CI] | Recall (Sensitivity) [95% CI] |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Top 5% Alert Budget** | `0.4577` | 4 | 44 | 8.3% `[2.7%, 19.9%]` | **28.6%** `[10.8%, 55.1%]` |
-| **Top 10% Alert Budget** | `0.3003` | 6 | 90 | 6.2% `[2.6%, 13.0%]` | **42.9%** `[20.0%, 68.3%]` |
-| **Top 20% Alert Budget** | `0.1802` | 9 | 184 | 4.7% `[2.3%, 8.6%]` | **64.3%** `[38.8%, 83.7%]` |
+| Surveillance Policy | Alert Cutoff | True Positives | False Positives | Precision (PPV) [95% CI] | Recall (Sensitivity) [95% CI] | Recommended Clinical Use Case |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Top 5% Alert Budget** | `0.4577` | 4 | 44 | 8.3% `[2.7%, 19.9%]` | **28.6%** `[10.8%, 55.1%]` | High-specificity specialist cardiologist review. |
+| **Top 10% Alert Budget** | `0.3003` | 6 | 90 | 6.2% `[2.6%, 13.0%]` | **42.9%** `[20.0%, 68.3%]` | Primary Health Center (PHC) medical officer triage. |
+| **Top 20% Alert Budget** | `0.1802` | 9 | 184 | 4.7% `[2.3%, 8.6%]` | **64.3%** `[38.8%, 83.7%]` | Community health worker / ASHA home visit surveillance. |
 
 ---
 
@@ -603,12 +654,15 @@ When presenting the platform to clinicians, hospital administrators, or summit j
 2. **Step 2: 3D Twin & Diagnostic Inspection (`/twin?patient=PT-101`)**
    - Click "Open Twin" for `PT-101`.
    - Rotate the Three.js 3D vascular model pulsing synchronously with the patient's resting heart rate.
+   - Switch to **3D Anatomical Body View** (`BodyTwinViz`) to show the rigged avatar.
+   - Click the glowing **Heart** and **Kidneys** hotspots to reveal organ-specific microvascular risk drivers and sparklines.
    - Inspect the Platt-calibrated risk gauge (e.g. `48.2% [41.2%, 55.4%]`) and explain the signed TreeExplainer SHAP clinical drivers (accelerating SBP slope, high pulse pressure).
    - Toggle to **Patient View** and switch languages to **हिंदी** or **ಕನ್ನಡ** to demonstrate health equity in primary health centers.
 3. **Step 3: What-If Counterfactual Lab (`/twin` Simulator Tab)**
    - Switch to the **Patient Simulator** tab.
-   - Apply a `-10 mmHg SBP` reduction and simulate adding an ACE inhibitor.
+   - Apply a `-15 mmHg SBP` reduction and simulate adding an ACE inhibitor.
    - Show how `lever_map.json` harmonizes rolling means, maximums, and pulse pressure, resulting in an immediate risk reduction from **15.3% down to 9.8%**.
+   - Watch the 3D Body visualizer immediately update target organ stress glows.
 4. **Step 4: Cryptographic Audit Trail Verification (`/audit`)**
    - Open `/audit`.
    - Show the newly recorded simulation and inference block with its inputs, timestamps, model version, and SHA-256 hash.
@@ -643,12 +697,13 @@ digital-twins/
 │   │   ├── registered_patients.json # Persistent custom-registered synthetic twins
 │   │   └── inference_audit.jsonl    # Immutable append-only audit ledger
 │   └── tests/
-│       └── test_api.py              # 26 automated integration and invariant tests
+│       └── test_api.py              # 28 automated integration and invariant tests
 ├── frontend/
 │   ├── app/
 │   │   ├── page.tsx                 # Executive overview and Summit theme dashboard
 │   │   ├── twin/page.tsx            # Core digital twin interface (3D, simulator, telemetry)
 │   │   ├── patients/page.tsx        # Searchable cohort directory table with sparklines
+│   │   ├── patients/[id]/page.tsx   # Dynamic permalink redirect into digital twin
 │   │   ├── alerts/page.tsx          # Surveillance and early warning trajectory drift
 │   │   ├── population/page.tsx      # Macro-level cohort analytics and risk distributions
 │   │   ├── import/page.tsx          # ABDM FHIR R4 and CSV device ingestion
@@ -660,9 +715,27 @@ digital-twins/
 │   │   ├── register/page.tsx        # 4-step clinical patient onboarding wizard
 │   │   └── about/page.tsx           # Summit context and Responsible AI Humility Charter
 │   ├── components/
-│   │   └── digital-twin/            # 3D visualizer, gauges, SHAP charts, timeline scrubber
+│   │   ├── ConsentModal.tsx         # DPDP Act 2023 governance and consent modal
+│   │   ├── LanguageSelector.tsx     # Multilingual switcher (EN, HI, KN)
+│   │   ├── Navbar.tsx               # Navigation header with active route styling & badge
+│   │   ├── ThemeProvider.tsx        # Light / Dark / System theme switcher
+│   │   └── digital-twin/            # 3D visualizers, gauges, SHAP charts, timeline scrubber
+│   │       ├── BodyTwinViz.tsx      # Photorealistic 3D Rigged Human Avatar with organ hotspots
+│   │       ├── DigitalTwinViz.tsx   # Abstract Three.js hemodynamic telemetry core
+│   │       ├── LongitudinalCharts.tsx# Trajectory charts with confidence bands
+│   │       ├── PatientSimulator.tsx # Full What-If Lab with correlated levers
+│   │       ├── PatientView.tsx      # Multilingual patient communication view
+│   │       ├── RiskPanel.tsx        # Platt-calibrated gauge with 95% CIs
+│   │       ├── RiskReplay.tsx       # Historical snapshot scrubber & lead-time markers
+│   │       ├── SHAPChart.tsx        # Signed TreeSHAP factor attributions
+│   │       ├── VitalCards.tsx       # Dense hemodynamic tiles with clinical indicators
+│   │       └── WearablePanel.tsx    # Simulated Bluetooth telemetry & SSE streaming
+│   ├── public/models/
+│   │   ├── human-male.glb           # Ready Player Me 3D male avatar model
+│   │   └── human-female.glb         # Ready Player Me 3D female avatar model
 │   └── lib/
-│       └── api.ts                   # Strongly-typed API client for all backend endpoints
+│       ├── api.ts                   # Strongly-typed API client for all backend endpoints
+│       └── bodyMap.ts               # Anatomical coordinates and organ hotspot configurations
 ├── docs/
 │   ├── DEMO.md                      # 3-minute hackathon presentation script
 │   ├── DESIGN.md                    # Visual design tokens and UI architecture
