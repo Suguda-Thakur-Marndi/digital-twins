@@ -378,9 +378,21 @@ export function WearablePanel({ patientId, onLiveReadingAccepted }: WearablePane
         <div className="h-44 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 8, right: 12, left: -24, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-              <XAxis dataKey="date" stroke="#9ca3af" fontSize={10} tickLine={false} fontFamily="monospace" />
-              <YAxis stroke="#9ca3af" fontSize={10} tickLine={false} fontFamily="monospace" domain={["auto", "auto"]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+              <XAxis
+                dataKey="date"
+                stroke="var(--text-secondary)"
+                tick={{ fill: "var(--text-secondary)", fontSize: 10, fontWeight: 600 }}
+                tickLine={false}
+                fontFamily="monospace"
+              />
+              <YAxis
+                stroke="var(--text-secondary)"
+                tick={{ fill: "var(--text-secondary)", fontSize: 10, fontWeight: 600 }}
+                tickLine={false}
+                fontFamily="monospace"
+                domain={["auto", "auto"]}
+              />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "#ffffff",

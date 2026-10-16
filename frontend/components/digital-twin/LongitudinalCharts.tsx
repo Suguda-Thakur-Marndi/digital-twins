@@ -50,10 +50,10 @@ export function LongitudinalCharts({
   }));
 
   const gridStroke = isDark ? "rgba(148, 183, 220, 0.12)" : "rgba(203, 219, 238, 0.6)";
-  const axisColor = isDark ? "#9BAFC7" : "#64748B";
-  const tooltipBg = isDark ? "rgba(15, 29, 48, 0.92)" : "rgba(255, 255, 255, 0.94)";
-  const tooltipBorder = isDark ? "rgba(148, 183, 220, 0.24)" : "rgba(255, 255, 255, 0.8)";
-  const tooltipTextColor = isDark ? "#E7F0FC" : "#172033";
+  const axisColor = isDark ? "#CBD5E1" : "#334155";
+  const tooltipBg = isDark ? "rgba(15, 29, 48, 0.95)" : "rgba(255, 255, 255, 0.98)";
+  const tooltipBorder = isDark ? "rgba(148, 183, 220, 0.24)" : "rgba(203, 219, 238, 0.8)";
+  const tooltipTextColor = isDark ? "#FFFFFF" : "#0F172A";
 
   return (
     <div className="glass-card p-5 border border-[var(--glass-border)] space-y-4">

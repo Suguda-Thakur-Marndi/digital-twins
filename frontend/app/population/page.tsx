@@ -137,7 +137,7 @@ export default function PopulationPage() {
       )}
 
       {/* Filters Card */}
-      <div className="clinical-card p-4 bg-white border-[var(--border-hairline)] shadow-2xs flex flex-wrap gap-4 items-center justify-between">
+      <div className="clinical-card p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs flex flex-wrap gap-4 items-center justify-between">
         <div className="flex flex-wrap items-center gap-3">
           <div>
             <label className="block text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">
@@ -146,7 +146,7 @@ export default function PopulationPage() {
             <select
               value={selectedAge}
               onChange={(e) => setSelectedAge(e.target.value)}
-              className="px-2.5 py-1.5 rounded bg-white border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
+              className="px-2.5 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
             >
               <option value="">All Ages</option>
               <option value="18-40">18 - 40 years</option>
@@ -162,7 +162,7 @@ export default function PopulationPage() {
             <select
               value={selectedGender}
               onChange={(e) => setSelectedGender(e.target.value)}
-              className="px-2.5 py-1.5 rounded bg-white border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
+              className="px-2.5 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
             >
               <option value="">All Genders</option>
               <option value="male">Male</option>
@@ -177,7 +177,7 @@ export default function PopulationPage() {
             <select
               value={selectedTier}
               onChange={(e) => setSelectedTier(e.target.value)}
-              className="px-2.5 py-1.5 rounded bg-white border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
+              className="px-2.5 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
             >
               <option value="">All Tiers</option>
               <option value="HIGH">High Risk</option>
@@ -198,7 +198,7 @@ export default function PopulationPage() {
               placeholder="Search ID, gender..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 rounded bg-white border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
+              className="pl-8 pr-3 py-1.5 rounded bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-teal)]"
             />
           </div>
         </div>
@@ -206,7 +206,7 @@ export default function PopulationPage() {
 
       {/* Summary Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="clinical-card p-4 bg-white border-[var(--border-hairline)] shadow-2xs">
+        <div className="clinical-card p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs">
           <div className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">
             Cohort Sample
           </div>
@@ -216,7 +216,7 @@ export default function PopulationPage() {
           <div className="text-[10px] text-[var(--text-muted)] mt-1">Evaluated records</div>
         </div>
 
-        <div className="clinical-card p-4 bg-white border-[var(--border-hairline)] shadow-2xs border-l-3 border-l-red-500">
+        <div className="clinical-card p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs border-l-3 border-l-red-500">
           <div className="text-[10px] font-semibold text-red-700 uppercase tracking-wider mb-1">
             High Risk
           </div>
@@ -226,7 +226,7 @@ export default function PopulationPage() {
           <div className="text-[10px] text-[var(--text-muted)] mt-1">Calibrated Risk ≥ 40%</div>
         </div>
 
-        <div className="clinical-card p-4 bg-white border-[var(--border-hairline)] shadow-2xs border-l-3 border-l-amber-500">
+        <div className="clinical-card p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs border-l-3 border-l-amber-500">
           <div className="text-[10px] font-semibold text-amber-700 uppercase tracking-wider mb-1">
             Medium Risk
           </div>
@@ -236,7 +236,7 @@ export default function PopulationPage() {
           <div className="text-[10px] text-[var(--text-muted)] mt-1">15% ≤ Risk &lt; 40%</div>
         </div>
 
-        <div className="clinical-card p-4 bg-white border-[var(--border-hairline)] shadow-2xs border-l-3 border-l-emerald-500">
+        <div className="clinical-card p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs border-l-3 border-l-emerald-500">
           <div className="text-[10px] font-semibold text-emerald-700 uppercase tracking-wider mb-1">
             Low Risk
           </div>
@@ -250,14 +250,19 @@ export default function PopulationPage() {
       {/* Chart + Table Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
         {/* Chart */}
-        <div className="clinical-card p-5 bg-white border-[var(--border-hairline)] shadow-2xs">
+        <div className="clinical-card p-5 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs">
           <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">
             Risk Tier Breakdown
           </h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <XAxis dataKey="name" stroke="#64748b" fontSize={11} tickLine={false} />
+                <XAxis
+                  dataKey="name"
+                  stroke="var(--text-secondary)"
+                  tick={{ fill: "var(--text-secondary)", fontSize: 11, fontWeight: 600 }}
+                  tickLine={false}
+                />
                 <YAxis stroke="#64748b" fontSize={11} allowDecimals={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{
@@ -285,7 +290,7 @@ export default function PopulationPage() {
         </div>
 
         {/* Patient Roster Table */}
-        <div className="clinical-card p-5 bg-white border-[var(--border-hairline)] shadow-2xs flex flex-col">
+        <div className="clinical-card p-5 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">

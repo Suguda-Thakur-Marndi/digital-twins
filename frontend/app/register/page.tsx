@@ -294,7 +294,7 @@ export default function RegisterPatientPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Top Banner & Title */}
-      <div className="clinical-card p-6 bg-white border-[var(--border-hairline)] shadow-2xs space-y-2">
+      <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
@@ -356,7 +356,7 @@ export default function RegisterPatientPage() {
       </div>
 
       {/* Wizard Progress Indicator */}
-      <div className="clinical-card p-4 bg-white border-[var(--border-hairline)] shadow-2xs">
+      <div className="clinical-card p-4 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs">
         <div className="grid grid-cols-4 gap-2 text-xs">
           {[
             { step: 1, label: "1. Demographics & Basics", icon: User },
@@ -413,7 +413,7 @@ export default function RegisterPatientPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* STEP 1: BASICS & DEMOGRAPHICS */}
         {currentStep === 1 && (
-          <div className="clinical-card p-6 bg-white border-[var(--border-hairline)] shadow-2xs space-y-5">
+          <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-5">
             <div className="border-b border-[var(--border-hairline)] pb-3">
               <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
                 Step 1: Patient Alias & Physical Baseline
@@ -552,7 +552,7 @@ export default function RegisterPatientPage() {
 
         {/* STEP 2: VITALS & LABS */}
         {currentStep === 2 && (
-          <div className="clinical-card p-6 bg-white border-[var(--border-hairline)] shadow-2xs space-y-5">
+          <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-5">
             <div className="border-b border-[var(--border-hairline)] pb-3">
               <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
                 Step 2: Vital Signs & Laboratory Measurements
@@ -679,7 +679,7 @@ export default function RegisterPatientPage() {
 
         {/* STEP 3: MEDICATIONS & CLINICAL HISTORY */}
         {currentStep === 3 && (
-          <div className="clinical-card p-6 bg-white border-[var(--border-hairline)] shadow-2xs space-y-5">
+          <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-5">
             <div className="border-b border-[var(--border-hairline)] pb-3">
               <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
                 Step 3: Active Medications & Clinical History
@@ -847,7 +847,7 @@ export default function RegisterPatientPage() {
 
         {/* STEP 4: REVIEW & REGISTRATION */}
         {currentStep === 4 && (
-          <div className="clinical-card p-6 bg-white border-[var(--border-hairline)] shadow-2xs space-y-6">
+          <div className="clinical-card p-6 bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs space-y-6">
             <div className="border-b border-[var(--border-hairline)] pb-3">
               <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
                 Step 4: Clinical Review & Twin Creation

@@ -255,15 +255,15 @@ function TwinDashboardContent() {
   if (loading && !patient) {
     return (
       <div className="space-y-6 py-8">
-        <div className="h-14 bg-white border border-[var(--border-hairline)] rounded p-4 animate-pulse" />
+        <div className="h-14 bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] rounded p-4 animate-pulse" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8 space-y-6">
-            <div className="h-44 bg-white border border-[var(--border-hairline)] rounded animate-pulse" />
-            <div className="h-72 bg-white border border-[var(--border-hairline)] rounded animate-pulse" />
+            <div className="h-44 bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] rounded animate-pulse" />
+            <div className="h-72 bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] rounded animate-pulse" />
           </div>
           <div className="lg:col-span-4 space-y-6">
-            <div className="h-64 bg-white border border-[var(--border-hairline)] rounded animate-pulse" />
-            <div className="h-64 bg-white border border-[var(--border-hairline)] rounded animate-pulse" />
+            <div className="h-64 bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] rounded animate-pulse" />
+            <div className="h-64 bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] rounded animate-pulse" />
           </div>
         </div>
       </div>
@@ -272,7 +272,7 @@ function TwinDashboardContent() {
 
   if (error || !patient) {
     return (
-      <div className="p-8 text-center bg-white border border-rose-200 rounded max-w-xl mx-auto my-12 space-y-4 shadow-sm">
+      <div className="p-8 text-center bg-[var(--bg-surface-strong)] border border-rose-200 dark:border-rose-900 rounded max-w-xl mx-auto my-12 space-y-4 shadow-sm">
         <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center mx-auto">
           <AlertCircle className="w-6 h-6" />
         </div>
@@ -725,8 +725,8 @@ function TwinDashboardContent() {
 
       {/* ── ADD READING MODAL DIALOG ────────────────────────────────────────── */}
       {showAddReadingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-2xs p-4">
-          <div className="bg-white border border-[var(--border-hairline)] rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-2xs p-4">
+          <div className="bg-[var(--bg-surface-strong)] border border-[var(--glass-border)] rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2 text-[var(--accent-teal)]">
                 <HeartPulse className="w-5 h-5" />

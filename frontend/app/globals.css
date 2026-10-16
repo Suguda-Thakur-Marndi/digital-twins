@@ -1,42 +1,44 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     /* ── LIGHT THEME PALETTE ── */
     --bg-canvas: #EEF5FC;
     --bg-canvas-rgb: 238, 245, 252;
-    --bg-surface: rgba(255, 255, 255, 0.62);
-    --bg-surface-strong: rgba(255, 255, 255, 0.82);
-    --bg-subtle: rgba(240, 247, 255, 0.55);
-    --bg-panel: rgba(255, 255, 255, 0.72);
+    --bg-surface: rgba(255, 255, 255, 0.92);
+    --bg-surface-strong: rgba(255, 255, 255, 0.98);
+    --bg-subtle: rgba(241, 245, 249, 0.90);
+    --bg-panel: rgba(255, 255, 255, 0.96);
 
-    /* Glass Tokens */
-    --glass-surface: rgba(255, 255, 255, 0.62);
-    --glass-surface-strong: rgba(255, 255, 255, 0.82);
-    --glass-border: rgba(255, 255, 255, 0.72);
-    --glass-border-subtle: rgba(203, 219, 238, 0.6);
-    --glass-border-strong: rgba(37, 99, 235, 0.35);
-    --glass-shadow: 0 8px 32px rgba(31, 65, 114, 0.08);
-    --glass-shadow-hover: 0 14px 40px rgba(31, 65, 114, 0.14);
+    /* Glass Tokens - Opaque enough to prevent background bleeding while maintaining glass sheen */
+    --glass-surface: rgba(255, 255, 255, 0.90);
+    --glass-surface-strong: rgba(255, 255, 255, 0.98);
+    --glass-border: rgba(186, 206, 230, 0.85);
+    --glass-border-subtle: rgba(203, 219, 238, 0.85);
+    --glass-border-strong: rgba(37, 99, 235, 0.45);
+    --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+    --glass-shadow-hover: 0 14px 40px rgba(15, 23, 42, 0.14);
     --glass-blur: 20px;
 
     /* Borders */
-    --border-hairline: rgba(255, 255, 255, 0.72);
-    --border-subtle: rgba(203, 219, 238, 0.6);
-    --border-strong: rgba(148, 163, 184, 0.6);
+    --border-hairline: rgba(203, 219, 238, 0.85);
+    --border-subtle: rgba(203, 219, 238, 0.85);
+    --border-strong: rgba(100, 116, 139, 0.65);
 
-    /* Typography */
-    --text-primary: #172033;
-    --text-secondary: #64748B;
-    --text-muted: #8194AA;
-    --text-faint: #94A3B8;
+    /* Typography - High-Contrast WCAG AAA/AA Compliant */
+    --text-primary: #0F172A;
+    --text-secondary: #334155;
+    --text-muted: #475569;
+    --text-faint: #64748B;
 
     /* Primary & Secondary Brand Colors */
-    --color-primary: #2563EB;
-    --color-primary-rgb: 37, 99, 235;
-    --color-primary-hover: #1D4ED8;
-    --color-secondary: #0891B2;
-    --color-secondary-rgb: 8, 145, 178;
+    --color-primary: #1D4ED8;
+    --color-primary-rgb: 29, 78, 216;
+    --color-primary-hover: #1E40AF;
+    --color-secondary: #0E7490;
+    --color-secondary-rgb: 14, 116, 144;
 
     /* Legacy Accent Mappings for Existing Components */
     --accent-teal: #0891B2;
@@ -45,59 +47,59 @@
     --accent-teal-hover: #0E7490;
 
     /* Risk Badges */
-    --risk-low: #059669;
-    --risk-low-bg: rgba(240, 253, 244, 0.85);
-    --risk-low-border: rgba(167, 243, 208, 0.8);
+    --risk-low: #047857;
+    --risk-low-bg: rgba(236, 253, 245, 0.95);
+    --risk-low-border: rgba(110, 231, 183, 0.9);
 
-    --risk-mod: #D97706;
-    --risk-mod-bg: rgba(254, 243, 199, 0.85);
-    --risk-mod-border: rgba(253, 230, 138, 0.8);
+    --risk-mod: #B45309;
+    --risk-mod-bg: rgba(254, 243, 199, 0.95);
+    --risk-mod-border: rgba(245, 158, 11, 0.8);
 
-    --risk-high: #E11D48;
-    --risk-high-bg: rgba(255, 241, 242, 0.85);
-    --risk-high-border: rgba(254, 205, 211, 0.8);
+    --risk-high: #BE123C;
+    --risk-high-bg: rgba(255, 241, 242, 0.95);
+    --risk-high-border: rgba(251, 113, 133, 0.85);
 
-    /* Background Layering Overlay */
+    /* Background Layering Overlay - Gentle overlay ensuring text on canvas is crystal clear */
     --bg-overlay-gradient: linear-gradient(
       180deg,
-      rgba(238, 245, 252, 0.74) 0%,
-      rgba(238, 245, 252, 0.86) 30%,
-      rgba(238, 245, 252, 0.94) 70%,
-      rgba(238, 245, 252, 0.98) 100%
+      rgba(238, 245, 252, 0.90) 0%,
+      rgba(238, 245, 252, 0.93) 30%,
+      rgba(238, 245, 252, 0.97) 70%,
+      rgba(238, 245, 252, 0.99) 100%
     );
-    --bg-radial-glow: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.08) 0%, transparent 45%),
-      radial-gradient(circle at 85% 25%, rgba(8, 145, 178, 0.09) 0%, transparent 40%);
+    --bg-radial-glow: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.06) 0%, transparent 45%),
+      radial-gradient(circle at 85% 25%, rgba(8, 145, 178, 0.07) 0%, transparent 40%);
   }
 
   .dark {
     /* ── DARK THEME PALETTE (Midnight-Blue Healthcare Intelligence) ── */
     --bg-canvas: #07111F;
     --bg-canvas-rgb: 7, 17, 31;
-    --bg-surface: rgba(15, 29, 48, 0.62);
-    --bg-surface-strong: rgba(20, 37, 59, 0.82);
-    --bg-subtle: rgba(11, 23, 40, 0.65);
-    --bg-panel: rgba(15, 29, 48, 0.75);
+    --bg-surface: rgba(15, 29, 48, 0.90);
+    --bg-surface-strong: rgba(20, 37, 59, 0.96);
+    --bg-subtle: rgba(11, 23, 40, 0.90);
+    --bg-panel: rgba(15, 29, 48, 0.94);
 
     /* Glass Tokens */
-    --glass-surface: rgba(15, 29, 48, 0.62);
-    --glass-surface-strong: rgba(20, 37, 59, 0.82);
-    --glass-border: rgba(148, 183, 220, 0.16);
-    --glass-border-subtle: rgba(148, 183, 220, 0.10);
-    --glass-border-strong: rgba(96, 165, 250, 0.35);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.32);
-    --glass-shadow-hover: 0 14px 40px rgba(0, 0, 0, 0.45);
+    --glass-surface: rgba(15, 29, 48, 0.90);
+    --glass-surface-strong: rgba(20, 37, 59, 0.96);
+    --glass-border: rgba(148, 183, 220, 0.24);
+    --glass-border-subtle: rgba(148, 183, 220, 0.16);
+    --glass-border-strong: rgba(96, 165, 250, 0.45);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    --glass-shadow-hover: 0 14px 40px rgba(0, 0, 0, 0.6);
     --glass-blur: 22px;
 
     /* Borders */
-    --border-hairline: rgba(148, 183, 220, 0.16);
-    --border-subtle: rgba(148, 183, 220, 0.12);
-    --border-strong: rgba(148, 183, 220, 0.28);
+    --border-hairline: rgba(148, 183, 220, 0.22);
+    --border-subtle: rgba(148, 183, 220, 0.16);
+    --border-strong: rgba(148, 183, 220, 0.35);
 
-    /* Typography */
-    --text-primary: #E7F0FC;
-    --text-secondary: #9BAFC7;
-    --text-muted: #6A82A0;
-    --text-faint: #475569;
+    /* Typography - Radiant White & Light Slate for Dark Mode */
+    --text-primary: #FFFFFF;
+    --text-secondary: #E2E8F0;
+    --text-muted: #CBD5E1;
+    --text-faint: #94A3B8;
 
     /* Primary & Secondary Brand Colors */
     --color-primary: #60A5FA;
@@ -108,30 +110,30 @@
 
     /* Legacy Accent Mappings for Existing Components */
     --accent-teal: #22D3EE;
-    --accent-teal-subtle: rgba(34, 211, 238, 0.12);
-    --accent-teal-border: rgba(34, 211, 238, 0.25);
+    --accent-teal-subtle: rgba(34, 211, 238, 0.15);
+    --accent-teal-border: rgba(34, 211, 238, 0.30);
     --accent-teal-hover: #67E8F9;
 
     /* Risk Badges */
     --risk-low: #34D399;
-    --risk-low-bg: rgba(6, 78, 59, 0.7);
-    --risk-low-border: rgba(52, 211, 153, 0.3);
+    --risk-low-bg: rgba(6, 78, 59, 0.85);
+    --risk-low-border: rgba(52, 211, 153, 0.45);
 
     --risk-mod: #FBBF24;
-    --risk-mod-bg: rgba(120, 53, 15, 0.7);
-    --risk-mod-border: rgba(251, 191, 36, 0.3);
+    --risk-mod-bg: rgba(120, 53, 15, 0.85);
+    --risk-mod-border: rgba(251, 191, 36, 0.45);
 
     --risk-high: #FB7185;
-    --risk-high-bg: rgba(136, 19, 55, 0.7);
-    --risk-high-border: rgba(251, 113, 133, 0.3);
+    --risk-high-bg: rgba(136, 19, 55, 0.85);
+    --risk-high-border: rgba(251, 113, 133, 0.45);
 
     /* Background Layering Overlay */
     --bg-overlay-gradient: linear-gradient(
       180deg,
-      rgba(7, 17, 31, 0.82) 0%,
-      rgba(7, 17, 31, 0.88) 30%,
-      rgba(11, 23, 40, 0.94) 70%,
-      rgba(7, 17, 31, 0.98) 100%
+      rgba(7, 17, 31, 0.88) 0%,
+      rgba(7, 17, 31, 0.92) 30%,
+      rgba(11, 23, 40, 0.96) 70%,
+      rgba(7, 17, 31, 0.99) 100%
     );
     --bg-radial-glow: radial-gradient(circle at 18% 18%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
       radial-gradient(circle at 82% 28%, rgba(96, 165, 250, 0.09) 0%, transparent 45%);

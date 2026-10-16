@@ -198,7 +198,7 @@ export default function PatientDirectoryPage() {
             <select
               value={originFilter}
               onChange={(e) => setOriginFilter(e.target.value as any)}
-              className="px-2.5 py-1.5 bg-white border border-[var(--border-hairline)] rounded text-xs text-[var(--text-secondary)] focus:outline-none"
+              className="px-2.5 py-1.5 bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] rounded text-xs text-[var(--text-secondary)] focus:outline-none"
             >
               <option value="ALL">All Sources ({patients.length})</option>
               <option value="REGISTERED">Registered Only ({registeredCount})</option>
@@ -209,7 +209,7 @@ export default function PatientDirectoryPage() {
             <select
               value={tierFilter}
               onChange={(e) => setTierFilter(e.target.value)}
-              className="px-2.5 py-1.5 bg-white border border-[var(--border-hairline)] rounded text-xs text-[var(--text-secondary)] focus:outline-none"
+              className="px-2.5 py-1.5 bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] rounded text-xs text-[var(--text-secondary)] focus:outline-none"
             >
               <option value="ALL">All Risk Tiers</option>
               <option value="High">High Risk Tier</option>
@@ -221,7 +221,7 @@ export default function PatientDirectoryPage() {
             <select
               value={genderFilter}
               onChange={(e) => setGenderFilter(e.target.value)}
-              className="px-2.5 py-1.5 bg-white border border-[var(--border-hairline)] rounded text-xs text-[var(--text-secondary)] focus:outline-none"
+              className="px-2.5 py-1.5 bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] rounded text-xs text-[var(--text-secondary)] focus:outline-none"
             >
               <option value="ALL">All Sexes</option>
               <option value="Female">Female</option>
@@ -232,7 +232,7 @@ export default function PatientDirectoryPage() {
             <select
               value={ageBandFilter}
               onChange={(e) => setAgeBandFilter(e.target.value)}
-              className="px-2.5 py-1.5 bg-white border border-[var(--border-hairline)] rounded text-xs text-[var(--text-secondary)] focus:outline-none"
+              className="px-2.5 py-1.5 bg-[var(--bg-surface-strong)] border border-[var(--border-hairline)] rounded text-xs text-[var(--text-secondary)] focus:outline-none"
             >
               <option value="ALL">All Age Bands</option>
               <option value="<40">&lt;40 years</option>
@@ -246,7 +246,7 @@ export default function PatientDirectoryPage() {
       </div>
 
       {/* Directory Table */}
-      <div className="clinical-card bg-white border-[var(--border-hairline)] shadow-2xs overflow-hidden">
+      <div className="clinical-card bg-[var(--bg-surface-strong)] border-[var(--border-hairline)] shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-[var(--bg-subtle)] border-b border-[var(--border-hairline)] text-[var(--text-muted)] font-mono uppercase tracking-wider text-[11px]">
@@ -419,8 +419,8 @@ export default function PatientDirectoryPage() {
 
       {/* Delete Confirmation Modal */}
       {patientToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-2xs p-4">
-          <div className="bg-white border border-[var(--border-hairline)] rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-2xs p-4">
+          <div className="bg-[var(--bg-surface-strong)] border border-[var(--glass-border)] rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2 text-red-600">
                 <AlertTriangle className="w-5 h-5" />

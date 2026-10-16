@@ -98,7 +98,7 @@ export default function AlertsPage() {
       </div>
 
       {/* Configurable Surveillance Controls */}
-      <div className="clinical-card p-4 bg-white border-[var(--border-hairline)] space-y-4">
+      <div className="clinical-card p-4 bg-white/95 dark:bg-slate-900/90 shadow-sm border-[var(--border-hairline)] space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sliders className="w-4 h-4 text-[var(--accent-teal)]" />
@@ -185,12 +185,12 @@ export default function AlertsPage() {
 
       {/* Surveillance Summary KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="clinical-card p-3.5 bg-white border-[var(--border-hairline)] space-y-1">
+        <div className="clinical-card p-3.5 bg-white/95 dark:bg-slate-900/90 shadow-sm border-[var(--border-hairline)] space-y-1">
           <div className="flex items-center justify-between text-[var(--text-muted)]">
             <span className="text-[11px] uppercase font-semibold">Flagged Patients</span>
             <Users className="w-4 h-4 text-[var(--accent-teal)]" />
           </div>
-          <div className="text-2xl font-serif text-[var(--text-primary)]">
+          <div className="text-2xl font-serif text-[var(--text-primary)] font-bold">
             {patients.length}
           </div>
           <p className="text-[10px] text-[var(--text-muted)]">
@@ -198,12 +198,12 @@ export default function AlertsPage() {
           </p>
         </div>
 
-        <div className="clinical-card p-3.5 bg-white border-[var(--border-hairline)] space-y-1">
+        <div className="clinical-card p-3.5 bg-white/95 dark:bg-slate-900/90 shadow-sm border-[var(--border-hairline)] space-y-1">
           <div className="flex items-center justify-between text-[var(--text-muted)]">
             <span className="text-[11px] uppercase font-semibold">Decompensation Events</span>
-            <AlertTriangle className="w-4 h-4 text-rose-600" />
+            <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
           </div>
-          <div className="text-2xl font-serif text-rose-700">
+          <div className="text-2xl font-serif text-rose-700 dark:text-rose-400 font-bold">
             {eventPatients.length}
           </div>
           <p className="text-[10px] text-[var(--text-muted)]">
@@ -211,12 +211,12 @@ export default function AlertsPage() {
           </p>
         </div>
 
-        <div className="clinical-card p-3.5 bg-white border-[var(--border-hairline)] space-y-1">
+        <div className="clinical-card p-3.5 bg-white/95 dark:bg-slate-900/90 shadow-sm border-[var(--border-hairline)] space-y-1">
           <div className="flex items-center justify-between text-[var(--text-muted)]">
             <span className="text-[11px] uppercase font-semibold">Avg Lead Time</span>
-            <Clock className="w-4 h-4 text-amber-600" />
+            <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
-          <div className="text-2xl font-serif text-amber-700">
+          <div className="text-2xl font-serif text-amber-700 dark:text-amber-400 font-bold">
             {avgLeadTime > 0 ? `${avgLeadTime} days` : "—"}
           </div>
           <p className="text-[10px] text-[var(--text-muted)]">
@@ -224,12 +224,12 @@ export default function AlertsPage() {
           </p>
         </div>
 
-        <div className="clinical-card p-3.5 bg-white border-[var(--border-hairline)] space-y-1">
+        <div className="clinical-card p-3.5 bg-white/95 dark:bg-slate-900/90 shadow-sm border-[var(--border-hairline)] space-y-1">
           <div className="flex items-center justify-between text-[var(--text-muted)]">
             <span className="text-[11px] uppercase font-semibold">Avg Risk Escalation</span>
             <TrendingUp className="w-4 h-4 text-[var(--accent-teal)]" />
           </div>
-          <div className="text-2xl font-serif text-[var(--text-primary)]">
+          <div className="text-2xl font-serif text-[var(--text-primary)] font-bold">
             +{avgRise} pp
           </div>
           <p className="text-[10px] text-[var(--text-muted)]">
@@ -239,7 +239,7 @@ export default function AlertsPage() {
       </div>
 
       {/* Flagged Patients Surveillance Table */}
-      <div className="clinical-card bg-white border-[var(--border-hairline)] overflow-hidden">
+      <div className="clinical-card bg-white/95 dark:bg-slate-900/90 shadow-sm border-[var(--border-hairline)] overflow-hidden">
         <div className="p-4 border-b border-[var(--border-hairline)] flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 className="text-sm font-semibold text-[var(--text-primary)]">
@@ -320,10 +320,10 @@ export default function AlertsPage() {
                         <span
                           className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold ${
                             p.risk_rise_pp > 15
-                              ? "bg-rose-100 text-rose-800 border border-rose-300"
+                              ? "bg-rose-100 text-rose-800 border border-rose-300 dark:bg-rose-950/70 dark:text-rose-200 dark:border-rose-700/60"
                               : p.risk_rise_pp > 5
-                              ? "bg-amber-100 text-amber-800 border border-amber-300"
-                              : "bg-teal-50 text-teal-800 border border-teal-200"
+                              ? "bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700/60"
+                              : "bg-teal-50 text-teal-800 border border-teal-200 dark:bg-teal-950/70 dark:text-teal-200 dark:border-teal-700/60"
                           }`}
                         >
                           +{p.risk_rise_pp.toFixed(1)} pp
@@ -338,7 +338,7 @@ export default function AlertsPage() {
                       {/* First Crossed Alert */}
                       <td className="py-2.5 px-3 font-mono text-[11px]">
                         {p.first_crossed_date ? (
-                          <span className="text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                          <span className="text-amber-800 bg-amber-50 dark:bg-amber-950/70 dark:text-amber-200 px-1.5 py-0.5 rounded border border-amber-200 dark:border-amber-700/60 font-semibold">
                             {p.first_crossed_date}
                           </span>
                         ) : (
@@ -350,8 +350,8 @@ export default function AlertsPage() {
                       <td className="py-2.5 px-3 font-mono">
                         {hasLeadTime ? (
                           <div className="space-y-0.5">
-                            <span className="inline-flex items-center gap-1 font-bold text-amber-900 bg-amber-100/90 border border-amber-300 px-1.5 py-0.5 rounded text-[11px]">
-                              <ShieldAlert className="w-3 h-3 text-amber-700 shrink-0" />
+                            <span className="inline-flex items-center gap-1 font-bold text-amber-900 bg-amber-100/90 dark:bg-amber-950/80 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60 px-1.5 py-0.5 rounded text-[11px]">
+                              <ShieldAlert className="w-3 h-3 text-amber-700 dark:text-amber-400 shrink-0" />
                               {p.lead_time_days} days
                             </span>
                             <span className="block text-[10px] text-[var(--text-muted)]">
@@ -372,13 +372,13 @@ export default function AlertsPage() {
                       {/* Event Status */}
                       <td className="py-2.5 px-3">
                         {isDecomp ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-800 bg-rose-100 border border-rose-300 px-1.5 py-0.5 rounded">
-                            <AlertTriangle className="w-3 h-3 text-rose-600" />
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-800 bg-rose-100 dark:bg-rose-950/70 dark:text-rose-200 border border-rose-300 dark:border-rose-700/60 px-1.5 py-0.5 rounded">
+                            <AlertTriangle className="w-3 h-3 text-rose-600 dark:text-rose-400" />
                             Stage 2 Event
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-teal-800 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded">
-                            <CheckCircle2 className="w-3 h-3 text-teal-600" />
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-teal-800 bg-teal-50 dark:bg-teal-950/70 dark:text-teal-200 border border-teal-200 dark:border-teal-700/60 px-1.5 py-0.5 rounded">
+                            <CheckCircle2 className="w-3 h-3 text-teal-600 dark:text-teal-400" />
                             No Event Recorded
                           </span>
                         )}
