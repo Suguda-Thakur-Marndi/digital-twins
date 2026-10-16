@@ -135,40 +135,38 @@ export default function PatientDirectoryPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="clinical-card p-6 bg-white border-[var(--border-hairline)] shadow-2xs space-y-3">
+      <div className="glass-panel p-5 border border-[var(--glass-border)] space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)]">
                 Cohort Directory
               </span>
-              <span className="text-[10px] font-mono text-[var(--accent-teal)] bg-[var(--accent-teal-subtle)] border border-[var(--accent-teal-border)] px-1.5 py-0.2 rounded font-medium">
-                {patients.length} Total Cohort ({registeredCount} Registered, {patients.length - registeredCount} Demo)
+              <span className="text-[10px] font-mono bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 px-2 py-0.5 rounded-full font-bold">
+                {patients.length} Profiles ({registeredCount} Registered, {patients.length - registeredCount} Demo)
               </span>
             </div>
-            <h1 className="font-editorial text-2xl font-bold text-[var(--text-primary)] tracking-tight">
-              Patient Directory & Longitudinal Profiles
+            <h1 className="font-editorial text-2xl font-bold text-[var(--text-primary)] tracking-tight mt-1">
+              Patient Directory &amp; Longitudinal Roster
             </h1>
-            <p className="text-xs text-[var(--text-muted)] max-w-2xl leading-relaxed">
-              Explore baseline demographic age bands, longitudinal observation sequences, and newly registered patient replicas.
-              Select any profile to inspect their real-time Digital Twin state or register a custom test case.
+            <p className="text-xs text-[var(--text-muted)] max-w-xl mt-0.5 leading-relaxed">
+              Longitudinal blood pressure trajectories, demographic strata, and live Digital Twin profiles.
             </p>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
             <Link
               href="/register"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-[var(--accent-teal)] text-white rounded hover:bg-[var(--accent-teal-hover)] transition-colors shadow-2xs"
+              className="glass-btn-primary inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold"
             >
               <UserPlus className="w-3.5 h-3.5" />
-              <span>Register New Patient</span>
+              <span>Register Patient</span>
             </Link>
             <Link
               href="/twin?patient=PT-101"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[var(--text-secondary)] bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded hover:bg-stone-200 transition-colors"
+              className="glass-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold"
             >
-              <span>Demo PT-101</span>
-              <span>→</span>
+              <span>Demo PT-101 →</span>
             </Link>
           </div>
         </div>

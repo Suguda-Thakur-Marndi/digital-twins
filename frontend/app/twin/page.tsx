@@ -470,25 +470,19 @@ function TwinDashboardContent() {
 
       {/* ── HONEST LOW_DATA / CLINICAL WARNINGS BANNER ────────────────────── */}
       {((patient.warnings && patient.warnings.length > 0) || patient.data_completeness_pct < 75) && (
-        <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-900 dark:text-amber-200 space-y-1 backdrop-blur-md">
-          <div className="flex items-center gap-1.5 font-semibold">
+        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-900 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2 backdrop-blur-md">
+          <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
-            <span>Honest Research Disclosures & Data Completeness Notice</span>
+            <span className="font-semibold">Clinical Notice:</span>
+            <span>
+              {patient.warnings && patient.warnings.length > 0
+                ? patient.warnings.join(" · ")
+                : `Sparse baseline record (${patient.data_completeness_pct}% completeness). 12-month unobserved trends imputed.`}
+            </span>
           </div>
-          {patient.warnings && patient.warnings.length > 0 ? (
-            patient.warnings.map((w: string, idx: number) => (
-              <p key={idx} className="leading-relaxed pl-5 font-mono text-[11px]">
-                • {w}
-              </p>
-            ))
-          ) : (
-            <p className="leading-relaxed pl-5 font-mono text-[11px]">
-              • LOW_DATA: Prediction rests on sparse baseline registration data ({patient.data_completeness_pct}% completeness). 12-month longitudinal trends are unobserved and estimated by the model imputer.
-            </p>
-          )}
-          <p className="leading-relaxed pl-5 text-[10px] text-amber-800 dark:text-amber-300">
-            Research prototype on synthetic EHR data. Model has not been clinically validated on real or Indian cohorts. Not for diagnostic or therapeutic decisions.
-          </p>
+          <span className="text-[10px] font-mono text-amber-800 dark:text-amber-300">
+            Synthea Synthetic EHR · Non-diagnostic
+          </span>
         </div>
       )}
 

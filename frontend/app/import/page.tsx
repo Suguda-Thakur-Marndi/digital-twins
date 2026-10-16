@@ -261,38 +261,37 @@ export default function ImportPage() {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-16">
       {/* ── HEADER ────────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[var(--border-hairline)] pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold tracking-wider text-[var(--accent-teal)] uppercase">
+            <span className="text-xs font-semibold tracking-wider text-[var(--color-primary)] uppercase">
               ABDM Ingestion Layer
             </span>
-            <span className="text-[10px] font-mono bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.2 rounded font-bold">
-              Ayushman Bharat Digital Mission Compatible
+            <span className="text-[10px] font-mono bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/60 px-2 py-0.5 rounded-full font-bold">
+              FHIR R4 Aligned
             </span>
-            <span className="text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-300 px-1.5 py-0.2 rounded font-bold">
-              SYNTHETIC EHR
+            <span className="text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 px-2 py-0.5 rounded-full font-bold">
+              Synthetic EHR
             </span>
           </div>
-          <h1 className="text-2xl font-serif text-[var(--text-primary)]">
-            Patient Record & Telemetry Ingestion
+          <h1 className="text-2xl font-editorial font-bold text-[var(--text-primary)]">
+            Patient Record &amp; Telemetry Ingestion
           </h1>
-          <p className="text-xs text-[var(--text-muted)] max-w-3xl mt-1 leading-relaxed">
-            Ingest structured FHIR Bundle records (Patient, Observation, Condition, MedicationStatement)
-            and low-cost Bluetooth BP/pulse-oximeter logs. Mapped directly into the 132-feature clinical twin schema.
+          <p className="text-xs text-[var(--text-muted)] max-w-2xl mt-0.5 leading-relaxed">
+            Ingest structured ABDM FHIR R4 Bundles and Bluetooth oscillometric cuff streams directly into the 132-feature matrix.
           </p>
         </div>
 
         {/* View Switcher */}
-        <div className="flex items-center gap-1 bg-white p-1 border border-[var(--border-hairline)] rounded shrink-0">
+        <div className="flex items-center gap-1 glass-card p-1 border border-[var(--border-subtle)] rounded-xl shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab("fhir")}
-            className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
               activeTab === "fhir"
-                ? "bg-[var(--accent-teal)] text-white font-bold"
+                ? "bg-[var(--color-primary)] text-white font-bold shadow-xs"
                 : "text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"
             }`}
           >
@@ -301,13 +300,13 @@ export default function ImportPage() {
           <button
             type="button"
             onClick={() => setActiveTab("device")}
-            className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
               activeTab === "device"
-                ? "bg-[var(--accent-teal)] text-white font-bold"
+                ? "bg-[var(--color-primary)] text-white font-bold shadow-xs"
                 : "text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"
             }`}
           >
-            Bluetooth & CSV Ingestion
+            Bluetooth &amp; CSV
           </button>
         </div>
       </div>

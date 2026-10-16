@@ -63,24 +63,23 @@ export default function AlertsPage() {
       : "0.0";
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-16">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[var(--border-hairline)] pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold tracking-wider text-[var(--accent-teal)] uppercase">
+            <span className="text-xs font-semibold tracking-wider text-[var(--color-primary)] uppercase">
               Early Warning Engine
             </span>
-            <span className="text-[10px] font-mono bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.2 rounded font-bold">
+            <span className="text-[10px] font-mono bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 px-2 py-0.5 rounded-full font-bold">
               Surveillance Mode
             </span>
           </div>
-          <h1 className="text-2xl font-serif text-[var(--text-primary)]">
-            Longitudinal Early Warning & Lead Time Surveillance
+          <h1 className="text-2xl font-editorial font-bold text-[var(--text-primary)]">
+            Early Warning &amp; Lead-Time Surveillance
           </h1>
-          <p className="text-xs text-[var(--text-muted)] max-w-2xl mt-1 leading-relaxed">
-            Monitors trajectory across synthetic patient snapshots. Identifies accelerated risk escalation
-            before clinical decompensation events to enable proactive therapeutic intervention.
+          <p className="text-xs text-[var(--text-muted)] max-w-xl mt-0.5 leading-relaxed">
+            Trajectory tracking across patient snapshots, identifying accelerated decompensation risk before acute crises.
           </p>
         </div>
 
@@ -90,7 +89,7 @@ export default function AlertsPage() {
             type="button"
             onClick={() => loadAlerts(windowSnapshots, threshold)}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium border border-[var(--border-hairline)] bg-white text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] disabled:opacity-50"
+            className="glass-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             <span>Refresh Surveillance</span>

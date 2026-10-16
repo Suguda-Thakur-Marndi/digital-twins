@@ -298,19 +298,18 @@ export default function RegisterPatientPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)]">
                 Patient Intake
               </span>
-              <span className="text-[10px] font-mono text-[var(--accent-teal)] bg-[var(--accent-teal-subtle)] border border-[var(--accent-teal-border)] px-1.5 py-0.2 rounded font-medium">
-                Research Intake Mode
+              <span className="text-[10px] font-mono bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 px-2 py-0.5 rounded-full font-bold">
+                Synthetic Intake
               </span>
             </div>
-            <h1 className="font-editorial text-2xl font-bold text-[var(--text-primary)] tracking-tight">
+            <h1 className="font-editorial text-2xl font-bold text-[var(--text-primary)] tracking-tight mt-1">
               Register New Patient Twin
             </h1>
-            <p className="text-xs text-[var(--text-muted)] max-w-2xl leading-relaxed">
-              Create a synthetic clinical replica from baseline vitals, lab measurements, and clinical history.
-              Generates the complete 132-feature vector, scores calibrated 365-day risk with Platt scaling, and produces instant SHAP explainability.
+            <p className="text-xs text-[var(--text-muted)] max-w-xl mt-0.5 leading-relaxed">
+              Synthesize a clinical profile from baseline vitals and labs. Computes 132 features, Platt-calibrated risk, and signed SHAP drivers.
             </p>
           </div>
 
@@ -318,7 +317,7 @@ export default function RegisterPatientPage() {
             <button
               type="button"
               onClick={saveDraft}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] bg-[var(--bg-subtle)] hover:bg-stone-200 border border-[var(--border-hairline)] rounded transition-colors"
+              className="glass-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl cursor-pointer"
             >
               <Save className="w-3.5 h-3.5" />
               <span>Save Draft</span>
@@ -326,7 +325,7 @@ export default function RegisterPatientPage() {
             <button
               type="button"
               onClick={resetForm}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-stone-700 bg-white border border-[var(--border-hairline)] rounded transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] glass-card border border-[var(--border-subtle)] rounded-xl transition-colors cursor-pointer"
               title="Reset form"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -336,21 +335,23 @@ export default function RegisterPatientPage() {
         </div>
 
         {draftSavedMsg && (
-          <div className="mt-3 p-2 text-xs bg-teal-50 border border-teal-200 text-teal-800 rounded flex items-center gap-2">
-            <Info className="w-4 h-4 shrink-0 text-teal-600" />
+          <div className="mt-3 p-2 text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 rounded-xl flex items-center gap-2">
+            <Info className="w-4 h-4 shrink-0 text-emerald-600" />
             <span>{draftSavedMsg}</span>
           </div>
         )}
 
         {/* Regulatory & Privacy Guardrail Banner */}
-        <div className="mt-4 p-3 bg-amber-50/70 border border-amber-200 rounded text-xs text-amber-900 flex items-start gap-2.5">
-          <ShieldAlert className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-          <div className="space-y-0.5 leading-relaxed">
-            <span className="font-semibold text-amber-950">Notice under DPDP Act 2023 & Research Safety: </span>
+        <div className="mt-3 p-3 glass-card bg-amber-500/10 border border-amber-500/25 rounded-xl text-xs text-amber-900 dark:text-amber-200 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>
-              This is a research prototype trained exclusively on Synthea synthetic records. Do NOT enter real patient identifiers, Aadhaar, or personally identifiable health information (PII). Use aliases or de-identified synthetic test cases only.
+              <strong>DPDP Act &amp; Safety Notice:</strong> Synthetic research prototype. Do not enter real citizen PII, Aadhaar numbers, or real clinical identities.
             </span>
           </div>
+          <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 shrink-0 hidden sm:inline">
+            Zero PHI Policy
+          </span>
         </div>
       </div>
 

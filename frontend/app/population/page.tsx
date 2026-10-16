@@ -88,44 +88,48 @@ export default function PopulationPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[var(--border-hairline)] pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold tracking-wider text-[var(--accent-teal)] uppercase">
+            <span className="text-xs font-semibold tracking-wider text-[var(--color-primary)] uppercase">
               Cohort Analysis
             </span>
-            <span className="text-[10px] font-mono bg-neutral-100 text-neutral-700 border border-neutral-300 px-1.5 py-0.2 rounded font-semibold">
-              SYNTHETIC EHR (N=1,335)
+            <span className="text-[10px] font-mono bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 px-2 py-0.5 rounded-full font-bold">
+              Synthea Synthetic EHR (N=1,335)
             </span>
           </div>
-          <h1 className="text-2xl font-serif text-[var(--text-primary)]">
-            Cohort Risk Distribution & Roster
+          <h1 className="text-2xl font-editorial font-bold text-[var(--text-primary)]">
+            Cohort Risk Stratification &amp; Roster
           </h1>
-          <p className="text-xs text-[var(--text-muted)] max-w-2xl mt-1 leading-relaxed">
-            Population-level distribution of 365-day hypertension decompensation risk scores across the synthetic validation cohort.
+          <p className="text-xs text-[var(--text-muted)] max-w-xl mt-0.5 leading-relaxed">
+            Population-level distribution of 365-day decompensation risk scores across demographic strata.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Link
             href="/patients"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium border border-[var(--border-hairline)] bg-white text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] transition-colors shadow-2xs"
+            className="glass-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold"
           >
-            <Users className="w-3.5 h-3.5 text-[var(--accent-teal)]" />
-            <span>Detailed Patient Directory</span>
+            <Users className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+            <span>Patient Cohort Roster →</span>
           </Link>
         </div>
       </div>
 
       {/* Disclaimers banner */}
-      <div className="p-3.5 rounded-lg bg-amber-50/70 border border-amber-200/80 text-xs text-amber-900 leading-relaxed flex items-start gap-2.5">
-        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-        <div>
-          <strong className="font-semibold text-amber-950">Synthetic Demonstration Notice:</strong>{" "}
-          All records shown originate from Synthea synthetic EHR profiles generated for algorithm evaluation. Scores reflect XGBoost predicted probabilities calibrated via Platt scaling, not epidemiological prevalence or diagnostic claims.
+      <div className="p-3 rounded-xl glass-card bg-amber-500/10 border border-amber-500/25 text-xs text-amber-900 dark:text-amber-200 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+          <span>
+            <strong>Synthea Synthetic EHR Demonstration:</strong> Scores reflect Platt-calibrated XGBoost probabilities, not epidemiological prevalence or diagnostic advice.
+          </span>
         </div>
+        <span className="text-[10px] font-mono text-amber-700 dark:text-amber-300 shrink-0 hidden sm:inline">
+          Research Prototype
+        </span>
       </div>
 
       {/* Global error */}
       {error && (
-        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-xs">
+        <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 text-rose-800 dark:text-rose-200 text-xs">
           {error.includes("fetch") || error.includes("Failed")
             ? "Population service unavailable. Please check that the FastAPI backend is running on port 8000."
             : error}

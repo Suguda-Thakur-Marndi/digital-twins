@@ -42,59 +42,41 @@ export function ConsentModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="clinical-card max-w-xl w-full p-6 bg-white shadow-xl border border-[var(--border-hairline)] space-y-4">
+      <div className="glass-modal max-w-lg w-full p-6 shadow-2xl border border-[var(--glass-border)] rounded-2xl space-y-4">
         <div className="flex items-center gap-2.5 border-b border-[var(--border-hairline)] pb-3">
-          <div className="w-9 h-9 rounded bg-[var(--accent-teal-subtle)] border border-[var(--accent-teal-border)] flex items-center justify-center text-[var(--accent-teal)]">
+          <div className="w-9 h-9 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--accent-teal)] font-bold">
-                Privacy &amp; Governance Charter
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-primary)] font-bold">
+                Governance Charter
               </span>
-              <span className="text-[9px] font-mono bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-bold">
-                DPDP Act 2023 Aligned
+              <span className="text-[9px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-1.5 py-0.2 rounded font-bold">
+                DPDP Act Aligned
               </span>
             </div>
             <h2 className="font-editorial text-lg font-bold text-[var(--text-primary)]">
-              Welcome to Pramana Clinical Twin (TwinCare)
+              Pramana Clinical Digital Twin (TwinCare)
             </h2>
           </div>
         </div>
 
-        <div className="space-y-3 text-xs text-[var(--text-secondary)] leading-relaxed">
-          <p>
-            Before exploring this clinical digital twin prototype presented at the{" "}
-            <strong>Happiest Health Summit 2026</strong>, please review our research and data-handling terms:
-          </p>
-
-          <div className="p-3 bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded space-y-2 text-[11px]">
+        <div className="space-y-2 text-xs text-[var(--text-secondary)]">
+          <div className="p-3 rounded-xl glass-card border border-[var(--border-subtle)] space-y-2 text-[11px]">
             <div className="flex items-start gap-2">
-              <span className="font-bold text-[var(--accent-teal)] shrink-0 font-mono">1. SYNTHETIC DATA ONLY:</span>
-              <span>
-                All patient profiles are synthetic records generated via Synthea EHR models. No real human Protected Health Information (PHI) or identifiable Indian citizen records are processed or stored.
-              </span>
+              <span className="font-bold text-[var(--color-primary)] shrink-0 font-mono">1. Synthetic Cohort:</span>
+              <span>Profiles originate from Synthea synthetic EHR models. Zero real citizen PHI is stored or processed.</span>
             </div>
 
             <div className="flex items-start gap-2">
-              <span className="font-bold text-[var(--accent-teal)] shrink-0 font-mono">2. SIMULATED WEARABLE TELEMETRY:</span>
-              <span>
-                Continuous biometric feeds (resting heart rate, home BP, daily steps, SpO2) are simulated overlays for clinical workflow demonstration.
-              </span>
+              <span className="font-bold text-[var(--color-primary)] shrink-0 font-mono">2. Simulated Telemetry:</span>
+              <span>Wearable biometrics (HR, BP, SpO2) are labeled simulated overlays for workflow demonstration.</span>
             </div>
 
             <div className="flex items-start gap-2">
-              <span className="font-bold text-[var(--accent-teal)] shrink-0 font-mono">3. DPDP ACT 2023 PRINCIPLES:</span>
-              <span>
-                Demonstrates privacy by design, purpose specification, and user data sovereignty under India&rsquo;s Digital Personal Data Protection Act 2023.
-              </span>
-            </div>
-
-            <div className="flex items-start gap-2">
-              <span className="font-bold text-[var(--accent-teal)] shrink-0 font-mono">4. RESEARCH PROTOTYPE:</span>
-              <span>
-                Outputs reflect machine learning calibrations for research evaluation and do NOT constitute medical advice, diagnosis, or prescriptive treatment instructions.
-              </span>
+              <span className="font-bold text-[var(--color-primary)] shrink-0 font-mono">3. Research Prototype:</span>
+              <span>Non-prescriptive decision support evaluated on synthetic data; not for clinical diagnosis or prescription.</span>
             </div>
           </div>
         </div>
@@ -103,18 +85,18 @@ export function ConsentModal() {
           <button
             type="button"
             onClick={handleClearSession}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-[var(--text-muted)] hover:text-rose-500 rounded-lg transition-colors cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Clear My Session Data</span>
+            <span>Clear Session</span>
           </button>
 
           <button
             type="button"
             onClick={handleAccept}
-            className="px-5 py-2 text-xs font-semibold bg-[var(--accent-teal)] text-white hover:bg-[var(--accent-teal-hover)] rounded shadow-xs transition-colors"
+            className="glass-btn-primary px-4 py-2 text-xs font-semibold cursor-pointer"
           >
-            I Understand &amp; Consent to Session Terms
+            I Understand &amp; Enter Dashboard
           </button>
         </div>
       </div>
