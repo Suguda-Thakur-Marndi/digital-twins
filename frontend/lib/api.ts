@@ -1,5 +1,5 @@
 /**
- * TwinCare / Pramana Clinical Twin API Client
+ * VitalTwin — AI-Powered Clinical Digital Twin API Client
  * Connects Next.js frontend to FastAPI backend (/api/v1).
  * Strictly typed interfaces mirroring the backend Pydantic models.
  */
@@ -53,7 +53,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
     return (await res.json()) as T;
   } catch (err: unknown) {
     if (err instanceof ApiError) throw err;
-    throw new ApiError(503, `Cannot reach TwinCare backend at ${API_BASE}. Ensure backend is running.`);
+    throw new ApiError(503, `Cannot reach VitalTwin backend at ${API_BASE}. Ensure backend is running.`);
   }
 }
 

@@ -1,4 +1,4 @@
-# Backend Dockerfile for Pramana Twin (TwinCare)
+# Backend Dockerfile for VitalTwin — AI-Powered Clinical Digital Twin
 FROM python:3.11-slim
 
 WORKDIR /app

@@ -1,5 +1,5 @@
 """
-Pydantic schemas for TwinCare / Pramana Twin FastAPI service.
+Pydantic schemas for VitalTwin — AI-Powered Clinical Digital Twin FastAPI service.
 All request and response contracts are strictly validated.
 """
 
@@ -18,7 +18,7 @@ class HealthResponse(BaseModel):
     schema_hash: Optional[str] = None
     feature_count: int
     model_loaded: bool = True
-    project: str = "TwinCare"
+    project: str = "VitalTwin"
 
 
 # ── Model Info / Metadata ──────────────────────────────────────────────────────

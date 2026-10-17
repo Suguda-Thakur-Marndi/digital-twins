@@ -153,10 +153,10 @@ export default function HowItWorksPage() {
             </span>
           </div>
           <h1 className="text-2xl font-editorial font-bold text-[var(--text-primary)]">
-            How Pramana Clinical Twin Operates
+            How VitalTwin Operates
           </h1>
           <p className="text-xs text-[var(--text-muted)] max-w-2xl mt-1 leading-relaxed">
-            From raw longitudinal EHR records to 132-feature extraction, calibrated XGBoost inference, and interactive what-if counterfactuals.
+            A Living Digital Perspective on Health: from raw longitudinal EHR records to 132-feature extraction, calibrated XGBoost inference, and interactive what-if counterfactuals.
           </p>
         </div>
 

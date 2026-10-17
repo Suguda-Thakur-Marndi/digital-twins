@@ -40,7 +40,7 @@ class FHIRService:
     ) -> Dict[str, Any]:
         """
         Parses an ABDM-aligned FHIR R4 Bundle JSON.
-        Validates structure and maps clinical observations into the TwinCare feature schema.
+        Validates structure and maps clinical observations into the VitalTwin feature schema.
         Optionally registers patient into PatientService.
         """
         validation_errors: List[str] = []

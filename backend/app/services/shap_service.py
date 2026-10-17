@@ -1,5 +1,5 @@
 """
-SHAP Explanation Service for TwinCare / Pramana Twin.
+SHAP Explanation Service for VitalTwin — AI-Powered Clinical Digital Twin.
 Computes patient-level local SHAP attributions using TreeExplainer on XGBoost
 and maps raw features to plain-English clinical labels with directional sign.
 """

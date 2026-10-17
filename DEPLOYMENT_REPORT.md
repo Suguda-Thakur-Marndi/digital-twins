@@ -1,16 +1,16 @@
-# Pramana Clinical Twin (TwinCare) — Production Deployment Report
+# VitalTwin — AI-Powered Clinical Digital Twin — Production Deployment Report
 
-**Project**: Pramana Clinical Digital Twin (TwinCare)  
+**Project**: VitalTwin — AI-Powered Clinical Digital Twin (formerly Pramana Clinical Twin / TwinCare)  
 **Target Architecture**: Next.js (Vercel) + FastAPI (Render)  
 **Model Pipeline**: 132-Feature Longitudinal XGBoost + Platt Calibrator + TreeSHAP Explainability  
-**Generated On**: October 16, 2026  
+**Generated On**: October 16, 2026 (Updated October 17, 2026 for VitalTwin Branding)  
 **Status**: Ready for Public Deployment (All Builds & Verification Tests Passing)
 
 ---
 
 ## Executive Summary
 
-The **Pramana Clinical Twin** repository has been audited, hardened, and prepared for public deployment on **Vercel** (Frontend) and **Render** (Backend). All deployment blockers have been resolved without altering the trained XGBoost model or removing features.
+The **VitalTwin** repository has been audited, hardened, branded, and prepared for public deployment on **Vercel** (Frontend) and **Render** (Backend). All deployment blockers have been resolved without altering the trained XGBoost model or removing features. For production deployment compatibility, the existing backend service (`twincare-backend.onrender.com`) remains actively connected.
 
 | Layer | Hosting Target | Runtime | Status | Key Verification |
 | :--- | :--- | :--- | :--- | :--- |
@@ -123,7 +123,7 @@ npm run build
 | :--- | :--- | :--- |
 | `PYTHON_VERSION` | `3.11.9` | Ensures exact Python runtime |
 | `ENVIRONMENT` | `production` | Enforces production security checks |
-| `ALLOWED_ORIGINS` | `https://your-twincare.vercel.app` | *Set to temporary `http://localhost:3000` until Vercel URL is known* |
+| `ALLOWED_ORIGINS` | `https://your-vitaltwin.vercel.app` | *Set to temporary `http://localhost:3000` until Vercel URL is known* |
 | `ALLOWED_ORIGIN_REGEX` | `^https:\/\/.*\.vercel\.app$` | Enables all Vercel production and preview URLs |
 | `ARTIFACTS_DIR` | `artifacts` | Relative to `backend/` |
 | `DATA_DIR` | `data` | Or `/var/data` if Persistent Disk is attached |
@@ -161,7 +161,7 @@ npm run build
 | `NEXT_PUBLIC_API_URL` | `https://<your-service-name>.onrender.com` | **No trailing slash**. Points to your Render backend. |
 
 5. Click **Deploy**. Vercel will build and assign your domain:  
-   `https://your-twincare.vercel.app`
+   `https://your-vitaltwin.vercel.app`
 
 ---
 
@@ -170,7 +170,7 @@ npm run build
 1. Return to your **Render Dashboard → twincare-backend → Environment**.
 2. Update `ALLOWED_ORIGINS` with your actual Vercel domain:
    ```text
-   https://your-twincare.vercel.app,http://localhost:3000
+   https://your-vitaltwin.vercel.app,http://localhost:3000
    ```
 3. Save changes. Render will perform a zero-downtime rolling restart.
 
@@ -194,7 +194,7 @@ npm run build
 
 1. **Render Free Tier Spin-Down**:
    - On Render Free tier, the service spins down after 15 minutes of inactivity. The first incoming request will experience a **cold-start delay of ~30–50 seconds**.
-   - *Mitigation*: The frontend includes a clear `"Cannot reach TwinCare backend..."` retry notification. Upgrading to Render Starter ($7/month) eliminates cold starts.
+   - *Mitigation*: The frontend includes a clear `"Cannot reach VitalTwin backend..."` retry notification. Upgrading to Render Starter ($7/month) eliminates cold starts.
 2. **Data Persistence on Render Free Tier**:
    - Without an attached Render Persistent Disk, registered patients and audit log events written at runtime reside in the container's ephemeral filesystem and will be wiped upon service redeployments or container restarts. Demo patients (64 profiles) are committed as read-only artifacts and will never be lost.
 3. **Vercel Root Directory Selection**:

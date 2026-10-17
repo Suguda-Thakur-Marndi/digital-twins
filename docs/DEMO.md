@@ -1,4 +1,4 @@
-# 3-Minute Hackathon Demo Script: Pramana Clinical Twin (TwinCare)
+# 3-Minute Hackathon Demo Script: VitalTwin — AI-Powered Clinical Digital Twin
 
 **Event:** Happiest Health "Reimagining and Reforming Healthcare in India Summit 2026", Bengaluru  
 **Theme:** Digital Twin in Healthcare — Longitudinal Hypertension Decompensation Risk  
@@ -28,7 +28,7 @@
 **Spoken Script:**
 > *"Respected judges: Hypertension affects over 220 million citizens in India, yet fewer than 15% maintain controlled blood pressure. Conventional EHRs are retrospective filing cabinets—they record cardiovascular damage after it occurs.*
 > 
-> *This is **Pramana Twin**—a dynamic clinical digital twin that models longitudinal 365-day decompensation risk. On the screen is patient PT-101, Elena Rostova. Notice the prominent **SYNTHETIC** badge: this is built on Synthea EHR data.*
+> *This is **VitalTwin**—an AI-powered clinical digital twin that models longitudinal 365-day decompensation risk (*A Living Digital Perspective on Health*). On the screen is patient PT-101, Elena Rostova. Notice the prominent **SYNTHETIC** badge: this is built on Synthea EHR data.*
 > 
 > *Her digital twin synthesizes her entire 365-day trajectory: systolic BP 142, DBP 88, BMI 29.4. Her 1-year decompensation risk is calibrated via Platt scaling at **48.2%** [95% CI: 41.2%–55.4%]. We never display raw machine scores as probabilities. Her signed SHAP drivers explain why: her 1-year mean systolic BP (+0.14) and 90-day acceleration (+0.09) are driving risk upward."*
 
@@ -85,7 +85,7 @@
 > 
 > *Most importantly: this model was trained on US Synthea synthetic EHR data. It is **not yet validated on Indian populations**, who exhibit distinct visceral adiposity phenotypes and dietary sodium patterns. Our roadmap aligns with ABDM (Ayushman Bharat Digital Mission) FHIR standards and CDSCO SaMD clearance.*
 > 
-> *Pramana Twin demonstrates how clinical digital twins can transform Indian healthcare from episodic crisis management to proactive, longitudinal prevention. Thank you."*
+> *VitalTwin demonstrates how clinical digital twins can transform Indian healthcare from episodic crisis management to proactive, longitudinal prevention. Thank you."*
 
 ---
 

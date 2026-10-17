@@ -1,7 +1,8 @@
 """
-TwinCare / Pramana Clinical Twin — FastAPI Service
+VitalTwin — AI-Powered Clinical Digital Twin — FastAPI Service
 Summit: Happiest Health "Reimagining and Reforming Healthcare in India Summit 2026", Bengaluru
 Theme: Digital Twin in Healthcare
+Tagline: A Living Digital Perspective on Health
 
 API Version: v1 (mounted under /api/v1 with root/legacy aliases)
 """
@@ -34,7 +35,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-logger = logging.getLogger("twincare_api")
+logger = logging.getLogger("vitaltwin_api")
 
 # ── Service singletons ────────────────────────────────────────────────────────
 _model_svc: Optional[ModelService] = None
@@ -50,7 +51,7 @@ async def lifespan(app: FastAPI):
     """Load and verify all required artifacts at startup."""
     global _model_svc, _patient_svc, _shap_svc, _wearable_svc, _audit_svc, _fhir_svc
 
-    logger.info("=== Starting TwinCare / Pramana Clinical Twin Backend ===")
+    logger.info("=== Starting VitalTwin — AI-Powered Clinical Digital Twin Backend ===")
 
     # Determine artifacts directory
     env_dir = os.getenv("ARTIFACTS_DIR")
@@ -104,21 +105,22 @@ async def lifespan(app: FastAPI):
         logger.info("Loading FHIRService...")
         _fhir_svc = FHIRService(_model_svc, _patient_svc)
 
-        logger.info("=== TwinCare Backend successfully initialized and ready ===")
+        logger.info("=== VitalTwin Backend successfully initialized and ready ===")
     except Exception as e:
         logger.critical("Failed to load artifacts: %s", e, exc_info=True)
         raise RuntimeError(f"Startup failure: {e}") from e
 
     yield
-    logger.info("TwinCare Backend shutting down.")
+    logger.info("VitalTwin Backend shutting down.")
 
 
 # ── FastAPI App ───────────────────────────────────────────────────────────────
 app = FastAPI(
-    title="TwinCare / Pramana Clinical Twin API",
+    title="VitalTwin — AI-Powered Clinical Digital Twin API",
     description=(
         "Production-grade FastAPI backend for longitudinal hypertension decompensation "
         "risk prediction and personalized what-if scenario exploration. "
+        "VitalTwin: A Living Digital Perspective on Health. "
         "Presented at Happiest Health 'Reimagining and Reforming Healthcare in India Summit 2026', Bengaluru. "
         "Research prototype based on Synthea synthetic EHR data. Not for clinical diagnosis or treatment."
     ),
@@ -212,7 +214,7 @@ async def health_check():
         "schema_hash": fp,
         "feature_count": _model_svc.feature_count if model_loaded else 0,
         "model_loaded": model_loaded,
-        "project": "TwinCare",
+        "project": "VitalTwin",
     }
 
 
@@ -230,7 +232,7 @@ async def model_info():
 
     return {
         "model_name": meta.get("model_name", "XGBoost 365-Day Hypertension Decompensation Pipeline"),
-        "working_project": meta.get("working_project", "TwinCare"),
+        "working_project": meta.get("working_project", "VitalTwin"),
         "version": meta.get("version", "1.0.0"),
         "condition": meta.get("condition", "Essential Hypertension"),
         "target_outcome": meta.get("target_outcome", "BP Decompensation within 365 days"),
@@ -946,5 +948,5 @@ if __name__ == "__main__":
 
     port = int(os.getenv("PORT", 8000))
     host = os.getenv("HOST", "0.0.0.0")
-    logger.info("Starting TwinCare FastAPI uvicorn server on %s:%d (env: %s)", host, port, os.getenv("ENVIRONMENT", "development"))
+    logger.info("Starting VitalTwin FastAPI uvicorn server on %s:%d (env: %s)", host, port, os.getenv("ENVIRONMENT", "development"))
     uvicorn.run("app.main:app", host=host, port=port, reload=False)

@@ -1,5 +1,5 @@
 {
-  "name": "twincare-root",
+  "name": "vitaltwin-root",
   "private": true,
   "scripts": {
     "build": "npm --prefix frontend run build",

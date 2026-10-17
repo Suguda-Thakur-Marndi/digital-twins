@@ -18,10 +18,10 @@ export default function AboutPage() {
           </span>
         </div>
         <h1 className="font-editorial text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
-          About TwinCare · Responsible Clinical AI Charter
+          About VitalTwin · Responsible Clinical AI Charter
         </h1>
         <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-          Developed for the Happiest Health Summit 2026 under the theme <em>Digital Twin in Healthcare</em>.
+          A Living Digital Perspective on Health. Developed for the Happiest Health Summit 2026 under the theme <em>Digital Twin in Healthcare</em>.
         </p>
       </div>
 
@@ -116,7 +116,7 @@ export default function AboutPage() {
         </div>
 
         <div className="pt-2 text-xs text-[var(--text-muted)] flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-hairline)]">
-          <span>Project: <strong>TwinCare (Pramana Clinical Twin)</strong></span>
+          <span>Project: <strong>VitalTwin — AI-Powered Clinical Digital Twin</strong></span>
           <div className="flex items-center gap-3">
             <Link href="/twin?patient=PT-101" className="text-[var(--color-primary)] hover:underline">
               Open Twin Dashboard →

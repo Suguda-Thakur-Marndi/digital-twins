@@ -705,7 +705,7 @@ function TwinDashboardContent() {
       <div className="hidden print:block space-y-4 p-4 font-sans text-xs">
         <div className="border-b-2 border-black pb-2 flex justify-between items-end">
           <div>
-            <h1 className="text-xl font-bold font-serif uppercase tracking-tight">Pramana Clinical Twin · Clinical Decision Support Report</h1>
+            <h1 className="text-xl font-bold font-serif uppercase tracking-tight">VitalTwin — AI-Powered Clinical Digital Twin · Clinical Decision Support Report</h1>
             <p className="text-[10px] text-gray-600">365-Day Longitudinal Hypertension Decompensation Risk Profile</p>
           </div>
           <div className="text-right text-[10px] font-mono">

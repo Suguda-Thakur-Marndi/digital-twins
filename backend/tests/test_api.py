@@ -1,5 +1,5 @@
 """
-Pytest test suite for TwinCare / Pramana Clinical Twin API.
+Pytest test suite for VitalTwin — AI-Powered Clinical Digital Twin API.
 Tests:
   - Health check & schema fingerprint
   - Model info metadata & calibration

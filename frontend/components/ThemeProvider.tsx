@@ -15,7 +15,8 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const STORAGE_KEY = "twincare-theme";
+const STORAGE_KEY = "vitaltwin-theme";
+const LEGACY_STORAGE_KEY = "twincare-theme";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("system");
@@ -25,7 +26,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Initialize theme from storage or system on client mount
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+      const stored = (localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY)) as Theme | null;
       if (stored && (stored === "light" || stored === "dark" || stored === "system")) {
         setThemeState(stored);
       } else {
@@ -83,6 +84,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setThemeState(newTheme);
     try {
       localStorage.setItem(STORAGE_KEY, newTheme);
+      localStorage.setItem(LEGACY_STORAGE_KEY, newTheme);
     } catch {
       // storage unavailable
     }

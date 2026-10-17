@@ -1,6 +1,6 @@
 # 3D Human Avatar & Asset Attributions
 
-This document records the provenance, licensing, and compliance details for all 3D digital twin assets used in the **TwinCare · Pramana Clinical Digital Twin** platform.
+This document records the provenance, licensing, and compliance details for all 3D digital twin assets used in the **VitalTwin — AI-Powered Clinical Digital Twin** platform.
 
 ---
 
@@ -30,7 +30,7 @@ This document records the provenance, licensing, and compliance details for all 
 - **Status:** **Reference Only** (Architectural concept for Three.js bone tracking and GLB loading).
 - **Compliance & Privacy Guardrails:**
   - In strict compliance with open-source and copyright compliance rules, **no code, shaders, or asset files** (`Thanh.glb`, `TranThiNgocTham.glb`) were copied or imported from that repository.
-  - The TwinCare 3D viewer is an entirely original React Three Fiber (`@react-three/fiber` + `@react-three/drei`) implementation built from scratch.
+  - The VitalTwin 3D viewer is an entirely original React Three Fiber (`@react-three/fiber` + `@react-three/drei`) implementation built from scratch.
 
 ---
 

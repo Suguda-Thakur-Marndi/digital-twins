@@ -42,7 +42,7 @@ export default function ModelCardPage() {
           Model Card · 365-Day Hypertension Decompensation
         </h1>
         <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-          Clinical model evaluation card documenting training provenance, Platt calibration, and operational limitations for TwinCare.
+          Clinical model evaluation card documenting training provenance, Platt calibration, and operational limitations for VitalTwin.
         </p>
       </div>
 

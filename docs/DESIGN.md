@@ -1,5 +1,6 @@
-# DESIGN.md — Pramana Twin Design & Clinical Architecture System
-**Project: TwinCare / Pramana Twin**  
+# DESIGN.md — VitalTwin Design & Clinical Architecture System
+**Project: VitalTwin — AI-Powered Clinical Digital Twin**  
+**Tagline: A Living Digital Perspective on Health**  
 **Hackathon:** Happiest Health "Reimagining and Reforming Healthcare in India Summit 2026", Bengaluru  
 **Domain:** Longitudinal Clinical Digital Twin for Hypertension Risk Decompensation  
 
@@ -7,7 +8,7 @@
 
 ## 1. Design Philosophy
 
-Pramana Twin integrates high-density scientific data visualization with an elegant glassmorphism healthcare interface:
+VitalTwin integrates high-density scientific data visualization with an elegant glassmorphism healthcare interface:
 - **Information Density with Breathing Room**: Critical clinical parameters are dense, high-contrast, and scan-friendly; surrounding whitespace is deliberate and generous.
 - **Glassmorphism & Frosted Panels**: Translucent panels with background blur (`backdrop-filter: blur(20px)`), subtle borders, and layered elevation over a composite healthcare backdrop.
 - **Asymmetry over Uniformity**: Structured 12-column grid layout with intentional focal points rather than repeated rows of identical cards.

@@ -1,5 +1,5 @@
 """
-Model Service — Production-grade inference engine for TwinCare / Pramana Twin.
+Model Service — Production-grade inference engine for VitalTwin — AI-Powered Clinical Digital Twin.
 Loads:
   1. model_pipeline.joblib
   2. platt_calibrator.joblib

@@ -88,19 +88,19 @@ export function Navbar() {
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link href="/" className="flex items-center gap-2 sm:gap-2.5 group">
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center text-white font-serif font-bold text-base sm:text-lg shadow-md group-hover:scale-105 transition-transform duration-200">
-                Ψ
+                V
               </div>
               <div>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <span className="font-editorial text-lg sm:text-xl font-bold tracking-tight text-[var(--text-primary)] group-hover:text-[var(--color-primary)] transition-colors">
-                    TwinCare
+                    VitalTwin
                   </span>
                   <span className="hidden min-[380px]:inline-block text-[9px] sm:text-[10px] font-mono tracking-wider uppercase text-[var(--color-primary)] bg-[rgba(37,99,235,0.08)] dark:bg-[rgba(96,165,250,0.12)] border border-[rgba(37,99,235,0.2)] dark:border-[rgba(96,165,250,0.25)] px-1.5 sm:px-2 py-0.5 rounded-full font-semibold">
-                    Pramana Twin
+                    Clinical Twin
                   </span>
                 </div>
                 <p className="text-[10px] text-[var(--text-muted)] -mt-0.5 hidden sm:block tracking-wide">
-                  Hypertension Decompensation Intelligence
+                  A Living Digital Perspective on Health
                 </p>
               </div>
             </Link>

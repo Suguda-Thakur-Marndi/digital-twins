@@ -9,7 +9,7 @@ export function ConsentModal() {
 
   useEffect(() => {
     try {
-      const consent = localStorage.getItem("twincare_consent_accepted");
+      const consent = localStorage.getItem("vitaltwin_consent_accepted") || localStorage.getItem("twincare_consent_accepted");
       if (!consent) {
         setIsOpen(true);
       }
@@ -20,7 +20,9 @@ export function ConsentModal() {
 
   const handleAccept = () => {
     try {
-      localStorage.setItem("twincare_consent_accepted", new Date().toISOString());
+      const now = new Date().toISOString();
+      localStorage.setItem("vitaltwin_consent_accepted", now);
+      localStorage.setItem("twincare_consent_accepted", now);
     } catch {
       // fallback
     }
@@ -57,7 +59,7 @@ export function ConsentModal() {
               </span>
             </div>
             <h2 className="font-editorial text-base sm:text-lg font-bold text-[var(--text-primary)] leading-tight">
-              Pramana Clinical Digital Twin (TwinCare)
+              VitalTwin — AI-Powered Clinical Digital Twin
             </h2>
           </div>
         </div>

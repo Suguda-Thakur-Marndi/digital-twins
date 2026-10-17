@@ -1,4 +1,4 @@
-# Frontend Dockerfile for Pramana Twin (Next.js 16)
+# Frontend Dockerfile for VitalTwin — AI-Powered Clinical Digital Twin (Next.js 16)
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package*.json ./

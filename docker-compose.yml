@@ -5,7 +5,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: pramana-twin-backend
+    container_name: vitaltwin-backend
     ports:
       - "8000:8000"
     environment:
@@ -28,7 +28,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: pramana-twin-frontend
+    container_name: vitaltwin-frontend
     ports:
       - "3000:3000"
     environment:

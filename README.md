@@ -1,5 +1,6 @@
-# Pramana Clinical Twin (TwinCare) — Complete System & User Guide
+# VitalTwin — AI-Powered Clinical Digital Twin — Complete System & User Guide
 
+> **Tagline:** A Living Digital Perspective on Health  
 > **Longitudinal Clinical Digital Twin for 365-Day Hypertension Decompensation Risk**  
 > Built for the **Happiest Health "Reimagining and Reforming Healthcare in India Summit 2026"**, Bengaluru  
 > *Theme: Digital Twin in Healthcare*
@@ -71,7 +72,7 @@
 
 In India, **over 220 million adults** suffer from hypertension ([ICMR-INDIAB Lancet Study, 2023](https://doi.org/10.1016/S2213-8587(23)00119-5)), but fewer than 15% have their blood pressure under control. Conventional hospital Electronic Health Records (EHRs) operate as static filing cabinets: they record a hypertensive crisis, stroke, or heart failure **after** irreversible cardiovascular damage has occurred.
 
-**Pramana Twin** (*Pramāṇa*, Sanskrit for *evidence, valid cognition, proof*) is a dynamic, longitudinal **Clinical Digital Twin** for cardiovascular care that shifts healthcare from reactive episodic crisis response to proactive, 365-day continuous prevention:
+**VitalTwin** is a dynamic, longitudinal **AI-Powered Clinical Digital Twin** for cardiovascular care that shifts healthcare from reactive episodic crisis response to proactive, 365-day continuous prevention (*A Living Digital Perspective on Health*):
 
 1. **Synthesizes Longitudinal Patient State**: Instead of evaluating an isolated blood pressure reading, it maintains a continuous computational twin integrating rolling 365-day vitals trajectories, variability, slopes, lab measurements, comorbidities, and medications across **132 engineered clinical features**.
 2. **Forecasts 365-Day Acute Decompensation**: Predicts whether a patient will experience blood pressure decompensation (progression to Stage 2 hypertension: $\ge 140$ mmHg systolic / $\ge 90$ mmHg diastolic, or an acute hypertensive event) within the subsequent 12 months.
@@ -747,6 +748,6 @@ digital-twins/
 
 ## 11. Ethical Guardrails & Disclaimer
 
-1. **Synthetic Data Benchmark**: Pramana Twin is trained strictly on synthetic EHR data generated via Synthea. It is **not validated for clinical diagnosis, prescribing, or autonomous treatment decisions**.
+1. **Synthetic Data Benchmark**: VitalTwin is trained strictly on synthetic EHR data generated via Synthea. It is **not validated for clinical diagnosis, prescribing, or autonomous treatment decisions**.
 2. **India Population Generalizability**: While aligned with ICMR-INDIAB epidemiology and IGH-IV guidelines, this prototype has not yet been validated on Indian clinical cohorts, which exhibit distinct visceral adiposity phenotypes, dietary sodium variations, and earlier onset of vascular disease.
 3. **Software as a Medical Device (SaMD) Notice**: This system is a research demonstration prototype. In real clinical environments, digital twins must operate under licensed physician oversight in compliance with India's CDSCO Medical Device Rules and the Digital Personal Data Protection (DPDP) Act 2023.

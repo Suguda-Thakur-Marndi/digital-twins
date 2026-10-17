@@ -1,5 +1,5 @@
 """
-Comprehensive audit and consistency verification tests for TwinCare / Pramana Clinical Twin.
+Comprehensive audit and consistency verification tests for VitalTwin — AI-Powered Clinical Digital Twin.
 Covers:
 - Confidence interval consistency with estimate and methodology
 - Distinct risk states across baseline, historical replay, and counterfactual simulation

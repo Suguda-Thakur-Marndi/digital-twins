@@ -24,24 +24,24 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TwinCare · Pramana Clinical Digital Twin",
+  title: "VitalTwin — AI-Powered Clinical Digital Twin",
   description:
-    "Longitudinal digital twin for 365-day hypertension decompensation risk modeling, SHAP explainability, and counterfactual what-if simulation. Research prototype presented at Happiest Health Summit 2026, Bengaluru.",
+    "VitalTwin: A Living Digital Perspective on Health. Longitudinal digital twin for 365-day hypertension decompensation risk modeling, SHAP explainability, and counterfactual what-if simulation. Research prototype presented at Happiest Health Summit 2026, Bengaluru.",
   keywords: [
     "digital twin",
     "hypertension",
     "healthcare",
-    "Pramana",
+    "VitalTwin",
     "cardiovascular risk",
     "XGBoost",
     "clinical decision support",
     "Bengaluru Summit 2026",
     "glassmorphism",
   ],
-  authors: [{ name: "TwinCare Clinical Engineering" }],
+  authors: [{ name: "VitalTwin Clinical Engineering" }],
   openGraph: {
-    title: "TwinCare · Pramana Clinical Twin (Hypertension)",
-    description: "Longitudinal hypertension digital twin prototype for 365-day trajectory exploration, SHAP explainability, and what-if simulations.",
+    title: "VitalTwin — AI-Powered Clinical Digital Twin",
+    description: "VitalTwin: A Living Digital Perspective on Health. Longitudinal hypertension digital twin prototype for 365-day trajectory exploration, SHAP explainability, and what-if simulations.",
   },
 };
 
@@ -63,7 +63,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `(function() {
               try {
-                var stored = localStorage.getItem('twincare-theme');
+                var stored = localStorage.getItem('vitaltwin-theme') || localStorage.getItem('twincare-theme');
                 var isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
                 if (isDark) {
                   document.documentElement.classList.add('dark');
@@ -82,8 +82,8 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {/* Layered background visual apparatus: Image + radial glows + subtle circuit grid */}
-        <div className="twincare-bg-layer" aria-hidden="true" />
-        <div className="twincare-bg-grid" aria-hidden="true" />
+        <div className="vitaltwin-bg-layer twincare-bg-layer" aria-hidden="true" />
+        <div className="vitaltwin-bg-grid twincare-bg-grid" aria-hidden="true" />
 
         <Providers>
           {/* Summit Top Glass Banner */}

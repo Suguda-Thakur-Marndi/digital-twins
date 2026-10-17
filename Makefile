@@ -3,7 +3,7 @@
 all: help
 
 help:
-	@echo "Pramana Twin (TwinCare) — Make commands:"
+	@echo "VitalTwin — AI-Powered Clinical Digital Twin — Make commands:"
 	@echo "  make dev         - Run both backend and frontend concurrently for local development"
 	@echo "  make test        - Run backend pytest test suite (26 API & validation tests)"
 	@echo "  make build       - Build production Next.js frontend and verify backend artifacts"
@@ -19,7 +19,7 @@ install:
 	cd frontend && npm install
 
 dev:
-	@echo "Starting Pramana Twin (Backend on :8000, Frontend on :3000)..."
+	@echo "Starting VitalTwin (Backend on :8000, Frontend on :3000)..."
 	@echo "Run these in two terminals if not using background runners:"
 	@echo "  Terminal 1: cd backend && uvicorn app.main:app --reload --port 8000"
 	@echo "  Terminal 2: cd frontend && npm run dev"

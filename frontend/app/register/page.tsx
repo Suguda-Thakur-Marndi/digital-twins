@@ -88,7 +88,8 @@ const INITIAL_FORM: FormState = {
   consent_confirmed: false,
 };
 
-const DRAFT_KEY = "twincare_registration_draft_v1";
+const DRAFT_KEY = "vitaltwin_registration_draft_v1";
+const LEGACY_DRAFT_KEY = "twincare_registration_draft_v1";
 
 export default function RegisterPatientPage() {
   const router = useRouter();
@@ -102,7 +103,7 @@ export default function RegisterPatientPage() {
   // Restore draft on mount if available
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(DRAFT_KEY);
+      const saved = localStorage.getItem(DRAFT_KEY) || localStorage.getItem(LEGACY_DRAFT_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         setForm((prev) => ({ ...prev, ...parsed, consent_confirmed: false }));
@@ -142,7 +143,9 @@ export default function RegisterPatientPage() {
 
   const saveDraft = () => {
     try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+      const draftJson = JSON.stringify(form);
+      localStorage.setItem(DRAFT_KEY, draftJson);
+      localStorage.setItem(LEGACY_DRAFT_KEY, draftJson);
       setDraftSavedMsg("Draft successfully saved to browser local storage.");
       setTimeout(() => setDraftSavedMsg(null), 3000);
     } catch {
@@ -270,6 +273,7 @@ export default function RegisterPatientPage() {
       // Clear draft on successful registration
       try {
         localStorage.removeItem(DRAFT_KEY);
+        localStorage.removeItem(LEGACY_DRAFT_KEY);
       } catch {
         // ignore
       }

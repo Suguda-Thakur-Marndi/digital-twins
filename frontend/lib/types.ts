@@ -1,5 +1,5 @@
 /**
- * Shared TypeScript types & clinical design helpers for TwinCare / Pramana Twin.
+ * Shared TypeScript types & clinical design helpers for VitalTwin — AI-Powered Clinical Digital Twin.
  */
 
 export type RiskTier = "LOW" | "MEDIUM" | "HIGH" | "Low" | "Moderate" | "High";

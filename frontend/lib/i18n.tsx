@@ -60,8 +60,8 @@ export interface TranslationDictionary {
 
 const TRANSLATIONS: Record<Language, TranslationDictionary> = {
   en: {
-    brandName: "Pramana Clinical Twin",
-    tagline: "Longitudinal Digital Twin for 365-Day Hypertension Decompensation",
+    brandName: "VitalTwin",
+    tagline: "A Living Digital Perspective on Health",
     syntheticLabel: "SYNTHETIC",
     simulatedLabel: "SIMULATED",
     clinicianView: "Clinician View",
@@ -112,8 +112,8 @@ const TRANSLATIONS: Record<Language, TranslationDictionary> = {
   },
 
   hi: {
-    brandName: "प्रमाण क्लिनिकल ट्विन",
-    tagline: "365-दिवसीय उच्च रक्तचाप जटिलता के लिए अनुदैर्ध्य डिजिटल ट्विन",
+    brandName: "वाइटलट्विन (VitalTwin)",
+    tagline: "स्वास्थ्य पर एक जीवंत डिजिटल दृष्टिकोण (A Living Digital Perspective on Health)",
     syntheticLabel: "सिंथेटिक डेटा",
     simulatedLabel: "सिम्युलेटेड टेलीमेट्री",
     clinicianView: "चिकित्सक दृश्य (Clinician)",
@@ -164,8 +164,8 @@ const TRANSLATIONS: Record<Language, TranslationDictionary> = {
   },
 
   kn: {
-    brandName: "ಪ್ರಮಾಣ ಕ್ಲಿನಿಕಲ್ ಟ್ವಿನ್",
-    tagline: "365-ದಿನಗಳ ಅಧಿಕ ರಕ್ತದೊತ್ತಡದ ತೊಡಕುಗಳಿಗಾಗಿ ಡಿಜಿಟಲ್ ಟ್ವಿನ್",
+    brandName: "ವೈಟಲ್ ಟ್ವಿನ್ (VitalTwin)",
+    tagline: "ಆರೋಗ್ಯದ ಕುರಿತು ಜೀವಂತ ಡಿಜಿಟಲ್ ದೃಷ್ಟಿಕೋನ (A Living Digital Perspective on Health)",
     syntheticLabel: "ಸಿಂಥೆಟಿಕ್ ಡೇಟಾ",
     simulatedLabel: "ಸಿಮ್ಯುಲೇಟೆಡ್ ಟೆಲಿಮೆಟ್ರಿ",
     clinicianView: "ವೈದ್ಯರ ನೋಟ (Clinician)",
@@ -233,6 +233,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
+      localStorage.setItem("vitaltwin_language", "en");
       localStorage.setItem("twincare_language", "en");
     } catch {
       // localStorage may not be available during SSR

@@ -208,10 +208,10 @@ export default function OverviewPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="text-2xl sm:text-3xl font-editorial font-bold text-[var(--text-primary)] tracking-tight">
-              Pramana Clinical Digital Twin
+              VitalTwin — AI-Powered Clinical Digital Twin
             </h1>
             <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-0.5 max-w-2xl leading-relaxed">
-              Longitudinal digital twin prototype for 365-day hypertension trajectory monitoring, risk estimation, and counterfactual scenario exploration.
+              A Living Digital Perspective on Health. Longitudinal digital twin prototype for 365-day hypertension trajectory monitoring, risk estimation, and counterfactual scenario exploration.
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -823,7 +823,7 @@ export default function OverviewPage() {
       {/* ── FOOTER ──────────────────────────────────────────────────────── */}
       <footer className="pt-4 border-t border-[var(--border-subtle)] flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-[var(--text-muted)]">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <span className="font-semibold text-[var(--text-primary)]">Pramana TwinCare</span>
+          <span className="font-semibold text-[var(--text-primary)]">VitalTwin</span>
           <span>·</span>
           <Link href="/twin" className="hover:text-[var(--color-primary)] transition-colors">Digital Twin</Link>
           <span>·</span>

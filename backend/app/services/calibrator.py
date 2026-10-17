@@ -1,5 +1,5 @@
 """
-Platt Calibrator implementation for TwinCare.
+Platt Calibrator implementation for VitalTwin.
 Maps raw XGBoost scores to calibrated empirical probabilities via fitted logistic regression.
 """
 
