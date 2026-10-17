@@ -151,6 +151,16 @@ function AvatarModel({
     const clonedScene = SkeletonUtils.clone(scene);
 
     clonedScene.traverse((child) => {
+      // Ensure novelty accessories (e.g. reindeer glasses / clown nose) are hidden
+      if (
+        child.name === "Wolf3D_Glasses" ||
+        child.name.toLowerCase().includes("glasses") ||
+        (child as THREE.Mesh).name === "Wolf3D_Glasses"
+      ) {
+        child.visible = false;
+        return;
+      }
+
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         mesh.castShadow = true;
