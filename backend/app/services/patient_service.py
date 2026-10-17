@@ -78,7 +78,7 @@ def _clean_patient_record(p: Dict[str, Any]) -> Dict[str, Any]:
 
 
 class PatientService:
-    def __init__(self, artifacts_dir: Path):
+    def __init__(self, artifacts_dir: Path | str):
         self._artifacts_dir = Path(artifacts_dir)
         self._lock = Lock()
 

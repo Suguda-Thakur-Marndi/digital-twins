@@ -77,7 +77,7 @@ def _get_feature_unit(feat_name: str) -> str:
 class ModelService:
     LEVEL_SUFFIXES = ["latest", "mean_365d", "min_365d", "max_365d", "first_365d", "last_365d"]
 
-    def __init__(self, artifacts_dir: Path):
+    def __init__(self, artifacts_dir: Path | str):
         self._artifacts_dir = Path(artifacts_dir)
 
         # ── 1. Load model pipeline ──────────────────────────────────────────

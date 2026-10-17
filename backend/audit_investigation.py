@@ -9,11 +9,16 @@ from app.services.model_service import ModelService
 from app.services.patient_service import PatientService
 from app.services.shap_service import SHAPService
 
-ps = PatientService("backend/artifacts")
-ms = ModelService("backend/artifacts")
-ss = SHAPService("backend/artifacts", ms)
+artifacts_dir = Path(__file__).resolve().parent / "artifacts"
+if not artifacts_dir.exists():
+    artifacts_dir = Path(__file__).resolve().parent.parent / "backend" / "artifacts"
+
+ps = PatientService(artifacts_dir)
+ms = ModelService(artifacts_dir)
+ss = SHAPService(artifacts_dir, ms)
 
 p = ps.get_patient("18622a98-20be-920f-051a-e0c584e71baa")
+assert p is not None, "Patient '18622a98-20be-920f-051a-e0c584e71baa' not found"
 print(f"Patient Name: {p['name']}, ID: {p['id']}")
 fr = p["feature_row"]
 df = pd.DataFrame([fr])

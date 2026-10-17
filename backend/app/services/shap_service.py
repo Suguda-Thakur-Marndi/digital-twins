@@ -69,7 +69,7 @@ def _clean_feature_name(raw_name: str) -> str:
 
 
 class SHAPService:
-    def __init__(self, artifacts_dir: Path, model_svc):
+    def __init__(self, artifacts_dir: Path | str, model_svc):
         self._artifacts_dir = Path(artifacts_dir)
         self._model_svc = model_svc
         self._explainer: Optional[shap.TreeExplainer] = None
