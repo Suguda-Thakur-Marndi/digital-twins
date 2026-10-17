@@ -47,6 +47,33 @@ def _score_to_tier(calibrated_risk: float, tiers: Optional[Dict[str, Any]] = Non
     return "Low"
 
 
+def _get_feature_label(feat_name: str) -> str:
+    try:
+        from app.services.shap_service import FEATURE_LABELS
+        return FEATURE_LABELS.get(feat_name, feat_name.replace("_", " ").title())
+    except ImportError:
+        return feat_name.replace("_", " ").title()
+
+
+def _get_feature_unit(feat_name: str) -> str:
+    f_lower = feat_name.lower()
+    if "sbp" in f_lower or "dbp" in f_lower or "pulse_pressure" in f_lower:
+        return "mmHg"
+    if "hr" in f_lower or "heart_rate" in f_lower:
+        return "bpm"
+    if "weight" in f_lower:
+        return "kg"
+    if "bmi" in f_lower:
+        return "kg/m²"
+    if "glucose" in f_lower:
+        return "mg/dL"
+    if "hba1c" in f_lower:
+        return "%"
+    if "age" in f_lower:
+        return "years"
+    return ""
+
+
 class ModelService:
     LEVEL_SUFFIXES = ["latest", "mean_365d", "min_365d", "max_365d", "first_365d", "last_365d"]
 
@@ -461,9 +488,10 @@ class ModelService:
         """
         Full patient simulator:
         - Correlated shifting of SBP, DBP, HR, Weight/BMI, Glucose, HbA1c, trend, conditions & meds.
-        - Out-of-range checking against training distribution.
+        - Out-of-range checking against training distribution with detailed feature breaches and bounds.
         - Low-sensitivity detection when tree thresholds aren't crossed.
-        - Signed SHAP before and after with feature-level diff attribution.
+        - Signed SHAP before and after with feature-level diff attribution on raw log-odds margin scale.
+        - Preserves historical intake milestones unless explicitly modeling counterfactual historical trajectory.
         """
         safe_x = self.validate_features_df(x_input)
         baseline_pred = self.predict(safe_x, context="simulate_baseline")
@@ -491,13 +519,18 @@ class ModelService:
                 "scenario_tier": baseline_pred["risk_tier"],
                 "delta_risk_pp": 0.0,
                 "delta_raw_pp": 0.0,
+                "relative_change_pct": 0.0,
                 "tier_changed": False,
                 "shap_before": shap_before,
                 "shap_after": shap_before,
                 "shap_diff": [],
+                "shap_scale": "raw_margin_log_odds",
                 "features_changed": [],
+                "dependent_features_summary": [],
                 "warnings": [],
                 "is_out_of_range": False,
+                "scenario_classification": "VALIDATED_DISTRIBUTION",
+                "out_of_range_features": [],
                 "is_low_sensitivity": False,
                 "sensitivity_message": None,
                 "caveat": (
@@ -507,6 +540,7 @@ class ModelService:
             }
 
         lever_specs = self._lever_map.get("levers", {})
+        model_historical = bool(levers.get("model_historical_trajectory", False))
 
         # 1. SBP
         curr_sbp = self._safe_float(safe_x.iloc[0].get("sbp_latest", 125.0), 125.0)
@@ -520,10 +554,12 @@ class ModelService:
             sbp_delta = 0.0
 
         if abs(sbp_delta) > 1e-4:
-            cols = lever_specs.get("sbp", {}).get("target_columns", [
-                "sbp_latest", "sbp_mean_365d", "sbp_min_365d", "sbp_max_365d",
-                "sbp_first_365d", "sbp_last_365d", "baseline_sbp"
-            ])
+            default_sbp_cols = ["sbp_latest", "sbp_mean_365d", "sbp_min_365d", "sbp_max_365d", "sbp_last_365d"]
+            if model_historical:
+                default_sbp_cols.extend(["sbp_first_365d", "baseline_sbp"])
+            cols = lever_specs.get("sbp", {}).get("target_columns", default_sbp_cols)
+            if not model_historical:
+                cols = [c for c in cols if c not in ("baseline_sbp", "sbp_first_365d")]
             for col in cols:
                 if col in scenario.columns and pd.notna(scenario.iloc[0][col]):
                     scenario.loc[scenario.index[0], col] = float(scenario.iloc[0][col]) + sbp_delta
@@ -541,10 +577,12 @@ class ModelService:
             dbp_delta = 0.0
 
         if abs(dbp_delta) > 1e-4:
-            cols = lever_specs.get("dbp", {}).get("target_columns", [
-                "dbp_latest", "dbp_mean_365d", "dbp_min_365d", "dbp_max_365d",
-                "dbp_first_365d", "dbp_last_365d", "baseline_dbp"
-            ])
+            default_dbp_cols = ["dbp_latest", "dbp_mean_365d", "dbp_min_365d", "dbp_max_365d", "dbp_last_365d"]
+            if model_historical:
+                default_dbp_cols.extend(["dbp_first_365d", "baseline_dbp"])
+            cols = lever_specs.get("dbp", {}).get("target_columns", default_dbp_cols)
+            if not model_historical:
+                cols = [c for c in cols if c not in ("baseline_dbp", "dbp_first_365d")]
             for col in cols:
                 if col in scenario.columns and pd.notna(scenario.iloc[0][col]):
                     scenario.loc[scenario.index[0], col] = float(scenario.iloc[0][col]) + dbp_delta
@@ -569,9 +607,12 @@ class ModelService:
             hr_delta = 0.0
 
         if abs(hr_delta) > 1e-4:
-            cols = lever_specs.get("hr", {}).get("target_columns", [
-                "hr_latest", "hr_mean_365d", "hr_min_365d", "hr_max_365d", "hr_first_365d", "hr_last_365d"
-            ])
+            default_hr_cols = ["hr_latest", "hr_mean_365d", "hr_min_365d", "hr_max_365d", "hr_last_365d"]
+            if model_historical:
+                default_hr_cols.append("hr_first_365d")
+            cols = lever_specs.get("hr", {}).get("target_columns", default_hr_cols)
+            if not model_historical:
+                cols = [c for c in cols if c != "hr_first_365d"]
             for col in cols:
                 if col in scenario.columns and pd.notna(scenario.iloc[0][col]):
                     scenario.loc[scenario.index[0], col] = float(scenario.iloc[0][col]) + hr_delta
@@ -590,20 +631,24 @@ class ModelService:
             wt_mult = 1.0
 
         if abs(wt_mult - 1.0) > 1e-4:
-            cols = lever_specs.get("weight", {}).get("target_columns", [
-                "weight_latest", "weight_mean_365d", "weight_min_365d", "weight_max_365d",
-                "weight_first_365d", "weight_last_365d"
-            ])
+            default_wt_cols = ["weight_latest", "weight_mean_365d", "weight_min_365d", "weight_max_365d", "weight_last_365d"]
+            if model_historical:
+                default_wt_cols.append("weight_first_365d")
+            cols = lever_specs.get("weight", {}).get("target_columns", default_wt_cols)
+            if not model_historical:
+                cols = [c for c in cols if c != "weight_first_365d"]
             for col in cols:
                 if col in scenario.columns and pd.notna(scenario.iloc[0][col]):
                     scenario.loc[scenario.index[0], col] = float(scenario.iloc[0][col]) * wt_mult
                     features_changed.append(col)
 
             # BMI shifts proportionately
-            bmi_cols = lever_specs.get("weight", {}).get("derived_columns", [
-                "bmi_latest", "bmi_mean_365d", "bmi_min_365d", "bmi_max_365d",
-                "bmi_first_365d", "bmi_last_365d"
-            ])
+            default_bmi_cols = ["bmi_latest", "bmi_mean_365d", "bmi_min_365d", "bmi_max_365d", "bmi_last_365d"]
+            if model_historical:
+                default_bmi_cols.append("bmi_first_365d")
+            bmi_cols = lever_specs.get("weight", {}).get("derived_columns", default_bmi_cols)
+            if not model_historical:
+                bmi_cols = [c for c in bmi_cols if c != "bmi_first_365d"]
             for col in bmi_cols:
                 if col in scenario.columns and pd.notna(scenario.iloc[0][col]):
                     scenario.loc[scenario.index[0], col] = float(scenario.iloc[0][col]) * wt_mult
@@ -621,10 +666,12 @@ class ModelService:
             gl_delta = 0.0
 
         if abs(gl_delta) > 1e-4:
-            cols = lever_specs.get("glucose", {}).get("target_columns", [
-                "glucose_latest", "glucose_mean_365d", "glucose_min_365d", "glucose_max_365d",
-                "glucose_first_365d", "glucose_last_365d"
-            ])
+            default_gl_cols = ["glucose_latest", "glucose_mean_365d", "glucose_min_365d", "glucose_max_365d", "glucose_last_365d"]
+            if model_historical:
+                default_gl_cols.append("glucose_first_365d")
+            cols = lever_specs.get("glucose", {}).get("target_columns", default_gl_cols)
+            if not model_historical:
+                cols = [c for c in cols if c != "glucose_first_365d"]
             for col in cols:
                 if col in scenario.columns and pd.notna(scenario.iloc[0][col]):
                     scenario.loc[scenario.index[0], col] = float(scenario.iloc[0][col]) + gl_delta
@@ -642,10 +689,12 @@ class ModelService:
             a1c_delta = 0.0
 
         if abs(a1c_delta) > 1e-4:
-            cols = lever_specs.get("hba1c", {}).get("target_columns", [
-                "hba1c_latest", "hba1c_mean_365d", "hba1c_min_365d", "hba1c_max_365d",
-                "hba1c_first_365d", "hba1c_last_365d"
-            ])
+            default_a1c_cols = ["hba1c_latest", "hba1c_mean_365d", "hba1c_min_365d", "hba1c_max_365d", "hba1c_last_365d"]
+            if model_historical:
+                default_a1c_cols.append("hba1c_first_365d")
+            cols = lever_specs.get("hba1c", {}).get("target_columns", default_a1c_cols)
+            if not model_historical:
+                cols = [c for c in cols if c != "hba1c_first_365d"]
             for col in cols:
                 if col in scenario.columns and pd.notna(scenario.iloc[0][col]):
                     scenario.loc[scenario.index[0], col] = float(scenario.iloc[0][col]) + a1c_delta
@@ -721,6 +770,7 @@ class ModelService:
 
         # Deduplicate and check ranges
         features_changed = sorted(list(set(features_changed)))
+        out_of_range_features = []
         for col in features_changed:
             spec = self._feature_spec.get(col, {})
             r_min = spec.get("range_min")
@@ -729,18 +779,47 @@ class ModelService:
             p_max = spec.get("plausible_max")
             cur_val = scenario.iloc[0][col]
             if isinstance(cur_val, (int, float, np.number)) and not np.isnan(cur_val):
-                # Clamp within schema min/max
+                # Clamp within schema min/max physical limits
                 if r_min is not None and cur_val < r_min:
                     scenario.loc[scenario.index[0], col] = r_min
                 elif r_max is not None and cur_val > r_max:
                     scenario.loc[scenario.index[0], col] = r_max
                 val_after = float(scenario.iloc[0][col])
+                unit = _get_feature_unit(col)
+                human_lbl = _get_feature_label(col)
                 if p_min is not None and val_after < p_min:
                     is_out_of_range = True
                     warnings.append(f"OUT_OF_RANGE: {col} ({val_after:.1f}) is below training distribution minimum ({p_min:.1f})")
+                    out_of_range_features.append({
+                        "feature": col,
+                        "label": human_lbl,
+                        "value": round(val_after, 2),
+                        "unit": unit,
+                        "plausible_min": p_min,
+                        "plausible_max": p_max,
+                        "breach_type": "BELOW_1ST_PERCENTILE",
+                        "reason": f"{human_lbl} ({val_after:.1f} {unit}) is below the model training 1st percentile ({p_min:.1f} {unit}).",
+                    })
                 elif p_max is not None and val_after > p_max:
                     is_out_of_range = True
                     warnings.append(f"OUT_OF_RANGE: {col} ({val_after:.1f}) exceeds training distribution 99th percentile ({p_max:.1f})")
+                    out_of_range_features.append({
+                        "feature": col,
+                        "label": human_lbl,
+                        "value": round(val_after, 2),
+                        "unit": unit,
+                        "plausible_min": p_min,
+                        "plausible_max": p_max,
+                        "breach_type": "ABOVE_99TH_PERCENTILE",
+                        "reason": f"{human_lbl} ({val_after:.1f} {unit}) exceeds the model training 99th percentile ({p_max:.1f} {unit}).",
+                    })
+
+        if is_out_of_range:
+            warnings.append(
+                "OUT_OF_DISTRIBUTION: One or more scenario inputs exceed the model's documented training distribution bounds. "
+                "Predictions outside this domain reflect tree extrapolation and synthetic data artifacts, "
+                "NOT a validated clinical risk reduction. Model outputs should be treated as exploratory calculations only."
+            )
 
         # No edits applied or no features modified -> return exact baseline
         if len(features_changed) == 0:
@@ -754,13 +833,18 @@ class ModelService:
                 "scenario_tier": baseline_pred["risk_tier"],
                 "delta_risk_pp": 0.0,
                 "delta_raw_pp": 0.0,
+                "relative_change_pct": 0.0,
                 "tier_changed": False,
                 "shap_before": shap_before,
                 "shap_after": shap_before,
                 "shap_diff": [],
+                "shap_scale": "raw_margin_log_odds",
                 "features_changed": [],
+                "dependent_features_summary": [],
                 "warnings": [],
                 "is_out_of_range": False,
+                "scenario_classification": "VALIDATED_DISTRIBUTION",
+                "out_of_range_features": [],
                 "is_low_sensitivity": False,
                 "sensitivity_message": None,
                 "caveat": (
@@ -769,12 +853,43 @@ class ModelService:
                 ),
             }
 
+        # Build dependent features summary explaining why features changed
+        dependent_summary = []
+        for col in features_changed:
+            orig_v = safe_x.iloc[0].get(col)
+            new_v = scenario.iloc[0].get(col)
+            human_lbl = _get_feature_label(col)
+            if col in ["sbp_latest", "dbp_latest", "hr_latest", "weight_latest", "glucose_latest", "hba1c_latest"]:
+                cat = "primary_lever"
+                rat = "Direct clinical vital scenario input"
+            elif col in ["pulse_pressure_latest", "bmi_latest"]:
+                cat = "physiological_derivation"
+                rat = "Physical definition: Pulse Pressure = SBP - DBP" if "pulse_pressure" in col else "Physical definition: BMI = Weight / Height² proportional scaling"
+            elif col in ["baseline_sbp", "baseline_dbp", "sbp_first_365d", "dbp_first_365d", "weight_first_365d", "bmi_first_365d", "glucose_first_365d", "hba1c_first_365d"]:
+                cat = "historical_anchor"
+                rat = "Historical longitudinal milestone updated under hypothetical historical trajectory"
+            else:
+                cat = "longitudinal_summary"
+                rat = "Observation window summary metric shifted consistently to reflect sustained physiological state"
+
+            dependent_summary.append({
+                "feature": col,
+                "label": human_lbl,
+                "category": cat,
+                "rationale": rat,
+                "value_before": round(float(orig_v), 2) if isinstance(orig_v, (int, float, np.number)) else orig_v,
+                "value_after": round(float(new_v), 2) if isinstance(new_v, (int, float, np.number)) else new_v,
+            })
+
         # Compute scenario risk
         scenario_pred = self.predict(scenario, context="simulate_scenario")
         shap_after = shap_svc.explain(scenario, n_drivers=6) if shap_svc is not None else []
 
-        delta_risk_pp = round((scenario_pred["calibrated_risk"] - baseline_pred["calibrated_risk"]) * 100, 2)
+        base_risk = baseline_pred["calibrated_risk"]
+        scen_risk = scenario_pred["calibrated_risk"]
+        delta_risk_pp = round((scen_risk - base_risk) * 100, 2)
         delta_raw_pp = round((scenario_pred["raw_score"] - baseline_pred["raw_score"]) * 100, 2)
+        relative_change_pct = round(((scen_risk - base_risk) / base_risk) * 100, 2) if base_risk > 0 else None
         tier_changed = (scenario_pred["risk_tier"] != baseline_pred["risk_tier"])
 
         # Sensitivity check
@@ -785,7 +900,7 @@ class ModelService:
             sensitivity_message = "The model does not rely on this input"
             warnings.append("LOW_SENSITIVITY: Model score did not change. The model does not rely on this input.")
 
-        # Compute SHAP difference
+        # Compute SHAP difference on raw log-odds scale
         before_map = {f["feature"]: (f["impact"], f.get("label", f["feature"])) for f in shap_before}
         after_map = {f["feature"]: (f["impact"], f.get("label", f["feature"])) for f in shap_after}
         all_driver_keys = list(dict.fromkeys(list(after_map.keys()) + list(before_map.keys())))
@@ -794,12 +909,18 @@ class ModelService:
             b_imp = before_map.get(feat, (0.0, ""))[0]
             a_imp, label = after_map.get(feat, (0.0, before_map.get(feat, (0.0, feat))[1]))
             diff = round(a_imp - b_imp, 4)
+            effect = "shifts_toward_higher_risk" if diff > 0 else "shifts_toward_lower_risk" if diff < 0 else "neutral"
             shap_diff.append({
                 "feature": feat,
                 "human_name": label,
                 "attribution_diff": diff,
                 "attribution_before": round(b_imp, 4),
                 "attribution_after": round(a_imp, 4),
+                "direction_effect": effect,
+                "clinical_note": (
+                    "Attribution change indicates tree routing response on uncalibrated log-odds margin scale. "
+                    "Correlated features share attribution across decision trees and cannot be interpreted as independent causal effects."
+                ),
             })
         shap_diff.sort(key=lambda x: abs(x["attribution_diff"]), reverse=True)
 
@@ -813,13 +934,18 @@ class ModelService:
             "scenario_tier": scenario_pred["risk_tier"],
             "delta_risk_pp": delta_risk_pp,
             "delta_raw_pp": delta_raw_pp,
+            "relative_change_pct": relative_change_pct,
             "tier_changed": tier_changed,
             "shap_before": shap_before,
             "shap_after": shap_after,
             "shap_diff": shap_diff,
+            "shap_scale": "raw_margin_log_odds",
             "features_changed": features_changed,
+            "dependent_features_summary": dependent_summary,
             "warnings": warnings,
             "is_out_of_range": is_out_of_range,
+            "scenario_classification": "OUT_OF_DISTRIBUTION_EXPLORATORY" if is_out_of_range else "VALIDATED_DISTRIBUTION",
+            "out_of_range_features": out_of_range_features,
             "is_low_sensitivity": is_low_sensitivity,
             "sensitivity_message": sensitivity_message,
             "caveat": (
@@ -831,128 +957,176 @@ class ModelService:
     def get_sensitivity(self, x_input: pd.DataFrame, pid: str) -> Dict[str, Any]:
         """
         Precomputes sensitivity curves for primary clinical variables across a multi-point grid.
-        Helps clinicians visualize step-function plateaus inherent in XGBoost trees.
+        Helps clinicians visualize step-function plateaus inherent in XGBoost trees and marks supported distribution bounds.
         """
         safe_x = self.validate_features_df(x_input)
         curves = {}
 
         # 1. SBP
         curr_sbp = self._safe_float(safe_x.iloc[0].get("sbp_latest", 125.0), 125.0)
+        sbp_spec = self._feature_spec.get("sbp_latest", {})
+        sbp_pmin = sbp_spec.get("plausible_min")
+        sbp_pmax = sbp_spec.get("plausible_max")
         sbp_points = []
         for d in [-30, -20, -15, -10, -5, 0, 5, 10, 15, 20, 30]:
             t_val = round(curr_sbp + d, 1)
             res = self.simulate(safe_x, {"sbp_delta": d}, shap_svc=None)
+            is_oor = bool((sbp_pmin is not None and t_val < sbp_pmin) or (sbp_pmax is not None and t_val > sbp_pmax))
             sbp_points.append({
                 "value": t_val,
                 "raw_score": res["scenario_raw"],
                 "calibrated_risk": res["scenario_risk"],
                 "risk_tier": res["scenario_tier"],
+                "is_out_of_range": is_oor,
             })
         curves["sbp"] = {
             "variable": "sbp",
             "display_name": "Systolic Blood Pressure",
             "unit": "mmHg",
             "current_value": curr_sbp,
+            "supported_min": sbp_pmin,
+            "supported_max": sbp_pmax,
+            "is_current_out_of_range": bool((sbp_pmin is not None and curr_sbp < sbp_pmin) or (sbp_pmax is not None and curr_sbp > sbp_pmax)),
             "points": sbp_points,
         }
 
         # 2. DBP
         curr_dbp = self._safe_float(safe_x.iloc[0].get("dbp_latest", 80.0), 80.0)
+        dbp_spec = self._feature_spec.get("dbp_latest", {})
+        dbp_pmin = dbp_spec.get("plausible_min")
+        dbp_pmax = dbp_spec.get("plausible_max")
         dbp_points = []
         for d in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
             t_val = round(curr_dbp + d, 1)
             res = self.simulate(safe_x, {"dbp_delta": d}, shap_svc=None)
+            is_oor = bool((dbp_pmin is not None and t_val < dbp_pmin) or (dbp_pmax is not None and t_val > dbp_pmax))
             dbp_points.append({
                 "value": t_val,
                 "raw_score": res["scenario_raw"],
                 "calibrated_risk": res["scenario_risk"],
                 "risk_tier": res["scenario_tier"],
+                "is_out_of_range": is_oor,
             })
         curves["dbp"] = {
             "variable": "dbp",
             "display_name": "Diastolic Blood Pressure",
             "unit": "mmHg",
             "current_value": curr_dbp,
+            "supported_min": dbp_pmin,
+            "supported_max": dbp_pmax,
+            "is_current_out_of_range": bool((dbp_pmin is not None and curr_dbp < dbp_pmin) or (dbp_pmax is not None and curr_dbp > dbp_pmax)),
             "points": dbp_points,
         }
 
         # 3. Weight
         curr_wt = self._safe_float(safe_x.iloc[0].get("weight_latest", 70.0), 70.0)
+        wt_spec = self._feature_spec.get("weight_latest", {})
+        wt_pmin = wt_spec.get("plausible_min")
+        wt_pmax = wt_spec.get("plausible_max")
         wt_points = []
         for pct in [-0.15, -0.10, -0.05, 0.0, 0.05, 0.10, 0.15]:
             t_val = round(curr_wt * (1.0 + pct), 1)
             res = self.simulate(safe_x, {"weight_delta_pct": pct}, shap_svc=None)
+            is_oor = bool((wt_pmin is not None and t_val < wt_pmin) or (wt_pmax is not None and t_val > wt_pmax))
             wt_points.append({
                 "value": t_val,
                 "raw_score": res["scenario_raw"],
                 "calibrated_risk": res["scenario_risk"],
                 "risk_tier": res["scenario_tier"],
+                "is_out_of_range": is_oor,
             })
         curves["weight"] = {
             "variable": "weight",
             "display_name": "Body Weight",
             "unit": "kg",
             "current_value": curr_wt,
+            "supported_min": wt_pmin,
+            "supported_max": wt_pmax,
+            "is_current_out_of_range": bool((wt_pmin is not None and curr_wt < wt_pmin) or (wt_pmax is not None and curr_wt > wt_pmax)),
             "points": wt_points,
         }
 
         # 4. Heart Rate
         curr_hr = self._safe_float(safe_x.iloc[0].get("hr_latest", 72.0), 72.0)
+        hr_spec = self._feature_spec.get("hr_latest", {})
+        hr_pmin = hr_spec.get("plausible_min")
+        hr_pmax = hr_spec.get("plausible_max")
         hr_points = []
         for d in [-20, -10, -5, 0, 5, 10, 20]:
             t_val = round(curr_hr + d, 1)
             res = self.simulate(safe_x, {"hr_delta": d}, shap_svc=None)
+            is_oor = bool((hr_pmin is not None and t_val < hr_pmin) or (hr_pmax is not None and t_val > hr_pmax))
             hr_points.append({
                 "value": t_val,
                 "raw_score": res["scenario_raw"],
                 "calibrated_risk": res["scenario_risk"],
                 "risk_tier": res["scenario_tier"],
+                "is_out_of_range": is_oor,
             })
         curves["hr"] = {
             "variable": "hr",
             "display_name": "Resting Heart Rate",
             "unit": "bpm",
             "current_value": curr_hr,
+            "supported_min": hr_pmin,
+            "supported_max": hr_pmax,
+            "is_current_out_of_range": bool((hr_pmin is not None and curr_hr < hr_pmin) or (hr_pmax is not None and curr_hr > hr_pmax)),
             "points": hr_points,
         }
 
         # 5. Glucose
         curr_gl = self._safe_float(safe_x.iloc[0].get("glucose_latest", 100.0), 100.0)
+        gl_spec = self._feature_spec.get("glucose_latest", {})
+        gl_pmin = gl_spec.get("plausible_min")
+        gl_pmax = gl_spec.get("plausible_max")
         gl_points = []
         for d in [-30, -20, -10, 0, 10, 20, 30, 50]:
             t_val = round(curr_gl + d, 1)
             res = self.simulate(safe_x, {"glucose_delta": d}, shap_svc=None)
+            is_oor = bool((gl_pmin is not None and t_val < gl_pmin) or (gl_pmax is not None and t_val > gl_pmax))
             gl_points.append({
                 "value": t_val,
                 "raw_score": res["scenario_raw"],
                 "calibrated_risk": res["scenario_risk"],
                 "risk_tier": res["scenario_tier"],
+                "is_out_of_range": is_oor,
             })
         curves["glucose"] = {
             "variable": "glucose",
             "display_name": "Fasting Blood Glucose",
             "unit": "mg/dL",
             "current_value": curr_gl,
+            "supported_min": gl_pmin,
+            "supported_max": gl_pmax,
+            "is_current_out_of_range": bool((gl_pmin is not None and curr_gl < gl_pmin) or (gl_pmax is not None and curr_gl > gl_pmax)),
             "points": gl_points,
         }
 
         # 6. HbA1c
         curr_a1c = self._safe_float(safe_x.iloc[0].get("hba1c_latest", 5.6), 5.6)
+        a1c_spec = self._feature_spec.get("hba1c_latest", {})
+        a1c_pmin = a1c_spec.get("plausible_min")
+        a1c_pmax = a1c_spec.get("plausible_max")
         a1c_points = []
         for d in [-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5]:
             t_val = round(curr_a1c + d, 1)
             res = self.simulate(safe_x, {"hba1c_delta": d}, shap_svc=None)
+            is_oor = bool((a1c_pmin is not None and t_val < a1c_pmin) or (a1c_pmax is not None and t_val > a1c_pmax))
             a1c_points.append({
                 "value": t_val,
                 "raw_score": res["scenario_raw"],
                 "calibrated_risk": res["scenario_risk"],
                 "risk_tier": res["scenario_tier"],
+                "is_out_of_range": is_oor,
             })
         curves["hba1c"] = {
             "variable": "hba1c",
             "display_name": "Glycated Hemoglobin (HbA1c)",
             "unit": "%",
             "current_value": curr_a1c,
+            "supported_min": a1c_pmin,
+            "supported_max": a1c_pmax,
+            "is_current_out_of_range": bool((a1c_pmin is not None and curr_a1c < a1c_pmin) or (a1c_pmax is not None and curr_a1c > a1c_pmax)),
             "points": a1c_points,
         }
 

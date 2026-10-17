@@ -511,6 +511,26 @@ export async function fetchPopulation(
 
 // ── Full Patient Simulator & Sensitivity Interfaces ──────────────────────────
 
+export interface OutOfRangeDetail {
+  feature: string;
+  label: string;
+  value: number;
+  unit: string;
+  plausible_min: number | null;
+  plausible_max: number | null;
+  breach_type: "BELOW_1ST_PERCENTILE" | "ABOVE_99TH_PERCENTILE";
+  reason: string;
+}
+
+export interface DependentFeatureSummary {
+  feature: string;
+  label: string;
+  category: "primary_lever" | "physiological_derivation" | "longitudinal_summary" | "historical_anchor";
+  rationale: string;
+  value_before: number | string | null;
+  value_after: number | string | null;
+}
+
 export interface SimulateRequest {
   patient_id: string;
   sbp_value?: number | null;
@@ -529,6 +549,7 @@ export interface SimulateRequest {
   conditions?: Record<string, number> | null;
   medications?: Record<string, number> | null;
   custom_features?: Record<string, unknown> | null;
+  model_historical_trajectory?: boolean;
 }
 
 export interface SHAPDiffItem {
@@ -537,6 +558,8 @@ export interface SHAPDiffItem {
   attribution_diff: number;
   attribution_before: number;
   attribution_after: number;
+  direction_effect?: "shifts_toward_higher_risk" | "shifts_toward_lower_risk" | "neutral";
+  clinical_note?: string;
 }
 
 export interface SimulateResponse {
@@ -549,13 +572,18 @@ export interface SimulateResponse {
   scenario_tier: string;
   delta_risk_pp: number;
   delta_raw_pp: number;
+  relative_change_pct?: number | null;
   tier_changed: boolean;
   shap_before: ContributingFactor[];
   shap_after: ContributingFactor[];
   shap_diff: SHAPDiffItem[];
+  shap_scale?: string;
   features_changed: string[];
+  dependent_features_summary?: DependentFeatureSummary[];
   warnings: string[];
   is_out_of_range: boolean;
+  scenario_classification?: "VALIDATED_DISTRIBUTION" | "OUT_OF_DISTRIBUTION_EXPLORATORY";
+  out_of_range_features?: OutOfRangeDetail[];
   is_low_sensitivity: boolean;
   sensitivity_message: string | null;
   caveat: string;
@@ -566,6 +594,7 @@ export interface SensitivityPoint {
   raw_score: number;
   calibrated_risk: number;
   risk_tier: string;
+  is_out_of_range?: boolean;
 }
 
 export interface SensitivityCurve {
@@ -573,6 +602,9 @@ export interface SensitivityCurve {
   display_name: string;
   unit: string;
   current_value: number;
+  supported_min?: number | null;
+  supported_max?: number | null;
+  is_current_out_of_range?: boolean;
   points: SensitivityPoint[];
 }
 

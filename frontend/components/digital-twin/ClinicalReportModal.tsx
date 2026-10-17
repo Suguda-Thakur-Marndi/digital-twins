@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import {
   PatientDetail,
   PatientSummary,
@@ -73,7 +73,10 @@ export function ClinicalReportModal({
   const glucose = patient?.latest_vitals?.glucose;
   const hba1c = patient?.latest_vitals?.hba1c;
 
-  const reportId = `VT-REP-${patientId}-${Date.now().toString(36).toUpperCase()}`;
+  const reportId = useMemo(
+    () => `VT-REP-${patientId.slice(0, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`,
+    [patientId]
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">

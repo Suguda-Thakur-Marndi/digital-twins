@@ -340,6 +340,27 @@ class SimulateRequest(BaseModel):
     conditions: Optional[Dict[str, int]] = None
     medications: Optional[Dict[str, int]] = None
     custom_features: Optional[Dict[str, Any]] = None
+    model_historical_trajectory: Optional[bool] = False
+
+
+class OutOfRangeDetail(BaseModel):
+    feature: str
+    label: str
+    value: float
+    unit: str
+    plausible_min: Optional[float] = None
+    plausible_max: Optional[float] = None
+    breach_type: str  # "BELOW_1ST_PERCENTILE" or "ABOVE_99TH_PERCENTILE"
+    reason: str
+
+
+class DependentFeatureSummary(BaseModel):
+    feature: str
+    label: str
+    category: str  # "primary_lever", "physiological_derivation", "longitudinal_summary", "historical_anchor"
+    rationale: str
+    value_before: Any
+    value_after: Any
 
 
 class SimulateResponse(BaseModel):
@@ -352,13 +373,18 @@ class SimulateResponse(BaseModel):
     scenario_tier: str
     delta_risk_pp: float
     delta_raw_pp: float
+    relative_change_pct: Optional[float] = None
     tier_changed: bool
     shap_before: List[ContributingFactor]
     shap_after: List[ContributingFactor]
     shap_diff: List[Dict[str, Any]]
+    shap_scale: str = "raw_margin_log_odds"
     features_changed: List[str]
+    dependent_features_summary: Optional[List[DependentFeatureSummary]] = None
     warnings: List[str]
     is_out_of_range: bool
+    scenario_classification: str = "VALIDATED_DISTRIBUTION"  # "VALIDATED_DISTRIBUTION" or "OUT_OF_DISTRIBUTION_EXPLORATORY"
+    out_of_range_features: Optional[List[OutOfRangeDetail]] = None
     is_low_sensitivity: bool
     sensitivity_message: Optional[str] = None
     caveat: str = (
@@ -374,6 +400,7 @@ class SensitivityPoint(BaseModel):
     raw_score: float
     calibrated_risk: float
     risk_tier: str
+    is_out_of_range: bool = False
 
 
 class SensitivityCurve(BaseModel):
@@ -381,6 +408,9 @@ class SensitivityCurve(BaseModel):
     display_name: str
     unit: str
     current_value: float
+    supported_min: Optional[float] = None
+    supported_max: Optional[float] = None
+    is_current_out_of_range: bool = False
     points: List[SensitivityPoint]
 
 
