@@ -61,8 +61,8 @@ export function SHAPChart({ factors, isLoading = false }: SHAPChartProps) {
         </div>
       </div>
 
-      <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
-        TreeExplainer attributions for this patient’s observation window. Positive values shift risk higher; negative values are protective.
+      <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+        TreeExplainer attributions for this patient’s observation window. Positive values shift model prediction higher; negative values shift it lower. Attributions describe feature contributions to this model’s output and do not imply causal mechanisms or clinical protection.
       </p>
 
       {/* Horizontal Attribution Bars */}

@@ -60,6 +60,19 @@ def _clean_patient_record(p: Dict[str, Any]) -> Dict[str, Any]:
         rec["is_registered"] = False
     if "is_demo" not in rec:
         rec["is_demo"] = True
+
+    # Ensure latest_risk tier strictly corresponds to calibrated_risk thresholds (<15% Low, 15-40% Moderate, >=40% High)
+    if "latest_risk" in rec and isinstance(rec["latest_risk"], dict):
+        cal_risk = rec["latest_risk"].get("calibrated_risk")
+        if cal_risk is not None and not math.isnan(float(cal_risk)):
+            c_val = float(cal_risk)
+            if c_val >= 0.40:
+                rec["latest_risk"]["risk_tier"] = "High"
+            elif c_val >= 0.15:
+                rec["latest_risk"]["risk_tier"] = "Moderate"
+            else:
+                rec["latest_risk"]["risk_tier"] = "Low"
+
     return rec
 
 

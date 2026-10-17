@@ -65,6 +65,40 @@ def test_predict_endpoint_confidence_interval_is_consistent(client):
     assert ci is not None
     assert len(ci) == 2
     assert ci[0] <= cal_risk <= ci[1], f"Calibrated risk {cal_risk} is outside CI [{ci[0]}, {ci[1]}]"
+    # Regression test: legacy risk_score must match calibrated_risk, NEVER raw_score
+    assert "risk_score" in data
+    assert data["risk_score"] == cal_risk, f"risk_score {data['risk_score']} must equal calibrated_risk {cal_risk}"
+
+
+def test_patient_risk_tier_matches_predict_and_thresholds(client):
+    """
+    Verify that displayed risk tiers strictly adhere to documented thresholds
+    (Low < 15%, Moderate 15-40%, High >= 40%) and match across patient summary and predict.
+    """
+    patients = client.get("/api/v1/patients").json()
+    assert len(patients) > 0
+
+    for p in patients[:10]:
+        cal_risk = p["calibrated_risk"]
+        summary_tier = p["risk_tier"]
+
+        # Check documented thresholds
+        if cal_risk >= 0.40:
+            expected_tier = "High"
+        elif cal_risk >= 0.15:
+            expected_tier = "Moderate"
+        else:
+            expected_tier = "Low"
+
+        assert summary_tier == expected_tier, (
+            f"Patient {p['id']} tier {summary_tier} does not match expected {expected_tier} for risk {cal_risk}"
+        )
+
+        # Check that /api/v1/predict agrees with the patient summary tier
+        pred_res = client.post("/api/v1/predict", json={"patient_id": p["id"]}).json()
+        assert pred_res["risk_tier"] == expected_tier, (
+            f"Predict tier {pred_res['risk_tier']} does not match expected {expected_tier} for patient {p['id']}"
+        )
 
 
 def test_simulation_does_not_fabricate_confidence_interval(client):

@@ -368,9 +368,16 @@ function TwinDashboardContent() {
 
   // Strict CI validation: only justified for baseline prediction where ci bounds enclose calibrated_risk.
   // For counterfactual simulation or replay snapshots, uncertainty is not computed/justified.
+  const isPredictionForPatient =
+    prediction &&
+    (!prediction.patient_id ||
+      prediction.patient_id === patient.id ||
+      prediction.patient_id === patient.display_id);
+
   const rawCi =
     activeRiskSource === "baseline"
-      ? activeRisk.confidence_interval_95 || prediction?.confidence_interval_95
+      ? (isPredictionForPatient ? prediction?.confidence_interval_95 : undefined) ||
+        activeRisk.confidence_interval_95
       : undefined;
   const isCiValid =
     Array.isArray(rawCi) &&
@@ -790,12 +797,15 @@ function TwinDashboardContent() {
         {/* Top Attributed Drivers */}
         {prediction?.top_contributing_factors && prediction.top_contributing_factors.length > 0 && (
           <div className="border p-3 space-y-1">
-            <h2 className="font-bold text-xs uppercase text-gray-700">Top Attributed Drivers (SHAP Attribution)</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold text-xs uppercase text-gray-700">Top Attributed Drivers (SHAP Attribution)</h2>
+              <span className="text-[10px] text-gray-500 italic">Local model attributions (non-causal)</span>
+            </div>
             <div className="grid grid-cols-2 gap-2 text-[11px]">
               {prediction.top_contributing_factors.slice(0, 6).map((f) => (
                 <div key={f.feature} className="flex justify-between border-b pb-0.5">
-                  <span>{f.label}</span>
-                  <span className="font-mono font-bold">
+                  <span className="truncate pr-1">{f.label}</span>
+                  <span className={`font-mono font-bold shrink-0 ${f.impact > 0 ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"}`}>
                     {f.impact > 0 ? "+" : ""}
                     {f.impact.toFixed(4)}
                   </span>

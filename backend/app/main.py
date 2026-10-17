@@ -462,8 +462,8 @@ async def predict_risk(request: schemas.PredictRequest):
             "or diagnostic device. Not for treatment decisions."
         ),
         "audit": pred_res.get("audit"),
-        # Legacy compat
-        "risk_score": pred_res["raw_score"],
+        # Legacy compat: risk_score must match calibrated_risk, not raw_score
+        "risk_score": pred_res["calibrated_risk"],
     }
 
 

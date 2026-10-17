@@ -210,6 +210,7 @@ class PredictResponse(BaseModel):
     patient_id: Optional[str] = None
     raw_score: float
     calibrated_risk: float
+    risk_score: Optional[float] = None  # Legacy compat: equals calibrated_risk
     risk_tier: str
     confidence_interval_95: List[float]
     top_contributing_factors: List[ContributingFactor]
