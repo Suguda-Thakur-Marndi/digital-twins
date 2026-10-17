@@ -82,7 +82,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 glass-navbar transition-colors">
+      <header className="sticky top-0 z-40 glass-navbar transition-colors no-print print:hidden">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo & Brand */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">

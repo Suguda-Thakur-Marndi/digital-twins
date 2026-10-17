@@ -82,12 +82,12 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {/* Layered background visual apparatus: Image + radial glows + subtle circuit grid */}
-        <div className="vitaltwin-bg-layer twincare-bg-layer" aria-hidden="true" />
-        <div className="vitaltwin-bg-grid twincare-bg-grid" aria-hidden="true" />
+        <div className="vitaltwin-bg-layer twincare-bg-layer no-print print:hidden" aria-hidden="true" />
+        <div className="vitaltwin-bg-grid twincare-bg-grid no-print print:hidden" aria-hidden="true" />
 
         <Providers>
           {/* Summit Top Glass Banner */}
-          <div className="relative z-50 bg-[rgba(8,145,178,0.92)] dark:bg-[rgba(15,29,48,0.88)] backdrop-blur-md text-white text-xs px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-1.5 border-b border-white/15 dark:border-[rgba(148,183,220,0.16)] transition-colors shadow-2xs">
+          <div className="relative z-50 bg-[rgba(8,145,178,0.92)] dark:bg-[rgba(15,29,48,0.88)] backdrop-blur-md text-white text-xs px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-1.5 border-b border-white/15 dark:border-[rgba(148,183,220,0.16)] transition-colors shadow-2xs no-print print:hidden banner-summit">
             <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
               <span className="inline-block w-2 h-2 rounded-full bg-cyan-300 animate-pulse shrink-0" />
               <span className="font-semibold tracking-wide uppercase text-[9px] sm:text-[10px] truncate">
@@ -105,12 +105,12 @@ export default function RootLayout({
           <Navbar />
 
           {/* Main Content Area */}
-          <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+          <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 print:p-0 print:m-0 print:max-w-none">
             {children}
           </main>
 
           {/* Global Honest Disclaimer Glass Footer */}
-          <footer className="relative z-10 mt-auto border-t border-[var(--glass-border)] bg-[var(--bg-surface)] backdrop-blur-lg py-5 sm:py-6 transition-colors">
+          <footer className="relative z-10 mt-auto border-t border-[var(--glass-border)] bg-[var(--bg-surface)] backdrop-blur-lg py-5 sm:py-6 transition-colors no-print print:hidden">
             <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-[var(--text-muted)] text-center md:text-left">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />

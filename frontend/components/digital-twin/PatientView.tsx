@@ -7,21 +7,19 @@ import {
   Heart,
   Activity,
   Scale,
-  Calendar,
   HelpCircle,
-  ShieldCheck,
   AlertCircle,
   Printer,
-  CheckCircle2,
 } from "lucide-react";
 
 interface PatientViewProps {
   patient: PatientDetail;
   activeRisk: RiskState;
+  onPrint?: () => void;
 }
 
-export function PatientView({ patient, activeRisk }: PatientViewProps) {
-  const { t, language } = useLanguage();
+export function PatientView({ patient, activeRisk, onPrint }: PatientViewProps) {
+  const { t } = useLanguage();
 
   const sbp = patient.latest_vitals.sbp ?? 120;
   const dbp = patient.latest_vitals.dbp ?? 80;
@@ -59,8 +57,16 @@ export function PatientView({ patient, activeRisk }: PatientViewProps) {
 
           <button
             type="button"
-            onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded hover:bg-[var(--bg-panel)] text-[var(--text-secondary)] transition-colors no-print"
+            onClick={() => {
+              if (onPrint) {
+                onPrint();
+              } else {
+                window.print();
+              }
+            }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-[var(--bg-subtle)] border border-[var(--border-hairline)] rounded hover:bg-[var(--bg-panel)] text-[var(--text-secondary)] transition-colors no-print cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent-teal)]"
+            title="Print patient summary report"
+            aria-label="Print patient summary report"
           >
             <Printer className="w-4 h-4" />
             <span>{t.printReport}</span>

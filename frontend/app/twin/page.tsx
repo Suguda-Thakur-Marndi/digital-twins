@@ -7,6 +7,8 @@ import {
   fetchPatient,
   fetchPredict,
   fetchTimelineRisk,
+  fetchModelInfo,
+  ModelInfo,
   PatientSummary,
   PatientDetail,
   PredictResponse,
@@ -25,6 +27,8 @@ import { RiskReplay } from "@/components/digital-twin/RiskReplay";
 import { WhatIfLab } from "@/components/digital-twin/WhatIfLab";
 import { WearablePanel } from "@/components/digital-twin/WearablePanel";
 import { PatientView } from "@/components/digital-twin/PatientView";
+import { ClinicalReportDocument } from "@/components/digital-twin/ClinicalReportDocument";
+import { ClinicalReportModal } from "@/components/digital-twin/ClinicalReportModal";
 import dynamic from "next/dynamic";
 import DigitalTwinViz from "@/components/digital-twin/DigitalTwinViz";
 
@@ -53,6 +57,8 @@ import {
   Plus,
   X,
   CheckCircle2,
+  Loader2,
+  Eye,
 } from "lucide-react";
 
 interface ReadingFormState {
@@ -85,6 +91,14 @@ function TwinDashboardContent() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Model metadata for provenance, version, and schema fingerprinting
+  const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
+
+  // Print workflow states
+  const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
+  const [isPrinting, setIsPrinting] = useState<boolean>(false);
+  const [printError, setPrintError] = useState<string | null>(null);
+
   // Add Reading modal state
   const [showAddReadingModal, setShowAddReadingModal] = useState<boolean>(false);
   const [readingForm, setReadingForm] = useState<ReadingFormState>({
@@ -98,6 +112,13 @@ function TwinDashboardContent() {
   const [readingSubmitting, setReadingSubmitting] = useState<boolean>(false);
   const [readingError, setReadingError] = useState<string | null>(null);
   const [readingSuccessNotice, setReadingSuccessNotice] = useState<string | null>(null);
+
+  // Load model metadata on mount
+  useEffect(() => {
+    fetchModelInfo()
+      .then((m) => setModelInfo(m))
+      .catch(() => null);
+  }, []);
 
   // 1. Load patient directory on mount
   useEffect(() => {
@@ -260,6 +281,28 @@ function TwinDashboardContent() {
     }
   };
 
+  const handlePrintRecord = () => {
+    if (!patient) {
+      setPrintError("Cannot print: No patient record selected or patient data is still loading.");
+      setTimeout(() => setPrintError(null), 5000);
+      return;
+    }
+    setPrintError(null);
+    setIsPrinting(true);
+    // Allow React state update to render if any before triggering native print dialog
+    setTimeout(() => {
+      try {
+        window.print();
+      } catch (err) {
+        console.error("Print dialog invocation failed:", err);
+        setPrintError("Native browser print dialog could not be opened.");
+        setTimeout(() => setPrintError(null), 5000);
+      } finally {
+        setIsPrinting(false);
+      }
+    }, 50);
+  };
+
   if (loading && !patient) {
     return (
       <div className="space-y-6 py-8">
@@ -391,7 +434,8 @@ function TwinDashboardContent() {
   const validCi = isCiValid ? (rawCi as [number, number]) : undefined;
 
   return (
-    <div className="space-y-6 print:hidden">
+    <>
+      <div className="space-y-6 print:hidden">
       {/* ── TOP PATIENT HEADER ────────────────────────────────────────────── */}
       <div className="glass-panel p-5 border border-[var(--glass-border)]">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -504,23 +548,57 @@ function TwinDashboardContent() {
               <span>Add Reading</span>
             </button>
 
-            {/* Print Summary */}
+            {/* Preview Clinical Report Modal Button */}
             <button
               type="button"
-              onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium glass-btn-secondary rounded-xl transition-colors no-print cursor-pointer"
-              title="Print clinical summary record"
+              id="preview-report-btn"
+              onClick={() => setIsReportModalOpen(true)}
+              disabled={loading || !patient}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium glass-btn-secondary rounded-xl transition-all no-print cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40 shadow-xs"
+              title="Preview clinical report document modal"
+              aria-label="Preview clinical report modal before printing"
             >
-              <Printer className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Print Record</span>
+              <Eye className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+              <span className="hidden md:inline">Preview Report</span>
+            </button>
+
+            {/* Print Record Button */}
+            <button
+              type="button"
+              id="print-record-btn"
+              onClick={handlePrintRecord}
+              disabled={loading || !patient || isPrinting}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold glass-btn-secondary rounded-xl transition-all no-print cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40 shadow-xs"
+              title="Print clinical summary record or save as PDF"
+              aria-label="Print clinical summary record or save as PDF"
+            >
+              {isPrinting ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--color-primary)]" />
+                  <span className="hidden sm:inline">Preparing Print…</span>
+                </>
+              ) : (
+                <>
+                  <Printer className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+                  <span className="hidden sm:inline">Print Record</span>
+                </>
+              )}
             </button>
           </div>
         </div>
       </div>
 
+      {/* Print Error Notification Banner */}
+      {printError && (
+        <div className="p-3 text-xs bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300 rounded-xl flex items-center gap-2 backdrop-blur-md no-print">
+          <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
+          <span>{printError}</span>
+        </div>
+      )}
+
       {/* Reading Success Banner */}
       {readingSuccessNotice && (
-        <div className="p-3 text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 rounded-xl flex items-center gap-2 backdrop-blur-md">
+        <div className="p-3 text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 rounded-xl flex items-center gap-2 backdrop-blur-md no-print">
           <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
           <span>{readingSuccessNotice}</span>
         </div>
@@ -528,7 +606,7 @@ function TwinDashboardContent() {
 
       {/* ── HONEST LOW_DATA / CLINICAL WARNINGS BANNER ────────────────────── */}
       {((patient.warnings && patient.warnings.length > 0) || patient.data_completeness_pct < 75) && (
-        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-900 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2 backdrop-blur-md">
+        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-900 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2 backdrop-blur-md no-print">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
             <span className="font-semibold">Clinical Notice:</span>
@@ -546,7 +624,7 @@ function TwinDashboardContent() {
 
       {/* ── CONDITIONAL VIEW MODE ─────────────────────────────────────────── */}
       {viewMode === "patient" ? (
-        <PatientView patient={patient} activeRisk={activeRisk} />
+        <PatientView patient={patient} activeRisk={activeRisk} onPrint={handlePrintRecord} />
       ) : (
         /* ── 12-COLUMN MAIN CLINICAL GRID ─────────────────────────────────── */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -976,7 +1054,40 @@ function TwinDashboardContent() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+
+      {/* ── DEDICATED PRINTABLE CLINICAL REPORT (PRINT MEDIA ONLY) ────── */}
+      <div id="clinical-printable-report" className="hidden print:block print:w-full print:m-0 print:p-0">
+        {patient && (
+          <ClinicalReportDocument
+            patient={patient}
+            prediction={prediction}
+            modelInfo={modelInfo}
+            activeVitals={activeVitals}
+            activeRisk={activeRisk}
+            activeRiskSource={activeRiskSource}
+            activeSnapshotIdx={activeSnapshotIdx}
+            currentSnapshot={currentSnapshot}
+            simulatedScenario={simulatedScenario}
+          />
+        )}
+      </div>
+
+      {/* ── CLINICAL REPORT PREVIEW MODAL (ON-SCREEN PREVIEW) ─────────── */}
+      <ClinicalReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        patient={patient}
+        prediction={prediction}
+        modelInfo={modelInfo}
+        activeVitals={activeVitals}
+        activeRisk={activeRisk}
+        activeRiskSource={activeRiskSource}
+        activeSnapshotIdx={activeSnapshotIdx}
+        currentSnapshot={currentSnapshot}
+        simulatedScenario={simulatedScenario}
+      />
+    </>
   );
 }
 

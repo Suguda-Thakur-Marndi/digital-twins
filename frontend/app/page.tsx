@@ -21,6 +21,7 @@ import {
 import { normalizeTier, RISK_BADGE_CLASSES } from "@/lib/types";
 import { WearablePanel } from "@/components/digital-twin/WearablePanel";
 import { ClinicalReportModal } from "@/components/digital-twin/ClinicalReportModal";
+import { ClinicalReportDocument } from "@/components/digital-twin/ClinicalReportDocument";
 import {
   ArrowRight,
   ShieldAlert,
@@ -263,7 +264,8 @@ export default function RiskDashboardPage() {
   const relativeRiskChange = baselineRisk > 0 ? ((scenarioRisk - baselineRisk) / baselineRisk) * 100 : 0;
 
   return (
-    <div className="space-y-7 pb-16 max-w-6xl mx-auto px-2 sm:px-4">
+    <>
+      <div className="space-y-7 pb-16 max-w-6xl mx-auto px-2 sm:px-4 print:hidden">
       {/* ── HEADER BANNER ──────────────────────────────────────────────── */}
       <section className="space-y-2 pt-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -1314,6 +1316,17 @@ export default function RiskDashboardPage() {
           <span>Next.js Connected</span>
         </div>
       </footer>
-    </div>
+      </div>
+
+      {/* ── DEDICATED PRINTABLE CLINICAL REPORT (PRINT MEDIA ONLY) ────── */}
+      <div id="clinical-printable-report" className="hidden print:block print:w-full print:m-0 print:p-0">
+        <ClinicalReportDocument
+          patient={patientDetail}
+          summary={currentSummary}
+          prediction={activePredict}
+          modelInfo={modelInfo}
+        />
+      </div>
+    </>
   );
 }

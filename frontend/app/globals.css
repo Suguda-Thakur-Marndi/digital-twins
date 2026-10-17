@@ -531,12 +531,27 @@ textarea {
   touch-action: manipulation;
 }
 
-/* Print Stylesheet */
+/* ── PRINT DESIGN SYSTEM ── */
 @media print {
-  body {
-    background: white !important;
-    color: black !important;
+  @page {
+    size: auto;
+    margin: 12mm 15mm;
   }
+
+  html,
+  body {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide decorative screen elements, navigation, summit banner, footers, toolbars, buttons */
   .vitaltwin-bg-layer,
   .vitaltwin-bg-grid,
   .twincare-bg-layer,
@@ -544,21 +559,63 @@ textarea {
   nav,
   header,
   footer,
+  aside,
   .no-print,
+  .print-hide,
   [role="status"],
   .animate-pulse,
   .animate-spin,
   button,
+  select,
+  input,
   input[type="range"] {
     display: none !important;
   }
+
+  /* Avoid splitting critical sections across page breaks */
+  .print-break-inside-avoid,
+  .clinical-report-section,
+  .clinical-report-card,
+  table,
+  tr,
+  figure {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Printable Report Container overrides */
+  #clinical-printable-report {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .clinical-report-root {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+  }
+
+  /* Remove all screen-only glassmorphic filters, blurs, and dark theme variables */
+  .clinical-report-root * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+
   .glass-card,
   .clinical-card {
     background: white !important;
-    border: 1px solid #ccc !important;
+    border: 1px solid #cbd5e1 !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
     break-inside: avoid;
   }
 }
+
 

@@ -174,7 +174,7 @@ export function PatientSimulator({
       featureRow?.sbp_latest !== undefined && featureRow?.sbp_latest !== null
         ? Number(featureRow.sbp_latest)
         : initialVitals.sbp ?? 125,
-    [featureRow?.sbp_latest, initialVitals.sbp]
+    [featureRow, initialVitals.sbp]
   );
 
   const baseDbp = useMemo(
@@ -182,7 +182,7 @@ export function PatientSimulator({
       featureRow?.dbp_latest !== undefined && featureRow?.dbp_latest !== null
         ? Number(featureRow.dbp_latest)
         : initialVitals.dbp ?? 80,
-    [featureRow?.dbp_latest, initialVitals.dbp]
+    [featureRow, initialVitals.dbp]
   );
 
   const baseHr = useMemo(
@@ -190,7 +190,7 @@ export function PatientSimulator({
       featureRow?.hr_latest !== undefined && featureRow?.hr_latest !== null
         ? Number(featureRow.hr_latest)
         : initialVitals.hr ?? 72,
-    [featureRow?.hr_latest, initialVitals.hr]
+    [featureRow, initialVitals.hr]
   );
 
   const baseWeight = useMemo(
@@ -198,7 +198,7 @@ export function PatientSimulator({
       featureRow?.weight_latest !== undefined && featureRow?.weight_latest !== null
         ? Number(featureRow.weight_latest)
         : initialVitals.weight ?? 70,
-    [featureRow?.weight_latest, initialVitals.weight]
+    [featureRow, initialVitals.weight]
   );
 
   const baseBmi = useMemo(
@@ -206,7 +206,7 @@ export function PatientSimulator({
       featureRow?.bmi_latest !== undefined && featureRow?.bmi_latest !== null
         ? Number(featureRow.bmi_latest)
         : initialVitals.bmi ?? Number((baseWeight / (1.7 * 1.7)).toFixed(1)),
-    [featureRow?.bmi_latest, initialVitals.bmi, baseWeight]
+    [featureRow, initialVitals.bmi, baseWeight]
   );
 
   const baseGlucose = useMemo(
@@ -214,7 +214,7 @@ export function PatientSimulator({
       featureRow?.glucose_latest !== undefined && featureRow?.glucose_latest !== null
         ? Number(featureRow.glucose_latest)
         : initialVitals.glucose ?? 100,
-    [featureRow?.glucose_latest, initialVitals.glucose]
+    [featureRow, initialVitals.glucose]
   );
 
   const baseHba1c = useMemo(
@@ -222,7 +222,7 @@ export function PatientSimulator({
       featureRow?.hba1c_latest !== undefined && featureRow?.hba1c_latest !== null
         ? Number(featureRow.hba1c_latest)
         : initialVitals.hba1c ?? 5.6,
-    [featureRow?.hba1c_latest, initialVitals.hba1c]
+    [featureRow, initialVitals.hba1c]
   );
 
   // Baseline conditions and medications extracted dynamically from patient's actual featureRow
