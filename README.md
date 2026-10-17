@@ -30,7 +30,7 @@
 8. [Demo Video](#8-demo-video)
 9. [Open-Source License Details](#9-open-source-license-details)
 10. [Architecture Diagram](#10-architecture-diagram)
-11. [Project Presentation](#11-project-presentation)
+11. [Project Presentation — VitalTwin](#11-project-presentation--vitaltwin)
 12. [Installation and Usage](#12-installation-and-usage)
 13. [Deployment and Links](#13-deployment-and-links)
 14. [Responsible Use and Limitations](#14-responsible-use-and-limitations)
@@ -223,6 +223,9 @@ Video URL: https://youtu.be/xzakIIPsmCc
 
 The end-to-end architecture of VitalTwin encompasses data ingestion, feature harmonization, machine learning inference, cryptographic auditing, and interactive visual presentation.
 
+### Technical Architecture Specification
+📖 **[View the VitalTwin Architecture Diagram](docs/VitalTwin-Architecture.md)** — Comprehensive technical architecture specification including frontend, backend, ML inference, sequence diagrams, and simulation workflows.
+
 ### Vector PDF Architecture Deliverable
 A dedicated vector architecture diagram derived directly from the source code has been generated and is committed to the repository:
 📄 [Download / View Architecture Diagram (PDF)](docs/architecture_diagram.pdf) (`docs/architecture_diagram.pdf`)
@@ -290,11 +293,15 @@ flowchart TD
 
 ---
 
-## 11. Project Presentation
+## 11. Project Presentation — VitalTwin
 
-- **Status**: **Pending Outstanding Deliverable**
-- **Inspection Finding**: No presentation deck in PDF or PPT/PPTX format (e.g. `presentation.pdf`, `slides.pptx`) is currently present in the repository.
-- **Action Item**: The team must upload the finalized project presentation deck covering project details, methodology, and outcomes to the `docs/` directory prior to submission.
+The official project presentation deck for VitalTwin submitted to the **Happiest Health Digital Twin Challenge 2026** (Reimagining and Reforming Healthcare in India Summit 2026, Bengaluru):
+
+[![VitalTwin Presentation Preview](docs/vitaltwin_presentation_cover.png)](Pramana_Clinical_Twin.pptx)
+
+*Click the cover slide to view or download the full presentation.*
+
+👉 **[Download / View Full Presentation (Pramana_Clinical_Twin.pptx)](Pramana_Clinical_Twin.pptx)** *(PowerPoint Presentation, 12.8 MB)*
 
 ---
 
@@ -419,8 +426,8 @@ The following table reflects the submission status based on repository inspectio
 | **AI/ML Model & Framework Details** | [x] | Verified: Documented in Section 7 from `model_metadata.json` (365d horizon, Platt scaling, ROC-AUC 0.8069, PR-AUC 0.0644). |
 | **15–20 Minute Demo Video Link** | [x] | Verified Link: `https://youtu.be/xzakIIPsmCc` included in Section 8. *(⚠️ Note: Link verified; video duration and 'Unlisted' visibility setting require manual verification by the team).* |
 | **Open-Source License Details** | [x] | Addressed in Section 9. *(⚠️ Note: Preserved as marked in team checklist, but pending actual LICENSE file creation in repository. MIT or Apache 2.0 License recommended).* |
-| **Architecture Diagram (PDF/PPT)** | [ ] | **Outstanding Deliverable**: Vector PDF diagram generated from codebase at [docs/architecture_diagram.pdf](docs/architecture_diagram.pdf). Presentation PPT format remains pending team deck. |
-| **Project Presentation (PDF/PPT)** | [ ] | **Outstanding Deliverable**: No presentation file (`presentation.pdf` / `slides.pptx`) exists in repository; pending file upload by team. |
+| **Architecture Diagram (PDF/PPT/MD)** | [x] | Verified: Technical specification at [docs/VitalTwin-Architecture.md](docs/VitalTwin-Architecture.md) and vector PDF at [docs/architecture_diagram.pdf](docs/architecture_diagram.pdf). |
+| **Project Presentation (PDF/PPT)** | [x] | Verified: Official presentation deck available in repository ([Pramana_Clinical_Twin.pptx](Pramana_Clinical_Twin.pptx)) with clickable cover preview in Section 11. |
 
 ---
 
@@ -570,12 +577,16 @@ digital-twins/
 │       ├── api.ts                   # Strongly-typed API client for all backend endpoints
 │       └── bodyMap.ts               # Anatomical coordinates and organ hotspot configurations
 ├── docs/
-│   ├── architecture_diagram.pdf     # Vector PDF Architecture Diagram derived from codebase
-│   ├── DEMO.md                      # 3-minute hackathon presentation script
-│   ├── DESIGN.md                    # Visual design tokens and UI architecture
-│   └── ATTRIBUTIONS.md              # Research citations and asset licenses
-├── DEPLOYMENT_REPORT.md             # Production cloud deployment guide (Vercel & Render)
-├── docker-compose.yml               # Containerized local orchestration
-├── render.yaml                      # Render Blueprint deployment definition
-└── README.md                        # Master comprehensive system documentation
+│   ├── VitalTwin-Architecture.md       # Comprehensive technical architecture & sequence diagrams
+│   ├── architecture_diagram.pdf        # Vector PDF Architecture Diagram derived from codebase
+│   ├── vitaltwin_presentation_cover.png# High-resolution Slide 1 preview of presentation deck
+│   ├── vitaltwin_youtube_thumbnail.png # 16:9 clickable YouTube video thumbnail
+│   ├── DEMO.md                         # 3-minute hackathon presentation script
+│   ├── DESIGN.md                       # Visual design tokens and UI architecture
+│   └── ATTRIBUTIONS.md                 # Research citations and asset licenses
+├── Pramana_Clinical_Twin.pptx          # Official project presentation deck (PowerPoint, 12.8 MB)
+├── DEPLOYMENT_REPORT.md                # Production cloud deployment guide (Vercel & Render)
+├── docker-compose.yml                  # Containerized local orchestration
+├── render.yaml                         # Render Blueprint deployment definition
+└── README.md                           # Master comprehensive system documentation
 ```
