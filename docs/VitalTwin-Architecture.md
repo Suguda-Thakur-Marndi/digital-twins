@@ -48,6 +48,10 @@ VitalTwin maintains an evolving computational representation of patient cardiova
 
 ## 2. End-to-End System Architecture
 
+[![VitalTwin System Architecture](images/vitaltwin-architecture.png)](VitalTwin-Clinical-Digital-Twin-Architecture.pdf)
+
+> 📄 **Official Architecture Blueprint**: [Download the official one-page architecture diagram (VitalTwin-Clinical-Digital-Twin-Architecture.pdf)](VitalTwin-Clinical-Digital-Twin-Architecture.pdf).
+
 The following diagram illustrates the verified architectural layers, runtime services, data stores, and communication pathways implemented in the repository:
 
 ```mermaid
