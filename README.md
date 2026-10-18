@@ -96,7 +96,11 @@ Evaluation was conducted on a held-out test cohort containing 14 positive decomp
 
 ## 15–20 Minute Demo Video
 
+[![VitalTwin Demo Video Preview](docs/vitaltwin_youtube_thumbnail.png)](https://youtu.be/xzakIIPsmCc)
+
 - **Project Demonstration Video**: [https://youtu.be/xzakIIPsmCc](https://youtu.be/xzakIIPsmCc)
+
+*Click the preview thumbnail above to open and watch the project demonstration video.*
 
 *Note on Video Verification*: The demonstration video link above is active and accessible. Because automated HTTP requests to YouTube return dynamic application shells without duration or visibility metadata, the exact video duration (15–20 minutes) and unlisted status cannot be programmatically verified from the repository and must be confirmed manually by the user.
 
